@@ -1,0 +1,331 @@
+<div class="baground-body-slider">
+    <div class="container">
+        <h1 class="titulo-bienvenido">Bienvenido</h1>
+        <div class="normateca-slider swiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="card-normateca">
+                        <img src="/documents/d/guest/inventario">
+                        <div class="data-slider-home">
+                            <h3 class="titulo-slider">Inventario Único de Normativa Interna</h3>
+                            <p class="texto-slider">En esta sección se podrá consultar reglamentos, políticas, manuales,
+                                lineamientos, procedimientos y demás instrumentos normativos, debidamente
+                                actualizados y clasificados para facilitar su búsqueda y consulta.</p>
+                            <a href="/web/normateca/inventario" class="btn-normateca">Ver más</a>
+                        </div>
+                    </div>
+                </div><!-- SLIDER ITEM -->
+                <div class="swiper-slide slider-pta" style="display:none;">
+                    <div class="card-normateca">
+                        <img src="/documents/d/guest/imgslider1">
+                        <div class="data-slider-home">
+                            <h3 class="titulo-slider">Programa Anual</h3>
+                            <p class="texto-slider">A través de este documento se definen las prioridades estratégicas y
+                                las acciones programadas para el cumplimiento de la misión y visión institucional.</p>
+                            <a href="/web/normateca/pta" class="btn-normateca">Ver más</a>
+                        </div>
+                    </div>
+                </div><!-- SLIDER ITEM -->
+                <div class="swiper-slide">
+                    <div class="card-normateca">
+                        <img src="/documents/d/guest/historico">
+                        <div class="data-slider-home">
+                            <h3 class="titulo-slider">Histórico</h3>
+                            <p class="texto-slider">Su finalidad es preservar el registro documental de la evolución
+                                normativa
+                                institucional.</p>
+                            <a href="/web/normateca/historico" class="btn-normateca">Ver más</a>
+                        </div>
+                    </div>
+                </div><!-- SLIDER ITEM -->
+                <div class="swiper-slide">
+                    <div class="card-normateca">
+                        <img src="/documents/d/guest/ayuda">
+                        <div class="data-slider-home">
+                            <h3 class="titulo-slider">Ayuda</h3>
+                            <p class="texto-slider">Normateca pone a tu disposición una serie de recursos para facilitar
+                                la consulta y comprensión del marco normativo institucional.</p>
+                            <a href="/web/normateca/ayuda" class="btn-normateca">Ver más</a>
+                        </div>
+                    </div>
+                </div><!-- SLIDER ITEM -->
+                <div class="swiper-slide slide-administracion" style="display:none;">
+                    <div class="card-normateca">
+                        <img src="/documents/d/normateca/enmascarar-grupo-12-2x">
+                        <div class="data-slider-home">
+                            <h3 class="titulo-slider">Administración</h3>
+                            <p class="texto-slider"> En esta sección se podrán administrar usuarios, roles y permisos de
+                                acceso a las diferentes funcionalidades de Normateca.</p>
+                            <a href="/web/normateca/administracion" class="btn-normateca">Ver más</a>
+                        </div>
+                    </div>
+                </div><!-- SLIDER ITEM -->
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #btn-aceptar {
+        background-color: #611232;
+        border-color: #611232;
+        color: #fff;
+    }
+
+    .titulo-bienvenido {
+        color: #13322E;
+    }
+
+    /************************************* ESTILOS DEL SLIDER ******************************************/
+
+
+    .normateca-slider {
+        width: 100%;
+        padding-bottom: 40px;
+    }
+
+    /* tamaño base del slide */
+    .normateca-slider .swiper-slide {
+        width: 320px;
+    }
+
+    /* transición suave al contenido */
+    .normateca-slider .card-normateca {
+        transition:
+            transform .45s ease,
+            box-shadow .45s ease,
+            filter .45s ease;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow:
+            0 15px 35px rgba(0, 0, 0, .18);
+        cursor: pointer;
+    }
+
+    .card-normateca img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .data-slider-home {
+        padding: 25px;
+        background-color: #fff;
+        min-height: 270px;
+    }
+
+    /* ESCRITORIO */
+
+    @media(min-width:1024px) {
+
+        /* tarjetas laterales */
+        .normateca-slider .card-normateca {
+            transform: scale(.85);
+            filter: blur(.2px);
+        }
+
+        /* tarjeta activa */
+        .normateca-slider .swiper-slide-active .card-normateca {
+            transform: scale(1);
+            opacity: 1;
+            filter: none;
+            z-index: 2;
+            box-shadow:
+                0 15px 35px rgba(0, 0, 0, .18),
+                0 0 30px rgba(219, 39, 119, .45);
+        }
+
+    }
+
+    /* TABLET */
+
+    @media(min-width:768px) and (max-width:1023px) {
+
+        .normateca-slider .card-normateca {
+            transform: scale(.92);
+        }
+
+        .normateca-slider .swiper-slide-active .card-normateca {
+            transform: scale(1);
+            opacity: 1;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, .12);
+        }
+
+    }
+
+    /* MOBILE */
+
+    @media(max-width:767px) {
+
+        .normateca-slider .swiper-slide {
+            width: 100%;
+        }
+
+        .normateca-slider .card-normateca {
+            transform: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, .08);
+        }
+
+    }
+
+    /* PAGINATION */
+
+    .normateca-slider .swiper-pagination {
+        bottom: 10px;
+    }
+
+    .normateca-slider .swiper-pagination-bullet {
+        background: var(--brand-color-1);
+        opacity: .4;
+        transition: .3s ease;
+    }
+
+    .normateca-slider .swiper-pagination-bullet-active {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    .titulo-slider {
+        color: var(--brand-color-1);
+        min-height: 70px;
+    }
+
+    .texto-slider {
+        margin-bottom: 30px;
+        min-height: 100px;
+    }
+
+    .baground-body-slider {
+        padding: 30px 0;
+        background-image: url("src/img/slider-img/backgroun-slider.jpg");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+</style>
+
+<script>
+    (function () {
+
+        async function validarSlideAdministracion(intentos = 50) {
+            const slideAdmin = document.querySelector(".slide-administracion");
+            const slidePTA = document.querySelector(".slider-pta");
+
+            if (!slideAdmin) return;
+
+            /*
+             * Se oculta temporalmente mientras el método global
+             * y userGroups terminan de cargarse.
+             */
+            slideAdmin.style.display = "none";
+            slidePTA.style.display = "none";
+
+            for (let i = 0; i < intentos; i++) {
+                if (typeof window.usuarioEsAdminNormateca === "function") {
+                    const esAdministrador =
+                        await window.usuarioEsAdminNormateca();
+
+                    if (esAdministrador) {
+                        slideAdmin.style.display = "";
+                        slidePTA.style.display = "";
+                    } else {
+                        slideAdmin.remove();
+                        slidePTA.remove();
+                    }
+
+                    return;
+                }
+
+                await new Promise(function (resolve) {
+                    setTimeout(resolve, 200);
+                });
+            }
+
+            /*
+             * Si el método global no estuvo disponible después
+             * de todos los intentos, se elimina el slide.
+             */
+            slideAdmin.remove();
+        }
+
+        async function sliderControls() {
+            await validarSlideAdministracion();
+
+            //recortarTextoPorCaracteres("texto-slider");
+
+            if (typeof Swiper === "undefined") return;
+
+            document.querySelectorAll(".normateca-slider").forEach(function (el) {
+
+                if (el.swiper) return;
+
+                new Swiper(el, {
+                    speed: 600,
+                    rewind: true,
+                    centeredSlides: true,
+                    slideToClickedSlide: true,
+                    watchSlidesProgress: true,
+
+                    breakpoints: {
+                        0: {
+                            slidesPerView: 1,
+                            spaceBetween: 10,
+                            effect: "slide",
+                            centeredSlides: false
+                        },
+                        768: {
+                            slidesPerView: 2,
+                            spaceBetween: 15,
+                            effect: "slide",
+                            centeredSlides: true
+                        },
+                        1024: {
+                            slidesPerView: "auto",
+                            spaceBetween: -60,
+                            effect: "coverflow",
+                            coverflowEffect: {
+                                rotate: 0,
+                                depth: 0,
+                                modifier: 1,
+                                slideShadows: false
+                            }
+                        }
+                    },
+                    pagination: {
+                        el: el.querySelector(".swiper-pagination"),
+                        clickable: true
+                    }
+                });
+
+            });
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", sliderControls);
+        } else {
+            sliderControls();
+        }
+
+        if (window.Liferay) {
+            Liferay.on("allPortletsReady", sliderControls);
+            Liferay.on("endNavigate", sliderControls);
+        }
+
+    })();
+
+    function recortarTextoPorCaracteres(clase, maxCaracteres = 150) {
+        document.querySelectorAll("." + clase).forEach(el => {
+            let texto = el.textContent.trim();
+
+            if (texto.length > maxCaracteres) {
+                let recortado = texto.substring(0, maxCaracteres);
+                recortado = recortado.substring(
+                    0,
+                    recortado.lastIndexOf(" ")
+                );
+                el.textContent = recortado + "...";
+            }
+        });
+    }
+</script>

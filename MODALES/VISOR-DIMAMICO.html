@@ -1,0 +1,2179 @@
+<div class="modal-visor" style="display: none;">
+    <div class="content-modal-visor">
+        <div class="d-flex justitfy-content-end close-icon">
+            <i class="bi bi-x-circle-fill"></i>
+        </div>
+
+        <div class="d-flex align-items-center mb-3 gap-10px">
+            <div class="icono-hdr">
+                <i class="bi bi-folder"></i>
+            </div>
+            <div>
+                <h3 class="titulo-h3">DOC-001</h3>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="d-flex justify-content-between aling-items-center mb-3">
+            <div class="d-flex flex-column aling-items-center justify-content-center">
+                <div>Clasificacion: Publica</div>
+                <div>Fecha vigencia:</div>
+            </div>
+
+            <div class="d-flex flex-column justify-content-end align-items-end">
+                <i class="bi bi-house-fill icon-home"></i>
+
+                <div>
+                    <button class="btn btn-primary">
+                        <i class="bi bi-arrow-left"></i> Historico
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-pdf">
+            <iframe
+                src="https://api.slingacademy.com/v1/sample-data/files/text-and-images.pdf#toolbar=0&navpanes=0&scrollbar=0"
+                style="width: 100%; height: 100%; border: none;" frameborder="0">
+            </iframe>
+        </div>
+    </div>
+</div>
+
+<style>
+    .iconos-des {
+        color: var(--brand-color-1);
+        font-size: 20px;
+    }
+
+    .icono-hdr {
+        border: solid 1px var(--brand-color-1);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 30px;
+        width: 50px;
+        height: 50px;
+        color: var(--brand-color-1);
+    }
+
+    .gap-10px {
+        gap: 10px;
+    }
+
+    .titulo-h3 {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+
+    /******************* MODAL VISOR *****************************************************/
+
+    .modal-visor {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #00000073;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .content-modal-visor {
+        max-width: 700px;
+        width: 90%;
+        height: 90%;
+        padding: 50px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+
+    .close-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    .icon-home {
+        margin-bottom: 10px;
+        font-size: 25px;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | CONTENEDOR PDF NORMAL
+    |--------------------------------------------------------------------------
+    */
+
+    .content-pdf {
+        position: relative;
+        width: 100%;
+        height: 65%;
+        overflow: hidden;
+        background: #525659;
+    }
+
+    .content-pdf .iframe-pdf {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PDF PROTEGIDO RENDERIZADO EN CANVAS
+    |--------------------------------------------------------------------------
+    */
+
+    .content-pdf-protegido {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: #525659;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+
+    .pdf-protegido-toolbar {
+        flex: 0 0 auto;
+        min-height: 46px;
+        padding: 6px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: #fff;
+        background: #323639;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .pdf-protegido-toolbar button {
+        min-width: 38px;
+        height: 34px;
+        padding: 0 10px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 4px;
+        color: #fff;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .pdf-protegido-toolbar button:hover {
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    .pdf-protegido-toolbar button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    .pdf-protegido-zoom {
+        min-width: 58px;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .pdf-protegido-scroll {
+        flex: 1 1 auto;
+        width: 100%;
+        min-height: 0;
+        padding: 18px;
+        overflow: auto;
+        overscroll-behavior: contain;
+        text-align: center;
+        background: #525659;
+    }
+
+    .pdf-protegido-paginas {
+        min-width: fit-content;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .pdf-protegido-pagina {
+        position: relative;
+        line-height: 0;
+        background: #fff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .pdf-protegido-pagina canvas {
+        display: block;
+        max-width: none;
+        pointer-events: none;
+    }
+
+    .pdf-protegido-loader,
+    .pdf-protegido-error {
+        min-height: 180px;
+        padding: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-height: 1.5;
+        text-align: center;
+        color: #fff;
+    }
+
+    .pdf-protegido-error {
+        color: #fff;
+        background: #8a1f1f;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | BLOQUEAR SELECCIÓN EN TODA LA PÁGINA MIENTRAS EL VISOR ESTÁ PROTEGIDO
+    |--------------------------------------------------------------------------
+    */
+
+    body.pagina-documento-protegido,
+    body.pagina-documento-protegido * {
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+    }
+
+    @media (min-width: 923px) {
+        .content-modal-visor {
+            max-width: 70vw;
+            width: 90%;
+            height: 90%;
+        }
+
+        .content-pdf {
+            height: 75%;
+        }
+    }
+
+
+    .btn-link {
+        border-radius: 1px;
+        font-weight: var(--font-weight-normal, 400);
+        text-decoration: none;
+        color: var(--brand-color-2);
+        margin-right: 10px;
+    }
+
+
+    .fecha-vigencia-visor {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .semaforo-visor {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    .semaforo-rojo {
+        background-color: #dc3545;
+    }
+
+    .semaforo-verde {
+        background-color: #28a745;
+    }
+
+    .semaforo-amarillo {
+        background-color: #ffc107;
+    }
+</style>
+
+<script>
+    window.abrirVisorDocumento = async function (config = {}) {
+        const opciones = {
+            contenedor: "body",
+
+            mostrarModal: true,
+            mostrarCerrar: true,
+            mostrarIcono: true,
+            mostrarTitulo: true,
+            mostrarClasificacion: true,
+            mostrarFechaVigencia: true,
+            mostrarTituloNorma: false,
+            mostrarVersionNorma: false,
+            mostrarFechaActualizacion: false,
+
+            /*
+             * Cada acción se muestra únicamente cuando su bandera llega en true
+             * desde la llamada al visor.
+             */
+            mostrarDescargar: false,
+            mostrarActualizar: false,
+            mostrarEliminar: false,
+            mostrarAgregarFormato: false,
+            mostrarActualizarNorma: false,
+
+            tituloNorma: "",
+
+            id: "",
+            contenidoId: "",
+            idContenido: "",
+            idRegistro: "",
+            idPadre: "",
+            versionId: "",
+            versionNorma: "",
+            idArchivo: "",
+            documentoId: "",
+            archivoId: "",
+
+            codigo: "",
+            ruta: "",
+            nombre: "",
+            nombreArchivo: "",
+            endpoint: "",
+
+            isUpdate: false,
+            vigenciaManual: false,
+            renovacion: false,
+            mostrarHome: true,
+
+            tipoHome: "icono",
+            textoHome: "Página principal",
+            iconoHome: "bi bi-house-fill",
+
+            mostrarBoton: true,
+            mostrarPdf: true,
+
+            rutaHome: "",
+            onHome: null,
+
+            tipo: "NORMA",
+            icono: "bi bi-folder",
+            titulo: "",
+            clasificacion: "",
+            fechaVigencia: "",
+            fechaActualizacion: "",
+            textoBoton: "Histórico",
+            semaforo: "",
+            iconoBoton: "bi bi-arrow-left",
+            rutaPdf: "",
+
+            /*
+                  |--------------------------------------------------------------------------
+                  | ARCHIVOS WORD Y EXCEL
+                  |--------------------------------------------------------------------------
+                  |
+                  | rutaArchivo es opcional. Si no se envía, se seguirá utilizando rutaPdf
+                  | para mantener compatibilidad con las llamadas actuales.
+                  |
+                  */
+
+            rutaArchivo: "",
+            nombreArchivo: "",
+            extensionArchivo: "",
+            mimeType: "",
+
+            pesoArchivo: "",
+            fechaCreacion: "",
+            jsZipUrl: "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js",
+
+            docxPreviewUrl:
+                "https://cdn.jsdelivr.net/npm/docx-preview@0.3.6/dist/docx-preview.min.js",
+
+            sheetJsUrl:
+                "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
+
+            officeViewerUrl: "https://view.officeapps.live.com/op/embed.aspx?src=",
+
+            onCerrar: null,
+            onBoton: null,
+
+            /*
+                  |--------------------------------------------------------------------------
+                  | PDF.JS
+                  |--------------------------------------------------------------------------
+                  |
+                  | Puedes reemplazar estas URLs por rutas locales, por ejemplo:
+                  |
+                  | pdfJsUrl: "/o/mi-modulo/js/pdf.min.js"
+                  | pdfWorkerUrl: "/o/mi-modulo/js/pdf.worker.min.js"
+                  |
+                  */
+
+            pdfJsUrl:
+                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",
+
+            pdfWorkerUrl:
+                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js",
+
+            /*
+                  |--------------------------------------------------------------------------
+                  | OPCIONES DE CARGA DEL PDF
+                  |--------------------------------------------------------------------------
+                  */
+
+            pdfHeaders: null,
+            pdfWithCredentials: false,
+
+            /*
+                  |--------------------------------------------------------------------------
+                  | OPCIONES DE ZOOM
+                  |--------------------------------------------------------------------------
+                  */
+
+            escalaInicial: 1,
+            escalaMinima: 0.6,
+            escalaMaxima: 3,
+            pasoZoom: 0.2,
+        };
+
+        const data = {
+            ...opciones,
+            ...config,
+        };
+
+        const coloresSemaforo = {
+            ROJO: "rojo",
+            VERDE: "verde",
+            AMARILLO: "amarillo",
+        };
+
+        const semaforoNormalizado = String(data.semaforo || "")
+            .trim()
+            .toUpperCase();
+
+        const claseSemaforo = coloresSemaforo[semaforoNormalizado] || "";
+
+        const tipoContenido = String(data.tipo || data.tipoContenido || "NORMA")
+            .trim()
+            .toUpperCase();
+
+        const esNorma = tipoContenido === "NORMA";
+        const esDocumento = tipoContenido === "DOCUMENTO";
+
+        data.icono = esDocumento ? "bi bi-paperclip" : "bi bi-folder";
+
+        data.mostrarBoton = esNorma && Boolean(data.mostrarBoton);
+
+        const eventoApertura = data.evento || data.event || null;
+
+        if (eventoApertura) {
+            if (typeof eventoApertura.preventDefault === "function") {
+                eventoApertura.preventDefault();
+            }
+
+            if (typeof eventoApertura.stopPropagation === "function") {
+                eventoApertura.stopPropagation();
+            }
+        }
+
+        const rutaDocumento = String(data.rutaArchivo || data.rutaPdf || "").trim();
+
+        const crearOpcionesFetchArchivo = function () {
+            const opcionesFetch = {
+                method: "GET",
+                credentials: data.pdfWithCredentials ? "include" : "same-origin",
+            };
+
+            if (data.pdfHeaders && typeof data.pdfHeaders === "object") {
+                opcionesFetch.headers = data.pdfHeaders;
+            }
+
+            return opcionesFetch;
+        };
+
+        let archivoPrecargado = null;
+        let metadatosArchivoPrecargado = null;
+
+        const extraerExtensionDeTexto = function (valor) {
+            const texto = String(valor || "")
+                .trim()
+                .split("#")[0]
+                .split("?")[0];
+
+            const coincidencia = texto.match(/\.([a-z0-9]+)$/i);
+
+            return coincidencia ? coincidencia[1].toLowerCase() : "";
+        };
+
+        const obtenerNombreContentDisposition = function (contentDisposition) {
+            const valor = String(contentDisposition || "");
+
+            const utf8 = valor.match(/filename\*\s*=\s*UTF-8''([^;]+)/i);
+
+            if (utf8 && utf8[1]) {
+                try {
+                    return decodeURIComponent(utf8[1].trim().replace(/^["']|["']$/g, ""));
+                } catch (error) {
+                    return utf8[1].trim().replace(/^["']|["']$/g, "");
+                }
+            }
+
+            const normal = valor.match(/filename\s*=\s*"?([^";]+)"?/i);
+
+            return normal && normal[1] ? normal[1].trim() : "";
+        };
+
+        const extensionPorMimeType = function (mimeType) {
+            const mime = String(mimeType || "")
+                .toLowerCase()
+                .split(";")[0]
+                .trim();
+
+            const mapaMime = {
+                "application/pdf": "pdf",
+                "application/msword": "doc",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                    "docx",
+                "application/vnd.ms-excel": "xls",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                    "xlsx",
+                "application/vnd.ms-excel.sheet.macroenabled.12": "xlsx",
+            };
+
+            return mapaMime[mime] || "";
+        };
+
+        const detectarExtensionPorFirma = function (arrayBuffer) {
+            if (!arrayBuffer || arrayBuffer.byteLength < 4) {
+                return "";
+            }
+
+            const bytes = new Uint8Array(arrayBuffer);
+            const primerosBytes = String.fromCharCode(
+                ...bytes.slice(0, Math.min(bytes.length, 8))
+            );
+
+            if (primerosBytes.startsWith("%PDF")) {
+                return "pdf";
+            }
+
+            const firmaOle = [0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1];
+
+            const esOle = firmaOle.every(function (valor, indice) {
+                return bytes[indice] === valor;
+            });
+
+            if (esOle) {
+                const limite = Math.min(bytes.length, 1024 * 1024);
+                let textoBinario = "";
+
+                for (let i = 0; i < limite; i++) {
+                    textoBinario += String.fromCharCode(bytes[i]);
+                }
+
+                if (textoBinario.includes("Workbook") || textoBinario.includes("Book")) {
+                    return "xls";
+                }
+
+                return "doc";
+            }
+
+            /*
+                  | DOCX y XLSX son contenedores ZIP. Los nombres internos suelen aparecer
+                  | en el archivo y permiten distinguir word/ de xl/.
+                  */
+
+            if (bytes[0] === 0x50 && bytes[1] === 0x4b) {
+                const limite = Math.min(bytes.length, 2 * 1024 * 1024);
+                let textoZip = "";
+
+                for (let i = 0; i < limite; i++) {
+                    textoZip += String.fromCharCode(bytes[i]);
+                }
+
+                if (
+                    textoZip.includes("word/document.xml") ||
+                    textoZip.includes("word/")
+                ) {
+                    return "docx";
+                }
+
+                if (textoZip.includes("xl/workbook.xml") || textoZip.includes("xl/")) {
+                    return "xlsx";
+                }
+            }
+
+            return "";
+        };
+
+        const obtenerArchivoConMetadatos = async function () {
+            if (archivoPrecargado && metadatosArchivoPrecargado) {
+                return {
+                    arrayBuffer: archivoPrecargado,
+                    ...metadatosArchivoPrecargado,
+                };
+            }
+
+            const respuesta = await fetch(rutaDocumento, crearOpcionesFetchArchivo());
+
+            if (!respuesta.ok) {
+                throw new Error(
+                    `No fue posible obtener el archivo (${respuesta.status}).`
+                );
+            }
+
+            const arrayBuffer = await respuesta.arrayBuffer();
+
+            const contentType = respuesta.headers.get("content-type") || "";
+
+            const contentDisposition =
+                respuesta.headers.get("content-disposition") || "";
+
+            const nombreRespuesta = obtenerNombreContentDisposition(contentDisposition);
+
+            archivoPrecargado = arrayBuffer;
+            metadatosArchivoPrecargado = {
+                contentType: contentType,
+                contentDisposition: contentDisposition,
+                nombreRespuesta: nombreRespuesta,
+            };
+
+            return {
+                arrayBuffer: arrayBuffer,
+                contentType: contentType,
+                contentDisposition: contentDisposition,
+                nombreRespuesta: nombreRespuesta,
+            };
+        };
+
+        const obtenerExtensionConfigurada = function () {
+            const extensionConfigurada = String(data.extensionArchivo || "")
+                .trim()
+                .toLowerCase()
+                .replace(/^\./, "");
+
+            if (extensionConfigurada) {
+                return extensionConfigurada;
+            }
+
+            const extensionNombre = extraerExtensionDeTexto(data.nombreArchivo);
+
+            if (extensionNombre) {
+                return extensionNombre;
+            }
+
+            const extensionRuta = extraerExtensionDeTexto(rutaDocumento);
+
+            if (extensionRuta) {
+                return extensionRuta;
+            }
+
+            return extensionPorMimeType(data.mimeType);
+        };
+
+        let extensionDocumento = obtenerExtensionConfigurada();
+
+        if (!extensionDocumento && rutaDocumento) {
+            try {
+                const archivoDetectado = await obtenerArchivoConMetadatos();
+
+                extensionDocumento =
+                    extraerExtensionDeTexto(archivoDetectado.nombreRespuesta) ||
+                    extensionPorMimeType(archivoDetectado.contentType) ||
+                    detectarExtensionPorFirma(archivoDetectado.arrayBuffer);
+            } catch (error) {
+                console.error("No fue posible detectar el formato del archivo:", error);
+            }
+        }
+
+        extensionDocumento = extensionDocumento || "pdf";
+
+        const esDocumentoPdf = extensionDocumento === "pdf";
+        const esDocumentoWord = ["doc", "docx"].includes(extensionDocumento);
+        const esDocumentoExcel = ["xls", "xlsx"].includes(extensionDocumento);
+        const esDocumentoOffice = esDocumentoWord || esDocumentoExcel;
+
+        const contenedor =
+            data.contenedor === "body"
+                ? document.body
+                : document.querySelector(data.contenedor);
+
+        if (!contenedor) {
+            console.error("No existe el contenedor:", data.contenedor);
+            return;
+        }
+
+        const clasificacionNormalizada = String(data.clasificacion || "")
+            .trim()
+            .toLowerCase();
+
+        const documentoProtegido = [
+            "restringida",
+            "restringido",
+            "confidencial",
+        ].includes(clasificacionNormalizada);
+
+        const visorAnterior = document.querySelector("#modal-visor-documento");
+
+        if (visorAnterior) {
+            visorAnterior.remove();
+        }
+
+        document.body.classList.remove("pagina-documento-protegido");
+
+        if (
+            window.proteccionDocumento &&
+            typeof window.proteccionDocumento.desactivar === "function"
+        ) {
+            window.proteccionDocumento.desactivar();
+        }
+
+        let rutaVisualizacionPdf = rutaDocumento;
+        let urlObjetoTemporalInicial = "";
+
+        if (
+            esDocumentoPdf &&
+            archivoPrecargado &&
+            typeof URL !== "undefined" &&
+            typeof URL.createObjectURL === "function"
+        ) {
+            const blobPdf = new Blob([archivoPrecargado], { type: "application/pdf" });
+
+            urlObjetoTemporalInicial = URL.createObjectURL(blobPdf);
+            rutaVisualizacionPdf = urlObjetoTemporalInicial;
+        }
+
+        const esAdminVisor = await (async function () {
+            try {
+                if (typeof window.usuarioEsAdminNormateca === "function") {
+                    return (await window.usuarioEsAdminNormateca()) === true;
+                }
+
+                const grupos = JSON.parse(
+                    sessionStorage.getItem("userGroups") || "[]"
+                );
+
+                return Array.isArray(grupos) && grupos.some(function (grupo) {
+                    const codigo = String(grupo?.codigo || "")
+                        .trim()
+                        .toLowerCase();
+
+                    return (
+                        codigo === "normateca-admin-principal" ||
+                        codigo === "normateca-admin"
+                    );
+                });
+            } catch (error) {
+                console.error("No fue posible validar el administrador del visor:", error);
+                return false;
+            }
+        })();
+
+        const modal = document.createElement("div");
+
+        modal.id = "modal-visor-documento";
+        modal.className = "modal-visor";
+
+        modal.innerHTML = `
+    <div class="content-modal-visor">
+    
+    ${data.mostrarCerrar
+                ? `
+        <div
+          class="
+            d-flex
+            justify-content-end
+            close-icon
+            btn-cerrar-visor
+          "
+        >
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+      `
+                : ""
+            }
+    
+    ${data.mostrarTitulo || data.mostrarIcono
+                ? `
+        <div class="d-flex align-items-center mb-3 gap-10px">
+    
+          ${data.mostrarIcono
+                    ? `
+                <div class="icono-hdr">
+                  <i class="${data.icono}"></i>
+                </div>
+              `
+                    : ""
+                }
+    
+          ${data.mostrarTitulo
+                    ? `
+      <div>
+        <h3 class="titulo-h3">
+            ${esAdminVisor ? (data.codigo || data.titulo) : ""}
+        </h3>
+    
+        ${data.mostrarTituloNorma && data.tituloNorma
+                        ? `
+              <h3 class="titulo-norma-completo">
+                ${data.tituloNorma}
+              </h3>
+            `
+                        : ""
+                    }
+      </div>
+    `
+                    : ""
+                }
+    
+        </div>
+    
+        <hr>
+      `
+                : ""
+            }
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+    
+    <div class="d-flex flex-column align-items-start justify-content-center">
+    
+    ${esDocumento
+                ? `
+            <div>
+              Tipo de documento: ${String(extensionDocumento).toUpperCase()}
+            </div>
+    
+            <div>
+              Peso del archivo: ${data.pesoArchivo || "No disponible"}
+            </div>
+    
+            <div>
+              Fecha de creación: ${data.fechaCreacion || "No disponible"}
+            </div>
+          `
+                : ""
+            }
+    
+      ${esNorma && data.mostrarClasificacion
+                ? `<div>Clasificación: ${data.clasificacion}</div>`
+                : ""
+            }
+            ${esNorma && data.mostrarVersionNorma && data.versionNorma
+                ? `<div>Versión: ${data.versionNorma}</div>`
+                : ""
+            }
+    
+            ${esNorma && data.mostrarFechaActualizacion && data.fechaActualizacion
+                ? `
+                    <div class="fecha-actualizacion-visor">
+                      <span>Fecha de actualización:</span>
+                      <span>${data.fechaActualizacion}</span>
+                    </div>
+                  `
+                : ""
+            }
+    
+            ${esNorma && data.mostrarFechaVigencia
+                ? `
+    <div class="fecha-vigencia-visor">
+      <span>Fecha vigencia:</span>
+    
+      ${claseSemaforo
+                    ? `
+          <span
+            class="semaforo-visor semaforo-${claseSemaforo}"
+            title="Semáforo ${semaforoNormalizado.toLowerCase()}"
+            aria-label="Semáforo ${semaforoNormalizado.toLowerCase()}"
+          ></span>
+        `
+                    : ""
+                }
+    
+      <span>${data.fechaVigencia}</span>
+    </div>
+    `
+                : ""
+            }
+    
+    </div>
+    
+    <div class="d-flex flex-column justify-content-end align-items-end">
+    
+    ${data.mostrarHome
+                ? String(data.tipoHome).toLowerCase() === "texto"
+                    ? `
+            <button
+              type="button"
+              class="btn btn-primary btn-home-visor mb-2"
+              title="${data.textoHome}"
+              aria-label="${data.textoHome}"
+            >
+              ${data.textoHome}
+            </button>
+          `
+                    : `
+            <button
+              type="button"
+              class="btn btn-link p-0 btn-home-visor mb-2"
+              title="${data.textoHome}"
+              aria-label="${data.textoHome}"
+            >
+              <i class="${data.iconoHome} icon-home"></i>
+            </button>
+          `
+                : ""
+            }
+    
+      ${data.mostrarBoton
+                ? `
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary btn-accion-visor"
+              >
+                <i class="${data.iconoBoton}"></i>
+                ${data.textoBoton}
+              </button>
+            </div>
+          `
+                : ""
+            }
+    
+    </div>
+    </div>
+    ${crearAccionesModal(data)}
+    ${data.mostrarPdf && rutaDocumento
+                ? esDocumentoPdf
+                    ? documentoProtegido
+                        ? `
+            <div class="content-pdf content-pdf-protegido">
+    
+              <div class="pdf-protegido-toolbar">
+                <button
+                  type="button"
+                  class="btn-zoom-menos"
+                  title="Alejar"
+                >
+                  <i class="bi bi-dash-lg"></i>
+                </button>
+    
+                <span class="pdf-protegido-zoom">100%</span>
+    
+                <button
+                  type="button"
+                  class="btn-zoom-mas"
+                  title="Acercar"
+                >
+                  <i class="bi bi-plus-lg"></i>
+                </button>
+    
+                <button
+                  type="button"
+                  class="btn-ajustar-ancho"
+                  title="Ajustar al ancho"
+                >
+                  <i class="bi bi-arrows-angle-expand"></i>
+                </button>
+              </div>
+    
+              <div class="pdf-protegido-scroll">
+                <div class="pdf-protegido-loader">
+                  Cargando documento...
+                </div>
+    
+                <div class="pdf-protegido-paginas"></div>
+              </div>
+    
+            </div>
+          `
+                        : `
+            <div class="content-pdf">
+              <iframe
+                class="iframe-pdf"
+                src="${rutaVisualizacionPdf}#toolbar=0&navpanes=0&scrollbar=1"
+                frameborder="0"
+                draggable="false"
+                allow="fullscreen"
+              ></iframe>
+            </div>
+          `
+                    : esDocumentoOffice
+                        ? `
+            <div
+              class="content-office ${documentoProtegido ? "content-office-protegido" : ""
+                        }"
+            >
+              <div class="office-documento-loader">
+                Cargando documento...
+              </div>
+    
+              <div class="office-documento-contenido"></div>
+            </div>
+          `
+                        : `
+            <div class="content-office">
+              <div class="office-documento-error">
+                El formato .${extensionDocumento || "desconocido"}
+                no es compatible con este visor.
+              </div>
+            </div>
+          `
+                : ""
+            }
+    
+    </div>
+    
+    `;
+
+        modal.style.display = data.mostrarModal ? "flex" : "none";
+
+        contenedor.appendChild(modal);
+
+        if (esDocumentoOffice) {
+            const estilosOffice = document.createElement("style");
+            estilosOffice.dataset.estilosVisorOffice = "true";
+            estilosOffice.textContent = `
+    #modal-visor-documento .content-office {
+    position: relative;
+    width: 100%;
+    height: 70vh;
+    overflow: auto;
+    background: #f3f3f3;
+    border: 1px solid #dee2e6;
+    }
+    
+    #modal-visor-documento .office-documento-loader,
+    #modal-visor-documento .office-documento-error {
+    min-height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    }
+    
+    #modal-visor-documento .office-documento-contenido {
+    width: 100%;
+    min-height: 100%;
+    }
+    
+    #modal-visor-documento .office-documento-contenido iframe {
+    display: block;
+    width: 100%;
+    height: 70vh;
+    border: 0;
+    background: #fff;
+    }
+    
+    #modal-visor-documento .office-documento-contenido .docx-wrapper {
+    padding: 24px !important;
+    background: #e9ecef !important;
+    }
+    
+    #modal-visor-documento .office-documento-contenido .docx-wrapper > section.docx {
+    margin: 0 auto 24px auto !important;
+    }
+    
+    #modal-visor-documento .visor-excel-hojas {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 10px;
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+    }
+    
+    #modal-visor-documento .visor-excel-hojas button {
+    border: 1px solid #0b5ed7;
+    border-radius: 4px;
+    background: #fff;
+    color: #0b5ed7;
+    padding: 5px 10px;
+    cursor: pointer;
+    }
+    
+    #modal-visor-documento .visor-excel-hojas button.activo {
+    background: #0b5ed7;
+    color: #fff;
+    }
+    
+    #modal-visor-documento .visor-excel-tabla {
+    padding: 12px;
+    overflow: auto;
+    }
+    
+    #modal-visor-documento .visor-excel-tabla table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    }
+    
+    #modal-visor-documento .visor-excel-tabla th,
+    #modal-visor-documento .visor-excel-tabla td {
+    border: 1px solid #ced4da;
+    padding: 6px 8px;
+    white-space: nowrap;
+    vertical-align: top;
+    }
+    
+    #modal-visor-documento .visor-excel-tabla th {
+    background: #f8f9fa;
+    font-weight: 600;
+    }
+    
+    #modal-visor-documento .content-office-protegido,
+    #modal-visor-documento .content-office-protegido * {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    }
+    
+    #modal-visor-documento .content-office-protegido img {
+    pointer-events: none;
+    }
+    
+    #modal-visor-documento .office-doc-protegido iframe {
+    pointer-events: none !important;
+    }
+    `;
+
+            modal.appendChild(estilosOffice);
+        }
+
+        let pdfDocumento = null;
+        let escalaActual = Number(data.escalaInicial) || 1;
+        let renderId = 0;
+        let modalCerrado = false;
+        let urlObjetoTemporal = urlObjetoTemporalInicial;
+
+        const limitarNumero = function (numero, minimo, maximo) {
+            return Math.min(Math.max(numero, minimo), maximo);
+        };
+
+        const actualizarZoomTexto = function () {
+            const textoZoom = modal.querySelector(".pdf-protegido-zoom");
+
+            if (textoZoom) {
+                textoZoom.textContent = `${Math.round(escalaActual * 100)}%`;
+            }
+        };
+
+        /*
+            
+            CARGAR PDF.JS
+            
+            --------------------------------------------------------------------------
+            
+            */
+
+        const cargarPdfJs = function () {
+            return new Promise(function (resolve, reject) {
+                if (window.pdfjsLib) {
+                    window.pdfjsLib.GlobalWorkerOptions.workerSrc = data.pdfWorkerUrl;
+
+                    resolve(window.pdfjsLib);
+                    return;
+                }
+
+                const scriptExistente = document.querySelector(
+                    'script[data-pdfjs-visor="true"]'
+                );
+
+                if (scriptExistente) {
+                    scriptExistente.addEventListener("load", function () {
+                        if (!window.pdfjsLib) {
+                            reject(
+                                new Error("PDF.js terminó de cargar, pero pdfjsLib no existe.")
+                            );
+                            return;
+                        }
+
+                        window.pdfjsLib.GlobalWorkerOptions.workerSrc = data.pdfWorkerUrl;
+
+                        resolve(window.pdfjsLib);
+                    });
+
+                    scriptExistente.addEventListener("error", function () {
+                        reject(new Error("No fue posible cargar PDF.js."));
+                    });
+
+                    return;
+                }
+
+                const script = document.createElement("script");
+
+                script.src = data.pdfJsUrl;
+                script.async = true;
+                script.dataset.pdfjsVisor = "true";
+
+                script.onload = function () {
+                    if (!window.pdfjsLib) {
+                        reject(
+                            new Error("PDF.js terminó de cargar, pero pdfjsLib no existe.")
+                        );
+                        return;
+                    }
+
+                    window.pdfjsLib.GlobalWorkerOptions.workerSrc = data.pdfWorkerUrl;
+
+                    resolve(window.pdfjsLib);
+                };
+
+                script.onerror = function () {
+                    reject(new Error("No fue posible cargar PDF.js."));
+                };
+
+                document.head.appendChild(script);
+            });
+        };
+
+        const renderizarPdfProtegido = async function () {
+            if (!pdfDocumento || modalCerrado) {
+                return;
+            }
+
+            const paginasContenedor = modal.querySelector(".pdf-protegido-paginas");
+
+            const loader = modal.querySelector(".pdf-protegido-loader");
+
+            if (!paginasContenedor) {
+                return;
+            }
+
+            const renderActual = ++renderId;
+
+            paginasContenedor.innerHTML = "";
+
+            if (loader) {
+                loader.style.display = "flex";
+                loader.textContent = "Renderizando documento...";
+            }
+
+            actualizarZoomTexto();
+
+            try {
+                for (
+                    let numeroPagina = 1;
+                    numeroPagina <= pdfDocumento.numPages;
+                    numeroPagina++
+                ) {
+                    if (modalCerrado || renderActual !== renderId || !modal.isConnected) {
+                        return;
+                    }
+
+                    const pagina = await pdfDocumento.getPage(numeroPagina);
+
+                    const viewport = pagina.getViewport({
+                        scale: escalaActual,
+                    });
+
+                    const pixelRatio = window.devicePixelRatio || 1;
+
+                    const paginaElemento = document.createElement("div");
+                    paginaElemento.className = "pdf-protegido-pagina";
+
+                    const canvas = document.createElement("canvas");
+                    const contexto = canvas.getContext("2d", {
+                        alpha: false,
+                    });
+
+                    canvas.width = Math.floor(viewport.width * pixelRatio);
+                    canvas.height = Math.floor(viewport.height * pixelRatio);
+                    canvas.style.width = `${Math.floor(viewport.width)}px`;
+                    canvas.style.height = `${Math.floor(viewport.height)}px`;
+
+                    paginaElemento.appendChild(canvas);
+                    paginasContenedor.appendChild(paginaElemento);
+
+                    await pagina.render({
+                        canvasContext: contexto,
+                        viewport: viewport,
+                        transform:
+                            pixelRatio !== 1 ? [pixelRatio, 0, 0, pixelRatio, 0, 0] : null,
+                    }).promise;
+                }
+
+                if (loader) {
+                    loader.style.display = "none";
+                }
+            } catch (error) {
+                if (renderActual !== renderId || modalCerrado) {
+                    return;
+                }
+
+                console.error("Error renderizando PDF protegido:", error);
+
+                if (loader) {
+                    loader.className = "pdf-protegido-error";
+                    loader.style.display = "flex";
+                    loader.textContent =
+                        "No fue posible renderizar el documento protegido.";
+                }
+            }
+        };
+
+        const iniciarPdfProtegido = async function () {
+            const loader = modal.querySelector(".pdf-protegido-loader");
+
+            try {
+                const pdfjsLib = await cargarPdfJs();
+
+                if (modalCerrado || !modal.isConnected) {
+                    return;
+                }
+
+                const parametrosCarga = archivoPrecargado
+                    ? {
+                        data: archivoPrecargado.slice(0),
+                    }
+                    : {
+                        url: rutaDocumento,
+                        withCredentials: Boolean(data.pdfWithCredentials),
+                    };
+
+                if (
+                    !archivoPrecargado &&
+                    data.pdfHeaders &&
+                    typeof data.pdfHeaders === "object"
+                ) {
+                    parametrosCarga.httpHeaders = data.pdfHeaders;
+                }
+
+                const tareaCarga = pdfjsLib.getDocument(parametrosCarga);
+
+                pdfDocumento = await tareaCarga.promise;
+
+                if (modalCerrado || !modal.isConnected) {
+                    try {
+                        await pdfDocumento.destroy();
+                    } catch (error) { }
+
+                    return;
+                }
+
+                await renderizarPdfProtegido();
+            } catch (error) {
+                console.error("Error cargando PDF protegido:", error);
+
+                if (loader && modal.isConnected) {
+                    loader.className = "pdf-protegido-error";
+                    loader.style.display = "flex";
+                    loader.textContent =
+                        "No fue posible cargar el documento. Revisa la ruta del PDF, CORS o la política CSP.";
+                }
+            }
+        };
+
+        const cargarScriptExterno = function (url, atributo, validar) {
+            return new Promise(function (resolve, reject) {
+                if (validar()) {
+                    resolve();
+                    return;
+                }
+
+                const existente = document.querySelector(`script[${atributo}="true"]`);
+
+                if (existente) {
+                    if (existente.dataset.cargado === "true") {
+                        validar()
+                            ? resolve()
+                            : reject(
+                                new Error(
+                                    `La librería ${url} se cargó, pero no quedó disponible.`
+                                )
+                            );
+                        return;
+                    }
+
+                    existente.addEventListener(
+                        "load",
+                        function () {
+                            existente.dataset.cargado = "true";
+                            validar()
+                                ? resolve()
+                                : reject(
+                                    new Error(
+                                        `La librería ${url} terminó de cargar, pero no existe.`
+                                    )
+                                );
+                        },
+                        { once: true }
+                    );
+
+                    existente.addEventListener(
+                        "error",
+                        function () {
+                            existente.remove();
+                            reject(new Error(`No fue posible cargar la librería ${url}.`));
+                        },
+                        { once: true }
+                    );
+
+                    return;
+                }
+
+                const script = document.createElement("script");
+                script.src = url;
+                script.async = true;
+                script.setAttribute(atributo, "true");
+
+                script.onload = function () {
+                    script.dataset.cargado = "true";
+                    validar()
+                        ? resolve()
+                        : reject(
+                            new Error(
+                                `La librería ${url} se cargó, pero no quedó disponible.`
+                            )
+                        );
+                };
+
+                script.onerror = function () {
+                    script.remove();
+                    reject(new Error(`No fue posible cargar la librería ${url}.`));
+                };
+
+                document.head.appendChild(script);
+            });
+        };
+
+        /*
+            
+            OBTENER ARCHIVO SIN ABRIRLO NI DESCARGARLO EN EL NAVEGADOR
+            
+            --------------------------------------------------------------------------
+            
+            */
+
+        const obtenerArchivoComoArrayBuffer = async function () {
+            const resultado = await obtenerArchivoConMetadatos();
+
+            /*
+                  | Se devuelve una copia para evitar que alguna librería transfiera o
+                  | modifique el ArrayBuffer almacenado y afecte otro render posterior.
+                  */
+
+            return resultado.arrayBuffer.slice(0);
+        };
+
+        const mostrarErrorOffice = function (mensaje) {
+            const loader = modal.querySelector(".office-documento-loader");
+            const contenido = modal.querySelector(".office-documento-contenido");
+
+            if (loader) {
+                loader.style.display = "none";
+            }
+
+            if (contenido) {
+                contenido.innerHTML = `
+    <div class="office-documento-error">
+      ${mensaje}
+    </div>
+    `;
+            }
+        };
+
+        /*
+            
+            RENDERIZAR WORD DOCX
+            
+            --------------------------------------------------------------------------
+            
+            */
+
+        const validarArrayBufferDocx = function (arrayBuffer) {
+            if (!arrayBuffer || arrayBuffer.byteLength < 4) {
+                throw new Error("El servicio devolvió un archivo vacío o incompleto.");
+            }
+
+            const bytes = new Uint8Array(arrayBuffer);
+
+            const esZip =
+                bytes[0] === 0x50 &&
+                bytes[1] === 0x4b &&
+                ((bytes[2] === 0x03 && bytes[3] === 0x04) ||
+                    (bytes[2] === 0x05 && bytes[3] === 0x06) ||
+                    (bytes[2] === 0x07 && bytes[3] === 0x08));
+
+            if (!esZip) {
+                let muestra = "";
+
+                try {
+                    muestra = new TextDecoder("utf-8")
+                        .decode(bytes.slice(0, Math.min(bytes.length, 300)))
+                        .trim();
+                } catch (error) { }
+
+                if (muestra.startsWith("{") || muestra.startsWith("[")) {
+                    throw new Error("El servicio devolvió JSON en lugar del archivo DOCX.");
+                }
+
+                if (
+                    muestra.startsWith("<!DOCTYPE") ||
+                    muestra.startsWith("<html") ||
+                    muestra.startsWith("<")
+                ) {
+                    throw new Error("El servicio devolvió HTML en lugar del archivo DOCX.");
+                }
+
+                throw new Error("La respuesta recibida no corresponde a un DOCX válido.");
+            }
+        };
+
+        const renderizarDocx = async function () {
+            const loader = modal.querySelector(".office-documento-loader");
+            const contenido = modal.querySelector(".office-documento-contenido");
+
+            try {
+                if (loader) {
+                    loader.style.display = "flex";
+                    loader.textContent = "Cargando documento Word...";
+                }
+
+                await cargarScriptExterno(data.jsZipUrl, "data-jszip-visor", function () {
+                    return Boolean(
+                        window.JSZip && typeof window.JSZip.loadAsync === "function"
+                    );
+                });
+
+                await cargarScriptExterno(
+                    data.docxPreviewUrl,
+                    "data-docx-preview-visor",
+                    function () {
+                        return Boolean(
+                            window.docx && typeof window.docx.renderAsync === "function"
+                        );
+                    }
+                );
+
+                const arrayBuffer = await obtenerArchivoComoArrayBuffer();
+
+                validarArrayBufferDocx(arrayBuffer);
+
+                if (modalCerrado || !modal.isConnected || !contenido) {
+                    return;
+                }
+
+                contenido.innerHTML = "";
+
+                await window.docx.renderAsync(arrayBuffer, contenido, contenido, {
+                    className: "docx",
+                    inWrapper: true,
+                    ignoreWidth: false,
+                    ignoreHeight: false,
+                    ignoreFonts: false,
+                    breakPages: true,
+                    renderHeaders: true,
+                    renderFooters: true,
+                    renderFootnotes: true,
+                    renderEndnotes: true,
+                    useBase64URL: true,
+                    experimental: true,
+                    trimXmlDeclaration: true,
+                });
+
+                if (
+                    !contenido.querySelector(".docx-wrapper") &&
+                    contenido.children.length === 0
+                ) {
+                    throw new Error(
+                        "El documento se procesó, pero no generó contenido visible."
+                    );
+                }
+
+                if (loader) {
+                    loader.style.display = "none";
+                }
+            } catch (error) {
+                console.error("Error renderizando DOCX:", error);
+
+                const detalle =
+                    error && error.message
+                        ? String(error.message)
+                        : "Error desconocido al procesar el archivo.";
+
+                mostrarErrorOffice(
+                    `
+      <div>
+        <div>
+          No fue posible visualizar el archivo Word dentro del visor.
+        </div>
+    
+        <div
+          style="
+            margin-top: 8px;
+            font-size: 13px;
+            opacity: 0.75;
+          "
+        >
+          ${detalle}
+        </div>
+      </div>
+    `
+                );
+            }
+        };
+
+        const renderizarDocLegacy = function () {
+            const loader = modal.querySelector(".office-documento-loader");
+            const contenido = modal.querySelector(".office-documento-contenido");
+
+            if (!contenido) {
+                return;
+            }
+
+            const urlOffice = data.officeViewerUrl + encodeURIComponent(rutaDocumento);
+
+            contenido.classList.toggle("office-doc-protegido", documentoProtegido);
+
+            contenido.innerHTML = `
+    <iframe
+    src="${urlOffice}"
+    title="Vista previa del documento Word"
+    frameborder="0"
+    draggable="false"
+    ></iframe>
+    `;
+
+            const iframe = contenido.querySelector("iframe");
+
+            if (iframe && loader) {
+                iframe.addEventListener(
+                    "load",
+                    function () {
+                        loader.style.display = "none";
+                    },
+                    { once: true }
+                );
+            }
+        };
+
+        /*
+            
+            RENDERIZAR EXCEL XLS / XLSX
+            
+            --------------------------------------------------------------------------
+            
+            */
+
+        const renderizarExcel = async function () {
+            const loader = modal.querySelector(".office-documento-loader");
+            const contenido = modal.querySelector(".office-documento-contenido");
+
+            try {
+                await cargarScriptExterno(
+                    data.sheetJsUrl,
+                    "data-sheetjs-visor",
+                    function () {
+                        return Boolean(window.XLSX && typeof window.XLSX.read === "function");
+                    }
+                );
+
+                const arrayBuffer = await obtenerArchivoComoArrayBuffer();
+                const libro = window.XLSX.read(arrayBuffer, {
+                    type: "array",
+                    cellDates: true,
+                });
+
+                if (modalCerrado || !modal.isConnected || !contenido) {
+                    return;
+                }
+
+                if (!libro.SheetNames || !libro.SheetNames.length) {
+                    throw new Error("El libro no contiene hojas.");
+                }
+
+                contenido.innerHTML = `
+    <div class="visor-excel-hojas"></div>
+    <div class="visor-excel-tabla"></div>
+    `;
+
+                const contenedorHojas = contenido.querySelector(".visor-excel-hojas");
+                const contenedorTabla = contenido.querySelector(".visor-excel-tabla");
+
+                const pintarHoja = function (nombreHoja, botonActivo) {
+                    const hoja = libro.Sheets[nombreHoja];
+
+                    contenedorHojas.querySelectorAll("button").forEach(function (boton) {
+                        boton.classList.remove("activo");
+                    });
+
+                    if (botonActivo) {
+                        botonActivo.classList.add("activo");
+                    }
+
+                    contenedorTabla.innerHTML = window.XLSX.utils.sheet_to_html(hoja, {
+                        id: "tabla-excel-visor",
+                        editable: false,
+                    });
+                };
+
+                libro.SheetNames.forEach(function (nombreHoja, indice) {
+                    const boton = document.createElement("button");
+                    boton.type = "button";
+                    boton.textContent = nombreHoja;
+
+                    boton.addEventListener("click", function () {
+                        pintarHoja(nombreHoja, boton);
+                    });
+
+                    contenedorHojas.appendChild(boton);
+
+                    if (indice === 0) {
+                        pintarHoja(nombreHoja, boton);
+                    }
+                });
+
+                if (loader) {
+                    loader.style.display = "none";
+                }
+            } catch (error) {
+                console.error("Error renderizando Excel:", error);
+                mostrarErrorOffice(
+                    "No fue posible visualizar el archivo Excel dentro del visor."
+                );
+            }
+        };
+
+        const iniciarDocumentoOffice = function () {
+            if (!esDocumentoOffice || !rutaDocumento) {
+                return;
+            }
+
+            if (extensionDocumento === "docx") {
+                renderizarDocx();
+                return;
+            }
+
+            if (extensionDocumento === "doc") {
+                renderizarDocLegacy();
+                return;
+            }
+
+            if (["xls", "xlsx"].includes(extensionDocumento)) {
+                renderizarExcel();
+            }
+        };
+
+        /*
+            
+            PROTECCIÓN GENERAL
+            --------------------------------------------------------------------------
+            */
+
+        if (documentoProtegido) {
+            document.body.classList.add("pagina-documento-protegido");
+
+            if (
+                window.proteccionDocumento &&
+                typeof window.proteccionDocumento.activar === "function"
+            ) {
+                window.proteccionDocumento.activar();
+            }
+
+            ["contextmenu", "copy", "cut", "dragstart", "selectstart"].forEach(
+                function (evento) {
+                    modal.addEventListener(
+                        evento,
+                        function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return false;
+                        },
+                        true
+                    );
+                }
+            );
+
+            if (esDocumentoPdf) {
+                iniciarPdfProtegido();
+            }
+        }
+
+        if (esDocumentoOffice) {
+            iniciarDocumentoOffice();
+        }
+
+        /*
+            
+            CONTROLES DE ZOOM
+            --------------------------------------------------------------------------
+            */
+
+        modal
+            .querySelector(".btn-zoom-menos")
+            ?.addEventListener("click", async function () {
+                escalaActual = limitarNumero(
+                    escalaActual - Number(data.pasoZoom),
+                    Number(data.escalaMinima),
+                    Number(data.escalaMaxima)
+                );
+
+                await renderizarPdfProtegido();
+            });
+
+        modal
+            .querySelector(".btn-zoom-mas")
+            ?.addEventListener("click", async function () {
+                escalaActual = limitarNumero(
+                    escalaActual + Number(data.pasoZoom),
+                    Number(data.escalaMinima),
+                    Number(data.escalaMaxima)
+                );
+
+                await renderizarPdfProtegido();
+            });
+
+        modal
+            .querySelector(".btn-ajustar-ancho")
+            ?.addEventListener("click", async function () {
+                if (!pdfDocumento) {
+                    return;
+                }
+
+                const scrollContenedor = modal.querySelector(".pdf-protegido-scroll");
+
+                if (!scrollContenedor) {
+                    return;
+                }
+
+                const primeraPagina = await pdfDocumento.getPage(1);
+
+                const viewportBase = primeraPagina.getViewport({
+                    scale: 1,
+                });
+
+                const anchoDisponible = Math.max(scrollContenedor.clientWidth - 36, 100);
+
+                escalaActual = limitarNumero(
+                    anchoDisponible / viewportBase.width,
+                    Number(data.escalaMinima),
+                    Number(data.escalaMaxima)
+                );
+
+                await renderizarPdfProtegido();
+            });
+
+        /*
+            
+            CERRAR VISOR
+            --------------------------------------------------------------------------
+            
+            */
+
+        const cerrarVisor = async function () {
+            modalCerrado = true;
+            renderId++;
+
+            document.body.classList.remove("pagina-documento-protegido");
+
+            if (
+                window.proteccionDocumento &&
+                typeof window.proteccionDocumento.desactivar === "function"
+            ) {
+                window.proteccionDocumento.desactivar();
+            }
+
+            if (pdfDocumento) {
+                try {
+                    await pdfDocumento.destroy();
+                } catch (error) { }
+
+                pdfDocumento = null;
+            }
+
+            if (
+                urlObjetoTemporal &&
+                typeof URL !== "undefined" &&
+                typeof URL.revokeObjectURL === "function"
+            ) {
+                URL.revokeObjectURL(urlObjetoTemporal);
+                urlObjetoTemporal = "";
+            }
+
+            modal.remove();
+
+            if (typeof data.onCerrar === "function") {
+                data.onCerrar();
+            }
+        };
+
+        modal
+            .querySelector(".btn-cerrar-visor")
+            ?.addEventListener("click", cerrarVisor);
+
+        /*
+            
+            BOTÓN DE ACCIÓN
+            --------------------------------------------------------------------------
+            
+            */
+
+        modal
+            .querySelector(".btn-accion-visor")
+            ?.addEventListener("click", function () {
+                if (typeof data.onBoton === "function") {
+                    data.onBoton(data);
+                }
+            });
+
+        /*
+            
+            BOTÓN HOME
+            --------------------------------------------------------------------------
+            
+            */
+
+        modal
+            .querySelector(".btn-home-visor")
+            ?.addEventListener("click", function () {
+                if (typeof data.onHome === "function") {
+                    data.onHome(data);
+                    return;
+                }
+
+                if (data.rutaHome) {
+                    window.location.href = data.rutaHome;
+                }
+            });
+    };
+
+    function crearAccionesModal(configuracion = {}) {
+        function esVerdadero(valor) {
+            return valor === true || valor === "true" || valor === 1 || valor === "1";
+        }
+
+        function escaparAtributo(valor) {
+            return String(valor ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;");
+        }
+
+        const tipoRegistro = String(configuracion.tipo || "NORMA")
+            .trim()
+            .toUpperCase();
+
+        const id = escaparAtributo(configuracion.id ?? configuracion.contenidoId);
+
+        const contenidoId = escaparAtributo(
+            configuracion.contenidoId ?? configuracion.id
+        );
+
+        const idContenido = escaparAtributo(
+            configuracion.idContenido ?? configuracion.contenidoId ?? configuracion.id
+        );
+
+        const idRegistro = escaparAtributo(
+            configuracion.idRegistro ?? configuracion.contenidoId ?? configuracion.id
+        );
+
+        const idArchivo = escaparAtributo(
+            configuracion.idArchivo ??
+            configuracion.documentoId ??
+            configuracion.archivoId
+        );
+
+        const idPadre = escaparAtributo(configuracion.idPadre);
+
+        const versionId = escaparAtributo(configuracion.versionId);
+
+        const codigo = escaparAtributo(configuracion.codigo);
+
+        const titulo = escaparAtributo(configuracion.titulo);
+
+        const clasificacion = escaparAtributo(configuracion.clasificacion);
+
+        const fechaDesde = escaparAtributo(configuracion.fechaDesde);
+
+        const fechaHasta = escaparAtributo(
+            configuracion.fechaHasta ?? configuracion.fechaVigencia
+        );
+
+        const vigencia = escaparAtributo(
+            configuracion.fechaVigencia ?? configuracion.vigencia
+        );
+
+        const nombre = escaparAtributo(
+            configuracion.nombre ?? configuracion.nombreArchivo
+        );
+
+        const nombreArchivo = escaparAtributo(
+            configuracion.nombreArchivo ?? configuracion.nombre
+        );
+
+        const ruta = escaparAtributo(configuracion.ruta);
+
+        const endpoint = escaparAtributo(configuracion.endpoint);
+
+        const isUpdate = esVerdadero(configuracion.isUpdate);
+
+        const vigenciaManual = esVerdadero(configuracion.vigenciaManual);
+
+        const renovacion = esVerdadero(configuracion.renovacion);
+
+        const botones = [];
+
+        /*
+         * Cada botón depende únicamente del parámetro recibido.
+         * El visor no aplica permisos, tipos ni condiciones adicionales.
+         */
+        if (esVerdadero(configuracion.mostrarDescargar)) {
+            botones.push(`
+        <button
+          type="button"
+          class="btn btn-link p-0 btn-descargar descargar-registro-inventario"
+          data-id="${id}"
+          data-contenido-id="${contenidoId}"
+          data-version-id="${versionId}"
+          data-id-archivo="${idArchivo}"
+          data-documento-id="${idArchivo}"
+          data-codigo="${codigo}"
+          data-titulo="${titulo}"
+          data-titulo-norma="${escaparAtributo(configuracion.tituloNorma)}"
+          data-fecha-modificacion="${escaparAtributo(
+                configuracion.fechaModificacion
+            )}"
+          data-tipo="${tipoRegistro}"
+          data-ruta="${ruta}"
+          data-nombre="${nombre}"
+          data-descarga-permitida="true"
+          title="Descargar"
+          aria-label="Descargar"
+        >
+          <i class="bi bi-file-earmark-arrow-down"></i>
+          <span>Descargar</span>
+        </button>
+      `);
+        }
+
+        if (esVerdadero(configuracion.mostrarActualizarNorma)) {
+            botones.push(`
+      <button
+        type="button"
+        class="btn btn-link p-0 editar-norma-inv"
+        data-id="${id}"
+        data-contenido-id="${contenidoId}"
+        data-documento-id="${idArchivo}"
+        data-id-padre="${idPadre}"
+        data-id-archivo="${idArchivo}"
+        data-archivo-id="${idArchivo}"
+        data-codigo="${codigo}"
+        data-titulo="${titulo}"
+        data-clasificacion="${clasificacion.toLowerCase()}"
+        data-fecha-desde="${fechaDesde}"
+        data-fecha-hasta="${fechaHasta}"
+        data-vigencia="${vigencia}"
+        data-is-update="${isUpdate}"
+        data-vigencia-manual="${vigenciaManual}"
+        data-renovacion="${renovacion}"
+        data-nombre-archivo="${nombreArchivo}"
+        data-tipo="${tipoRegistro}"
+        title="Actualizar norma"
+        aria-label="Actualizar norma"
+      >
+        <i class="bi bi-arrow-clockwise"></i>
+        <span>Actualizar</span>
+      </button>
+    `);
+        }
+
+        if (esVerdadero(configuracion.mostrarAgregarFormato)) {
+            botones.push(`
+        <button
+          type="button"
+          class="btn btn-link p-0 btn-crear-formato-adjunto"
+          data-crear-formato-adjunto="true"
+          data-id="${id}"
+          data-contenido-id="${contenidoId}"
+          data-id-contenido="${idContenido}"
+          data-id-archivo="${idArchivo}"
+          data-documento-id="${idArchivo}"
+          data-codigo="${codigo}"
+          data-titulo="${titulo}"
+          data-tipo="formato-adjunto"
+          title="Agregar formato adjunto"
+          aria-label="Agregar formato adjunto"
+        >
+          <i class="bi bi-plus-circle"></i>
+          <span>Subir nuevo archivo</span>
+        </button>
+      `);
+        }
+
+        if (esVerdadero(configuracion.mostrarActualizar)) {
+            botones.push(`
+        <button
+          type="button"
+          class="btn btn-link p-0 btn-editar"
+          data-id="${idArchivo || id}"
+          data-id-registro="${idRegistro}"
+          data-contenido-id="${contenidoId}"
+          data-id-contenido="${idContenido}"
+          data-documento-id="${idArchivo}"
+          data-id-archivo="${idArchivo}"
+          data-endpoint="${endpoint}"
+          data-tipo="documento"
+          data-nombre="${nombre}"
+          title="Actualizar"
+          aria-label="Actualizar"
+        >
+          <i class="bi bi-arrow-clockwise"></i>
+          <span>Actualizar</span>
+        </button>
+      `);
+        }
+
+        if (esVerdadero(configuracion.mostrarEliminar)) {
+            botones.push(`
+        <button
+          type="button"
+          class="btn btn-link p-0 btn-eliminar-formato eliminar-registro-inventario"
+          data-id="${idArchivo || id}"
+          data-id-registro="${idRegistro}"
+          data-contenido-id="${contenidoId}"
+          data-documento-id="${idArchivo}"
+          data-id-archivo="${idArchivo}"
+          data-codigo="${codigo}"
+          data-titulo="${titulo}"
+          data-nombre="${nombre}"
+          title="Eliminar"
+          aria-label="Eliminar"
+        >
+          <i class="bi bi-trash"></i>
+          <span>Eliminar</span>
+        </button>
+      `);
+        }
+
+        if (botones.length === 0) {
+            return "";
+        }
+
+        return `
+    <div
+      class="
+        acciones-modal-visor
+        d-flex
+        flex-wrap
+        justify-content-end
+        align-items-center
+        gap-2
+        mb-3
+      "
+    >
+      ${botones.join("")}
+    </div>
+    `;
+    }
+
+</script>

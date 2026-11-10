@@ -1,0 +1,1580 @@
+<div class="editar-norma-inv-root">
+    <div class="modal fade editar-norma-inv-modal" id="editar-norma-inv" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title d-flex align-items-center">
+                        <span class="editar-norma-inv-icon-circle">
+                            <i class="bi bi-pencil-square"></i>
+                        </span>
+                        <span class="negro">Editar norma</span>
+                    </h5>
+
+                    <button type="button" class="editar-norma-inv-btn-cerrar" id="btn-cerrar-editar-norma-inv"
+                        aria-label="Cerrar">
+                        &times;
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="editar-norma-inv-form-container">
+
+                        <input type="hidden" id="contenido-id-editar-norma-inv">
+                        <input type="hidden" id="archivo-id-editar-norma-inv">
+                        <input type="hidden" id="codigo-editar-norma-inv">
+
+                        <div class="editar-norma-inv-campo editar-norma-inv-campo-renovacion">
+                            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px;">
+                                <label class="editar-norma-inv-checkbox-label" style="margin-bottom: 0;">
+                                    <input type="checkbox" id="renovacion-vigencia-editar-norma-inv">
+                                    <span>Renovación de vigencia</span>
+                                </label>
+
+                                <label class="editar-norma-inv-checkbox-label" style="margin-bottom: 0;">
+                                    <input type="checkbox" id="crear-version-editar-norma-inv">
+                                    <span>Generar una nueva versión</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="editar-norma-inv-campo">
+                            <label for="titulo-editar-norma-inv" class="editar-norma-inv-label">
+                                Título<span class="rojo">*</span> :
+                            </label>
+
+                            <input type="text" id="titulo-editar-norma-inv"
+                                class="form-control editar-norma-inv-dato-bloqueable"
+                                placeholder="Ingresa el título de la norma" autocomplete="off">
+                        </div>
+
+                        <div class="editar-norma-inv-fila">
+                            <div class="editar-norma-inv-columna editar-norma-inv-columna-clasificacion">
+                                <label for="clasificacion-editar-norma-inv" class="editar-norma-inv-label">
+                                    Clasificación<span class="rojo">*</span> :
+                                </label>
+
+                                <select id="clasificacion-editar-norma-inv"
+                                    class="form-control editar-norma-inv-dato-bloqueable">
+                                    <option value="">Seleccione</option>
+                                    <option value="usoInterno">Uso interno</option>
+                                    <option value="publica">Pública</option>
+                                    <option value="restringida">Restringida</option>
+                                    <option value="confidencial">Confidencial</option>
+                                </select>
+                            </div>
+
+
+
+                            <div class="editar-norma-inv-columna editar-norma-inv-columna-fecha">
+                                <label for="fecha-desde-editar-norma-inv" class="editar-norma-inv-label">
+                                    Fecha desde<span class="rojo">*</span> :
+                                </label>
+
+                                <input type="date" id="fecha-desde-editar-norma-inv"
+                                    class="form-control editar-norma-inv-dato-bloqueable">
+                            </div>
+
+                            <div class="editar-norma-inv-columna editar-norma-inv-columna-fecha">
+                                <label for="fecha-hasta-editar-norma-inv" class="editar-norma-inv-label">
+                                    Fecha hasta<span class="rojo">*</span> :
+                                </label>
+
+                                <input type="date" id="fecha-hasta-editar-norma-inv"
+                                    class="form-control editar-norma-inv-dato-bloqueable">
+                            </div>
+                        </div>
+                        <div id="alerta-clasificacion-editar-norma-inv"
+                            class="alert alert-warning editar-norma-inv-alerta-clasificacion" role="alert"
+                            aria-live="polite" hidden>
+                            <strong>¡Alerta!</strong>
+
+                            <p id="texto-cambio-clasificacion-editar-norma-inv" class="mb-2"></p>
+
+                            <p class="mb-2">
+                                ¡Este cambio habilitará la descarga libre del documento para todos
+                                los usuarios del sistema, eliminando las restricciones de acceso
+                                actualmente vigentes!
+                            </p>
+
+                            <p class="mb-0">
+                                Esta acción quedará registrada en la Bitácora de Seguridad.
+                            </p>
+                        </div>
+
+
+
+                        <div
+                            class="editar-norma-inv-campo editar-norma-inv-campo-archivo editar-norma-inv-bloque-archivo">
+                            <label class="editar-norma-inv-label">
+                                Archivo adjunto:
+                            </label>
+
+                            <p class="editar-norma-inv-archivo-actual">
+                                Archivo actual:
+                                <strong id="archivo-actual-editar-norma-inv">
+                                    Sin archivo asociado
+                                </strong>
+                            </p>
+
+                            <p class="editar-norma-inv-leyenda">
+                                Selecciona o arrastra un archivo únicamente cuando quieras reemplazar el actual.
+                            </p>
+
+                            <input type="file" id="archivo-editar-norma-inv" class="editar-norma-inv-dato-bloqueable"
+                                accept=".pdf,application/pdf" hidden>
+
+                            <div class="editar-norma-inv-selector">
+                                <span class="editar-norma-inv-nombre-archivo" id="nombre-archivo-editar-norma-inv">
+                                    Sin archivo nuevo seleccionado
+                                </span>
+
+                                <button type="button"
+                                    class="btn btn-outline-danger btn-sm editar-norma-inv-dato-bloqueable"
+                                    id="btn-limpiar-archivo-editar-norma-inv" disabled>
+                                    Limpiar
+                                </button>
+                            </div>
+
+                            <div class="editar-norma-inv-upload-box editar-norma-inv-dato-bloqueable"
+                                id="upload-box-editar-norma-inv" role="button" tabindex="0">
+                                <span class="editar-norma-inv-upload-icon">
+                                    <i class="bi bi-cloud-arrow-up"></i>
+                                </span>
+
+                                <span class="editar-norma-inv-upload-text">
+                                    Arrastra y suelta el archivo aquí
+                                </span>
+
+                                <span class="editar-norma-inv-upload-subtext">
+                                    También puedes hacer clic para seleccionarlo
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="editar-norma-inv-mensaje" id="mensaje-editar-norma-inv" hidden></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar-editar-norma-inv">
+                        Cancelar
+                    </button>
+
+                    <button type="button" class="btn btn-primary" id="btn-guardar-editar-norma-inv">
+                        Guardar cambios
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .editar-norma-inv-root .editar-norma-inv-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: none;
+        overflow-x: hidden;
+        overflow-y: auto;
+        outline: 0;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-modal.show {
+        display: block;
+    }
+
+    span.negro {
+        color: black;
+    }
+
+    .editar-norma-inv-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 99998;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .editar-norma-inv-root .modal-dialog {
+        position: relative;
+        z-index: 100000;
+        width: auto;
+        max-width: 850px;
+        margin: 1.75rem auto;
+    }
+
+    .editar-norma-inv-root .modal-content {
+        overflow: hidden;
+        background: #fff;
+        border: 0;
+        border-radius: 6px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+    }
+
+    .editar-norma-inv-root .modal-header,
+    .editar-norma-inv-root .modal-footer {
+        display: flex;
+        align-items: center;
+        padding: 16px 20px;
+        background: #fff;
+    }
+
+    .editar-norma-inv-root .modal-header {
+        justify-content: space-between;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .editar-norma-inv-root .modal-footer {
+        justify-content: flex-end;
+        gap: 10px;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .editar-norma-inv-root .modal-title {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .editar-norma-inv-root .modal-body {
+        padding: 24px;
+        background: #fff;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-icon-circle {
+        display: inline-flex;
+        flex: 0 0 42px;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        margin-right: 10px;
+        color: #5b0014;
+        font-size: 20px;
+        border: 1.5px solid #5b0014;
+        border-radius: 50%;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-btn-cerrar {
+        padding: 5px 10px;
+        color: #333;
+        font-size: 24px;
+        line-height: 1;
+        cursor: pointer;
+        background: transparent;
+        border: 0;
+        border-radius: 4px;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-btn-cerrar:hover {
+        background: #f1f1f1;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-campo {
+        width: 100%;
+        margin-bottom: 22px;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #222;
+        font-weight: 600;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-fila {
+        display: flex;
+        align-items: flex-end;
+        gap: 20px;
+        width: 100%;
+        margin-bottom: 22px;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-columna {
+        min-width: 0;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-columna-clasificacion {
+        flex: 1;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-columna-fecha {
+        width: 170px;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-checkbox-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        color: #222;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-checkbox-label input {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-ayuda-renovacion,
+    .editar-norma-inv-root .editar-norma-inv-leyenda,
+    .editar-norma-inv-root .editar-norma-inv-archivo-actual {
+        margin: 7px 0 12px;
+        color: #666;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-selector {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-nombre-archivo {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        color: #777;
+        font-size: 13px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-upload-box {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 190px;
+        padding: 32px 20px;
+        text-align: center;
+        cursor: pointer;
+        background: #fafafa;
+        border: 2px dashed #d7d7d7;
+        border-radius: 12px;
+        transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-upload-box:hover,
+    .editar-norma-inv-root .editar-norma-inv-upload-box:focus,
+    .editar-norma-inv-root .editar-norma-inv-upload-box.arrastrando {
+        background: #fff4f6;
+        border-color: #5b0014;
+        outline: none;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-upload-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
+        color: #5b0014;
+        font-size: 27px;
+        background: #eee;
+        border-radius: 50%;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-upload-text {
+        margin-bottom: 5px;
+        color: #222;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-upload-subtext {
+        color: #777;
+        font-size: 13px;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-mensaje {
+        margin-top: 15px;
+        padding: 12px 14px;
+        font-size: 13px;
+        line-height: 1.5;
+        border-radius: 6px;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-mensaje[hidden] {
+        display: none !important;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-mensaje.error {
+        color: #721c24;
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-mensaje.procesando {
+        color: #284b75;
+        background: #eef3fa;
+        border: 1px solid #cbd9e8;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-bloqueado {
+        opacity: 0.58;
+    }
+
+    .editar-norma-inv-root .editar-norma-inv-dato-bloqueable:disabled,
+    .editar-norma-inv-root .editar-norma-inv-upload-box.bloqueado {
+        cursor: not-allowed !important;
+    }
+
+    @media (max-width: 768px) {
+        .editar-norma-inv-root .modal-dialog {
+            margin: 15px;
+        }
+
+        .editar-norma-inv-root .editar-norma-inv-fila,
+        .editar-norma-inv-root .editar-norma-inv-selector {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .editar-norma-inv-root .editar-norma-inv-columna-fecha {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<script>
+    (function () {
+        "use strict";
+
+        const CONFIG_EDITAR_NORMA_INV = {
+            endpoint: "/api/v1/inventario/normas/:contenidoPadreId/hijas/:contenidoHijaId/versiones",
+            endpointSinVersion: "/api/v1/inventario/normas/:contenidoId/sin-version",
+            metodo: "POST",
+            metodoSinVersion: "PUT",
+            functionalId: "Actualizar norma de inventario",
+            moduloBitacora: "Inventario",
+            accionBitacora: "Actualizar norma",
+        };
+
+        const ESTADO_EDITAR_NORMA_INV = {
+            inicializado: false,
+            enviando: false,
+            archivoSeleccionado: null,
+            datosOriginales: null,
+        };
+
+        function obtenerElementoEditarNormaInv(id) {
+            return document.getElementById(id);
+        }
+
+        function normalizarBooleanoEditarNormaInv(valor) {
+            return [true, "true", "1", 1, "si", "sí", "on"].includes(valor);
+        }
+
+        function normalizarClasificacionEditarNormaInv(valor) {
+            const texto = String(valor || "")
+                .trim()
+                .toLowerCase();
+            const mapa = {
+                "uso interno": "usoInterno",
+                usointerno: "usoInterno",
+                publica: "publica",
+                pública: "publica",
+                restringida: "restringida",
+                confidencial: "confidencial",
+            };
+
+            return mapa[texto] || valor || "";
+        }
+
+        function obtenerNombreClasificacionEditarNormaInv(valor) {
+            const nombres = {
+                usoInterno: "Uso Interno",
+                publica: "Pública",
+                restringida: "Restringida",
+                confidencial: "Confidencial",
+            };
+
+            return nombres[valor] || valor || "";
+        }
+
+        function actualizarAlertaClasificacionEditarNormaInv() {
+            const alerta = obtenerElementoEditarNormaInv(
+                "alerta-clasificacion-editar-norma-inv"
+            );
+            const textoCambio = obtenerElementoEditarNormaInv(
+                "texto-cambio-clasificacion-editar-norma-inv"
+            );
+            const selector = obtenerElementoEditarNormaInv(
+                "clasificacion-editar-norma-inv"
+            );
+
+            if (!alerta || !textoCambio || !selector) {
+                return;
+            }
+
+            const clasificacionOriginal =
+                ESTADO_EDITAR_NORMA_INV.datosOriginales?.clasificacion || "";
+            const clasificacionNueva = selector.value || "";
+
+            const esClasificacionRestringida = ["restringida", "confidencial"].includes(
+                clasificacionOriginal
+            );
+
+            const esClasificacionLibre = ["publica", "usoInterno"].includes(
+                clasificacionNueva
+            );
+
+            const debeMostrarAlerta =
+                esClasificacionRestringida &&
+                esClasificacionLibre &&
+                clasificacionOriginal !== clasificacionNueva;
+
+            if (!debeMostrarAlerta) {
+                alerta.hidden = true;
+                textoCambio.textContent = "";
+                return;
+            }
+
+            const nombreOriginal = obtenerNombreClasificacionEditarNormaInv(
+                clasificacionOriginal
+            );
+            const nombreNueva =
+                obtenerNombreClasificacionEditarNormaInv(clasificacionNueva);
+
+            textoCambio.textContent =
+                `Está a punto de cambiar la clasificación de esta norma ` +
+                `de ${nombreOriginal} a ${nombreNueva}.`;
+
+            alerta.hidden = false;
+        }
+
+        function obtenerBaseUrlEditarNormaInv() {
+            const baseUrl =
+                window.apiConfig?.normativas || window.apiConfig?.baseUrl || "";
+
+            if (!baseUrl) {
+                throw new Error("No se encontró la URL base del servicio.");
+            }
+
+            return String(baseUrl).replace(/\/+$/, "");
+        }
+
+        function mostrarMensajeEditarNormaInv(mensaje, tipo = "error") {
+            const contenedor = obtenerElementoEditarNormaInv(
+                "mensaje-editar-norma-inv"
+            );
+
+            if (!contenedor) {
+                return;
+            }
+
+            contenedor.hidden = false;
+            contenedor.textContent = mensaje || "";
+            contenedor.classList.remove("error", "procesando");
+            contenedor.classList.add(tipo);
+        }
+
+        function ocultarMensajeEditarNormaInv() {
+            const contenedor = obtenerElementoEditarNormaInv(
+                "mensaje-editar-norma-inv"
+            );
+
+            if (!contenedor) {
+                return;
+            }
+
+            contenedor.hidden = true;
+            contenedor.textContent = "";
+            contenedor.classList.remove("error", "procesando");
+        }
+
+        function validarArchivoEditarNormaInv(archivo) {
+            if (!archivo) {
+                return true;
+            }
+
+            const nombre = String(archivo.name || "").toLowerCase();
+            const valido = nombre.endsWith(".pdf");
+
+            if (!valido) {
+                throw new Error("Solo se permiten archivos .pdf");
+            }
+
+            return true;
+        }
+
+        function limpiarArchivoEditarNormaInv() {
+            const input = obtenerElementoEditarNormaInv("archivo-editar-norma-inv");
+            const nombre = obtenerElementoEditarNormaInv(
+                "nombre-archivo-editar-norma-inv"
+            );
+            const btnLimpiar = obtenerElementoEditarNormaInv(
+                "btn-limpiar-archivo-editar-norma-inv"
+            );
+
+            if (input) {
+                input.value = "";
+            }
+
+            if (nombre) {
+                nombre.textContent = "Sin archivo nuevo seleccionado";
+            }
+
+            if (btnLimpiar) {
+                btnLimpiar.disabled = true;
+            }
+
+            ESTADO_EDITAR_NORMA_INV.archivoSeleccionado = null;
+        }
+
+        function asignarArchivoEditarNormaInv(archivo) {
+            try {
+                validarArchivoEditarNormaInv(archivo);
+
+                ESTADO_EDITAR_NORMA_INV.archivoSeleccionado = archivo;
+
+                const nombre = obtenerElementoEditarNormaInv(
+                    "nombre-archivo-editar-norma-inv"
+                );
+                const btnLimpiar = obtenerElementoEditarNormaInv(
+                    "btn-limpiar-archivo-editar-norma-inv"
+                );
+
+                if (nombre) {
+                    nombre.textContent = archivo.name;
+                }
+
+                if (btnLimpiar) {
+                    btnLimpiar.disabled = false;
+                }
+
+                ocultarMensajeEditarNormaInv();
+            } catch (error) {
+                limpiarArchivoEditarNormaInv();
+                mostrarMensajeEditarNormaInv(
+                    error?.message || "El archivo seleccionado no es válido.",
+                    "error"
+                );
+            }
+        }
+
+        function obtenerDatosFormularioEditarNormaInv() {
+            return {
+                contenidoPadreId:
+                    ESTADO_EDITAR_NORMA_INV.datosOriginales?.contenidoPadreId || "",
+                contenidoId:
+                    obtenerElementoEditarNormaInv("contenido-id-editar-norma-inv")?.value ||
+                    "",
+                archivoId:
+                    obtenerElementoEditarNormaInv("archivo-id-editar-norma-inv")?.value ||
+                    "",
+                codigo:
+                    obtenerElementoEditarNormaInv("codigo-editar-norma-inv")?.value || "",
+                titulo:
+                    obtenerElementoEditarNormaInv(
+                        "titulo-editar-norma-inv"
+                    )?.value.trim() || "",
+                clasificacion:
+                    obtenerElementoEditarNormaInv("clasificacion-editar-norma-inv")
+                        ?.value || "",
+                fechaDesde:
+                    obtenerElementoEditarNormaInv("fecha-desde-editar-norma-inv")?.value ||
+                    "",
+                fechaHasta:
+                    obtenerElementoEditarNormaInv("fecha-hasta-editar-norma-inv")?.value ||
+                    "",
+                renovacionVigencia: Boolean(
+                    obtenerElementoEditarNormaInv("renovacion-vigencia-editar-norma-inv")
+                        ?.checked
+                ),
+                crearVersion: Boolean(
+                    obtenerElementoEditarNormaInv("crear-version-editar-norma-inv")?.checked
+                ),
+                archivo: ESTADO_EDITAR_NORMA_INV.archivoSeleccionado,
+            };
+        }
+        function limpiarErroresCamposEditarNormaInv() {
+            const campos = [
+                "titulo-editar-norma-inv",
+                "clasificacion-editar-norma-inv",
+                "fecha-desde-editar-norma-inv",
+                "fecha-hasta-editar-norma-inv",
+            ];
+
+            campos.forEach(function (id) {
+                const campo = obtenerElementoEditarNormaInv(id);
+
+                if (!campo) {
+                    return;
+                }
+
+                // Quitar borde rojo
+                campo.classList.remove("editar-norma-inv-error-campo");
+
+                // Quitar mensaje "Este campo es requerido"
+                const mensaje = campo.parentNode.querySelector(
+                    `.editar-norma-inv-mensaje-campo[data-campo="${id}"]`
+                );
+
+                if (mensaje) {
+                    mensaje.remove();
+                }
+            });
+        }
+
+        function validarFormularioEditarNormaInv(datos) {
+            const campos = [
+                "titulo-editar-norma-inv",
+                "clasificacion-editar-norma-inv",
+                "fecha-desde-editar-norma-inv",
+                "fecha-hasta-editar-norma-inv",
+            ];
+
+            let formularioValido = true;
+
+            /* Limpiar errores anteriores */
+            campos.forEach(function (id) {
+                const campo = obtenerElementoEditarNormaInv(id);
+
+                if (!campo) {
+                    return;
+                }
+
+                campo.classList.remove("editar-norma-inv-error-campo");
+
+                const mensaje = campo.parentNode.querySelector(
+                    `.editar-norma-inv-mensaje-campo[data-campo="${id}"]`
+                );
+
+                if (mensaje) {
+                    mensaje.remove();
+                }
+            });
+
+            function marcarError(id, mensajeTexto = "Este campo es requerido") {
+                const campo = obtenerElementoEditarNormaInv(id);
+
+                if (!campo) {
+                    return;
+                }
+
+                campo.classList.add("editar-norma-inv-error-campo");
+
+                const mensaje = document.createElement("span");
+
+                mensaje.className = "editar-norma-inv-mensaje-campo";
+                mensaje.dataset.campo = id;
+                mensaje.textContent = mensajeTexto;
+
+                campo.insertAdjacentElement("afterend", mensaje);
+
+                formularioValido = false;
+            }
+
+            /* =====================================================
+                   CONTENIDO ID
+                   ===================================================== */
+
+            if (!datos.contenidoPadreId) {
+                throw new Error("No se encontró el identificador de la norma padre.");
+            }
+
+            if (!datos.contenidoId) {
+                throw new Error("No se encontró el identificador de la norma.");
+            }
+
+            /* =====================================================
+                   TÍTULO
+                   ===================================================== */
+
+            if (!datos.titulo) {
+                marcarError("titulo-editar-norma-inv");
+            }
+
+            /* =====================================================
+                   CLASIFICACIÓN
+                   ===================================================== */
+
+            if (!datos.clasificacion) {
+                marcarError("clasificacion-editar-norma-inv");
+            }
+
+            /* =====================================================
+                   FECHA DESDE
+                   ===================================================== */
+
+            if (!datos.renovacionVigencia && !datos.fechaDesde) {
+                marcarError("fecha-desde-editar-norma-inv");
+            }
+
+            /* =====================================================
+                   FECHA HASTA
+                   ===================================================== */
+
+            if (!datos.renovacionVigencia && !datos.fechaHasta) {
+                marcarError("fecha-hasta-editar-norma-inv");
+            }
+
+            /* =====================================================
+                   VALIDACIÓN DE FECHAS
+                   ===================================================== */
+
+            if (
+                !datos.renovacionVigencia &&
+                datos.fechaDesde &&
+                datos.fechaHasta &&
+                new Date(datos.fechaHasta) < new Date(datos.fechaDesde)
+            ) {
+                marcarError(
+                    "fecha-hasta-editar-norma-inv",
+                    "La fecha hasta no puede ser menor que la fecha desde."
+                );
+            }
+
+            /* =====================================================
+                   ARCHIVO
+                   ===================================================== */
+
+            validarArchivoEditarNormaInv(datos.archivo);
+
+            /* =====================================================
+                   RESULTADO
+                   ===================================================== */
+
+            if (!formularioValido) {
+                mostrarMensajeEditarNormaInv(
+                    "Revisa los campos marcados en rojo.",
+                    "error"
+                );
+
+                return false;
+            }
+
+            return true;
+        }
+
+        function aplicarBloqueoRenovacionEditarNormaInv() {
+            const renovacion = obtenerElementoEditarNormaInv(
+                "renovacion-vigencia-editar-norma-inv"
+            );
+            const crearVersion = obtenerElementoEditarNormaInv(
+                "crear-version-editar-norma-inv"
+            );
+            const activo = Boolean(renovacion?.checked);
+            const versionActiva = Boolean(crearVersion?.checked);
+
+            if (renovacion) renovacion.disabled = versionActiva;
+            if (crearVersion) crearVersion.disabled = activo;
+            const modal = obtenerElementoEditarNormaInv("editar-norma-inv");
+            const bloqueArchivo = modal?.querySelector(
+                ".editar-norma-inv-bloque-archivo"
+            );
+            const uploadBox = obtenerElementoEditarNormaInv(
+                "upload-box-editar-norma-inv"
+            );
+            const fechaDesde = obtenerElementoEditarNormaInv(
+                "fecha-desde-editar-norma-inv"
+            );
+            const fechaHasta = obtenerElementoEditarNormaInv(
+                "fecha-hasta-editar-norma-inv"
+            );
+
+            [fechaDesde, fechaHasta].forEach(function (campoFecha) {
+                if (!campoFecha) {
+                    return;
+                }
+
+                campoFecha.required = !activo;
+                campoFecha.setAttribute("aria-required", activo ? "false" : "true");
+            });
+
+            modal
+                ?.querySelectorAll(".editar-norma-inv-dato-bloqueable")
+                .forEach(function (elemento) {
+                    const esFecha = elemento === fechaDesde || elemento === fechaHasta;
+                    elemento.disabled = esFecha ? !(activo || versionActiva) : activo;
+
+                    if (elemento === uploadBox) {
+                        elemento.setAttribute("aria-disabled", activo ? "true" : "false");
+                        elemento.tabIndex = activo ? -1 : 0;
+                    }
+                });
+
+            bloqueArchivo?.classList.toggle("editar-norma-inv-bloqueado", activo);
+            uploadBox?.classList.toggle("bloqueado", activo);
+
+            if (!activo) {
+                const btnLimpiar = obtenerElementoEditarNormaInv(
+                    "btn-limpiar-archivo-editar-norma-inv"
+                );
+
+                if (btnLimpiar) {
+                    btnLimpiar.disabled = !ESTADO_EDITAR_NORMA_INV.archivoSeleccionado;
+                }
+            }
+        }
+
+        function cargarDatosDesdeBotonEditarNormaInv(boton) {
+            // Limpiar errores de una edición anterior
+            limpiarErroresCamposEditarNormaInv();
+
+            // Limpiar mensaje general
+            ocultarMensajeEditarNormaInv();
+            const datos = {
+                contenidoPadreId: boton?.dataset?.idPadre || "",
+                contenidoId: boton?.dataset?.contenidoId || boton?.dataset?.id || "",
+                archivoId: boton?.dataset?.archivoId || boton?.dataset?.idArchivo || "",
+                codigo: boton?.dataset?.codigo || "",
+                titulo: boton?.dataset?.titulo || "",
+                clasificacion: normalizarClasificacionEditarNormaInv(
+                    boton?.dataset?.clasificacion || ""
+                ),
+                fechaDesde:
+                    boton?.dataset?.fechaVigencia || boton?.dataset?.vigencia || "",
+                fechaHasta:
+                    boton?.dataset?.fhasta || boton?.dataset?.fechaHasta || "",
+                renovacionVigencia: normalizarBooleanoEditarNormaInv(
+                    boton?.dataset?.renovacion
+                ),
+                nombreArchivo:
+                    boton?.dataset?.nombreArchivo ||
+                    boton?.dataset?.archivoNombre ||
+                    "Sin archivo asociado",
+            };
+            const span = document.querySelector(".negro");
+
+            if (span) {
+                span.textContent = "Editar norma (" + boton?.dataset?.codigo + ")";
+            }
+
+            if (!datos.contenidoPadreId) {
+                throw new Error("No se encontró el identificador de la norma padre.");
+            }
+
+            if (!datos.contenidoId) {
+                throw new Error("El botón no contiene data-contenido-id ni data-id.");
+            }
+
+            ESTADO_EDITAR_NORMA_INV.datosOriginales = { ...datos };
+
+            obtenerElementoEditarNormaInv("contenido-id-editar-norma-inv").value =
+                datos.contenidoId;
+            obtenerElementoEditarNormaInv("archivo-id-editar-norma-inv").value =
+                datos.archivoId;
+            obtenerElementoEditarNormaInv("codigo-editar-norma-inv").value =
+                datos.codigo;
+            obtenerElementoEditarNormaInv("titulo-editar-norma-inv").value =
+                datos.titulo;
+            obtenerElementoEditarNormaInv("clasificacion-editar-norma-inv").value =
+                datos.clasificacion;
+            obtenerElementoEditarNormaInv("fecha-desde-editar-norma-inv").value =
+                datos.fechaDesde;
+            obtenerElementoEditarNormaInv("fecha-hasta-editar-norma-inv").value =
+                datos.fechaHasta;
+            obtenerElementoEditarNormaInv(
+                "renovacion-vigencia-editar-norma-inv"
+            ).checked = datos.renovacionVigencia;
+            obtenerElementoEditarNormaInv(
+                "archivo-actual-editar-norma-inv"
+            ).textContent = datos.nombreArchivo;
+
+            const crearVersion = obtenerElementoEditarNormaInv(
+                "crear-version-editar-norma-inv"
+            );
+            if (crearVersion) crearVersion.checked = false;
+
+            limpiarArchivoEditarNormaInv();
+            ocultarMensajeEditarNormaInv();
+            aplicarBloqueoRenovacionEditarNormaInv();
+            actualizarAlertaClasificacionEditarNormaInv();
+        }
+
+        function abrirModalEditarNormaInv(boton) {
+            try {
+                cargarDatosDesdeBotonEditarNormaInv(boton);
+            } catch (error) {
+                if (typeof window.abrirModal === "function") {
+                    window.abrirModal({
+                        paso: 2,
+                        tipo: "Error",
+                        titulo: "Error",
+                        contenido: error?.message || "No fue posible abrir la edición.",
+                        btnAceptar: "Cerrar",
+                    });
+                }
+
+                return;
+            }
+
+            const modal = obtenerElementoEditarNormaInv("editar-norma-inv");
+
+            if (!modal) {
+                return;
+            }
+
+            let backdrop = obtenerElementoEditarNormaInv("backdrop-editar-norma-inv");
+
+            if (!backdrop) {
+                backdrop = document.createElement("div");
+                backdrop.id = "backdrop-editar-norma-inv";
+                backdrop.className = "editar-norma-inv-modal-backdrop";
+                backdrop.addEventListener("click", cerrarModalEditarNormaInv);
+                document.body.appendChild(backdrop);
+            }
+
+            modal.classList.add("show");
+            modal.style.display = "block";
+            modal.style.visibility = "visible";
+            modal.style.pointerEvents = "auto";
+            modal.setAttribute("aria-hidden", "false");
+            modal.setAttribute("aria-modal", "true");
+
+            document.body.classList.add("modal-open");
+            document.body.style.overflow = "hidden";
+        }
+
+        function cerrarModalEditarNormaInv() {
+            const modal = obtenerElementoEditarNormaInv("editar-norma-inv");
+
+            if (modal) {
+                modal.classList.remove("show");
+                modal.style.display = "none";
+                modal.style.visibility = "hidden";
+                modal.style.pointerEvents = "none";
+                modal.setAttribute("aria-hidden", "true");
+                modal.removeAttribute("aria-modal");
+            }
+
+            obtenerElementoEditarNormaInv("backdrop-editar-norma-inv")?.remove();
+            document.body.classList.remove("modal-open");
+            document.body.style.overflow = "";
+            document.body.style.paddingRight = "";
+        }
+
+        function limpiarModalEditarNormaInv() {
+            [
+                "contenido-id-editar-norma-inv",
+                "archivo-id-editar-norma-inv",
+                "codigo-editar-norma-inv",
+                "titulo-editar-norma-inv",
+                "fecha-desde-editar-norma-inv",
+                "fecha-hasta-editar-norma-inv",
+            ].forEach(function (id) {
+                const elemento = obtenerElementoEditarNormaInv(id);
+
+                if (elemento) {
+                    elemento.value = "";
+                }
+            });
+
+            const clasificacion = obtenerElementoEditarNormaInv(
+                "clasificacion-editar-norma-inv"
+            );
+            const renovacion = obtenerElementoEditarNormaInv(
+                "renovacion-vigencia-editar-norma-inv"
+            );
+            const archivoActual = obtenerElementoEditarNormaInv(
+                "archivo-actual-editar-norma-inv"
+            );
+
+            if (clasificacion) clasificacion.value = "";
+            if (renovacion) renovacion.checked = false;
+            if (archivoActual) archivoActual.textContent = "Sin archivo asociado";
+
+            const alertaClasificacion = obtenerElementoEditarNormaInv(
+                "alerta-clasificacion-editar-norma-inv"
+            );
+            const textoCambioClasificacion = obtenerElementoEditarNormaInv(
+                "texto-cambio-clasificacion-editar-norma-inv"
+            );
+
+            if (alertaClasificacion) {
+                alertaClasificacion.hidden = true;
+            }
+
+            if (textoCambioClasificacion) {
+                textoCambioClasificacion.textContent = "";
+            }
+
+            ESTADO_EDITAR_NORMA_INV.datosOriginales = null;
+
+            const crearVersion = obtenerElementoEditarNormaInv(
+                "crear-version-editar-norma-inv"
+            );
+            if (crearVersion) crearVersion.checked = false;
+
+            limpiarArchivoEditarNormaInv();
+            ocultarMensajeEditarNormaInv();
+            aplicarBloqueoRenovacionEditarNormaInv();
+        }
+
+        function construirFormDataEditarNormaInv(datos) {
+            /*************************************/
+            /* DATOS JSON */
+            /*************************************/
+            const dataEnviar = {
+                titulo: datos.titulo,
+                clasificacion: datos.clasificacion,
+                fechaDesde: datos.fechaDesde,
+                fechaHasta: datos.fechaHasta,
+                isUpdate: Boolean(datos.archivo),
+                vigenciaManual: Boolean(datos.renovacionVigencia),
+                // crearVersion: Boolean(datos.crearVersion),
+            };
+
+            /*************************************/
+            /* FORMDATA */
+            /*************************************/
+            const formData = new FormData();
+
+            /*************************************/
+            /* ARCHIVO BINARIO */
+            /*************************************/
+            if (datos.archivo) {
+                formData.append("archivo", datos.archivo, datos.archivo.name);
+            }
+
+            /*************************************/
+            /* DATOS OBJETO */
+            /*************************************/
+            const jsonBlob = new Blob([JSON.stringify(dataEnviar)], {
+                type: "application/json",
+            });
+
+            formData.append("datos", jsonBlob);
+
+            return formData;
+        }
+        async function registrarBitacoraEditarNormaInv(
+            statusCode,
+            mensaje,
+            tituloNorma,
+            metodo = CONFIG_EDITAR_NORMA_INV.metodo
+        ) {
+            if (
+                !window.bitacoraService ||
+                typeof window.bitacoraService.operationLog !== "function"
+            ) {
+                return;
+            }
+
+            try {
+                await window.bitacoraService.operationLog(
+                    metodo,
+                    CONFIG_EDITAR_NORMA_INV.moduloBitacora,
+                    CONFIG_EDITAR_NORMA_INV.accionBitacora,
+                    `Se actualiza la norma del inventario: ${tituloNorma}`,
+                    Number(statusCode || 500),
+                    mensaje || ""
+                );
+            } catch (error) {
+                console.warn(
+                    "[EDITAR NORMA INV] No se pudo registrar la bitácora:",
+                    error
+                );
+            }
+        }
+
+        function abrirResultadoEditarNormaInv(
+            tipo,
+            titulo,
+            mensaje,
+            onAceptar = null
+        ) {
+            cerrarModalEditarNormaInv();
+
+            setTimeout(function () {
+                if (typeof window.abrirModal !== "function") {
+                    return;
+                }
+
+                window.abrirModal({
+                    paso: 2,
+                    tipo,
+                    titulo,
+                    contenido: mensaje,
+                    btnAceptar: "Cerrar",
+
+                    onAceptar: async function (ok) {
+                        if (!ok) {
+                            return;
+                        }
+
+                        if (typeof onAceptar === "function") {
+                            await onAceptar();
+                        }
+                    },
+                });
+            }, 400);
+        }
+
+        function obtenerMensajeErrorEditarNormaInv(resultado, response, fallback) {
+            return (
+                resultado?.errorMessageDTO?.message ||
+                resultado?.errorMessageDTO?.detail ||
+                resultado?.dataResponse?.mensaje ||
+                resultado?.message ||
+                (response?.status ? `Error HTTP ${response.status}` : "") ||
+                fallback ||
+                "No fue posible actualizar la norma."
+            );
+        }
+
+        async function procesarEditarNormaInv() {
+            if (ESTADO_EDITAR_NORMA_INV.enviando) {
+                return;
+            }
+
+            const datos = obtenerDatosFormularioEditarNormaInv();
+            const usarSinVersion = !datos.crearVersion || datos.renovacionVigencia;
+            const metodoPeticion = usarSinVersion
+                ? CONFIG_EDITAR_NORMA_INV.metodoSinVersion
+                : CONFIG_EDITAR_NORMA_INV.metodo;
+
+            try {
+                const formularioValido = validarFormularioEditarNormaInv(datos);
+
+                if (!formularioValido) {
+                    return;
+                }
+            } catch (error) {
+                mostrarMensajeEditarNormaInv(
+                    error?.message || "Revisa la información ingresada.",
+                    "error"
+                );
+                return;
+            }
+
+            ESTADO_EDITAR_NORMA_INV.enviando = true;
+            mostrarMensajeEditarNormaInv("Actualizando la norma...", "procesando");
+
+            if (typeof window.mostrarLoaderPeticion === "function") {
+                window.mostrarLoaderPeticion();
+            }
+
+            try {
+                sessionStorage.setItem(
+                    "functional-id",
+                    CONFIG_EDITAR_NORMA_INV.functionalId
+                );
+
+                if (typeof window.tokenizerTransactionId !== "function") {
+                    throw new Error("No se encontró tokenizerTransactionId.");
+                }
+
+                await window.tokenizerTransactionId();
+
+                const headers =
+                    typeof window.getGlobalHeaders === "function"
+                        ? await window.getGlobalHeaders()
+                        : {};
+
+                delete headers["Content-Type"];
+                delete headers["content-type"];
+                headers.Accept = "application/json";
+
+                const endpointSeleccionado = usarSinVersion
+                    ? CONFIG_EDITAR_NORMA_INV.endpointSinVersion
+                    : CONFIG_EDITAR_NORMA_INV.endpoint;
+
+                const endpoint = endpointSeleccionado
+                    .replace(
+                        ":contenidoPadreId",
+                        encodeURIComponent(datos.contenidoPadreId)
+                    )
+                    .replace(":contenidoHijaId", encodeURIComponent(datos.contenidoId))
+                    .replace(":contenidoId", encodeURIComponent(datos.contenidoId));
+
+                const url = /^https?:\/\//i.test(endpoint)
+                    ? endpoint
+                    : `${obtenerBaseUrlEditarNormaInv()}${endpoint.startsWith("/") ? "" : "/"
+                    }${endpoint}`;
+
+                const formData = construirFormDataEditarNormaInv(datos);
+
+                const peticion = fetch(url, {
+                    method: metodoPeticion,
+                    headers,
+                    body: formData,
+                });
+
+                cerrarModalEditarNormaInv();
+
+                const response = await peticion;
+                const responseText = await response.text();
+
+                let resultado = {};
+
+                try {
+                    resultado = responseText ? JSON.parse(responseText) : {};
+                } catch {
+                    resultado = {
+                        statusCode: response.status,
+                        message: responseText,
+                    };
+                }
+
+                if (
+                    !response.ok ||
+                    (resultado?.statusCode !== undefined &&
+                        Number(resultado.statusCode) >= 400)
+                ) {
+                    const error = new Error(
+                        obtenerMensajeErrorEditarNormaInv(
+                            resultado,
+                            response,
+                            "No fue posible actualizar la norma."
+                        )
+                    );
+
+                    error.statusCode =
+                        resultado?.errorMessageDTO?.statusCode ||
+                        resultado?.statusCode ||
+                        response.status;
+                    error.response = resultado;
+                    throw error;
+                }
+
+                const mensaje =
+                    resultado?.message ||
+                    resultado?.dataResponse?.mensaje ||
+                    "La norma se actualizó correctamente.";
+
+                await registrarBitacoraEditarNormaInv(
+                    resultado?.statusCode || response.status || 200,
+                    mensaje,
+                    datos.titulo,
+                    metodoPeticion
+                );
+
+                if (typeof window.obtenerInformacionTabla === "function") {
+                    await window.obtenerInformacionTabla();
+                }
+
+                limpiarModalEditarNormaInv();
+
+                abrirResultadoEditarNormaInv("Aceptar", "Completado", mensaje);
+            } catch (error) {
+                console.error("[EDITAR NORMA INV] Error:", error);
+
+                const statusCode =
+                    error?.response?.errorMessageDTO?.statusCode ||
+                    error?.response?.statusCode ||
+                    error?.statusCode ||
+                    500;
+
+                const mensaje = obtenerMensajeErrorEditarNormaInv(
+                    error?.response,
+                    { status: error?.statusCode },
+                    error?.message
+                );
+
+                await registrarBitacoraEditarNormaInv(statusCode, mensaje, datos.titulo, metodoPeticion);
+
+                limpiarModalEditarNormaInv();
+                abrirResultadoEditarNormaInv("Error", "Error", mensaje);
+            } finally {
+                ESTADO_EDITAR_NORMA_INV.enviando = false;
+
+                if (typeof window.ocultarLoaderPeticion === "function") {
+                    window.ocultarLoaderPeticion();
+                }
+            }
+        }
+
+        function inicializarModalEditarNormaInv() {
+            const modal = obtenerElementoEditarNormaInv("editar-norma-inv");
+
+            if (!modal || ESTADO_EDITAR_NORMA_INV.inicializado) {
+                return;
+            }
+
+            ESTADO_EDITAR_NORMA_INV.inicializado = true;
+
+            const inputArchivo = obtenerElementoEditarNormaInv(
+                "archivo-editar-norma-inv"
+            );
+            if (inputArchivo) {
+                inputArchivo.accept = ".pdf";
+            }
+            const uploadBox = obtenerElementoEditarNormaInv(
+                "upload-box-editar-norma-inv"
+            );
+            const renovacion = obtenerElementoEditarNormaInv(
+                "renovacion-vigencia-editar-norma-inv"
+            );
+            const clasificacion = obtenerElementoEditarNormaInv(
+                "clasificacion-editar-norma-inv"
+            );
+
+            uploadBox?.addEventListener("click", function () {
+                if (renovacion?.checked) return;
+                inputArchivo?.click();
+            });
+
+            uploadBox?.addEventListener("keydown", function (event) {
+                if (renovacion?.checked) return;
+
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    inputArchivo?.click();
+                }
+            });
+
+            inputArchivo?.addEventListener("change", function () {
+                const archivo = inputArchivo.files?.[0] || null;
+
+                if (!archivo) {
+                    limpiarArchivoEditarNormaInv();
+                    return;
+                }
+
+                asignarArchivoEditarNormaInv(archivo);
+            });
+
+            ["dragenter", "dragover"].forEach(function (tipoEvento) {
+                uploadBox?.addEventListener(tipoEvento, function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    if (renovacion?.checked) return;
+
+                    uploadBox.classList.add("arrastrando");
+
+                    if (event.dataTransfer) {
+                        event.dataTransfer.dropEffect = "copy";
+                    }
+                });
+            });
+
+            ["dragleave", "dragend"].forEach(function (tipoEvento) {
+                uploadBox?.addEventListener(tipoEvento, function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    uploadBox.classList.remove("arrastrando");
+                });
+            });
+
+            uploadBox?.addEventListener("drop", function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                uploadBox.classList.remove("arrastrando");
+
+                if (renovacion?.checked) return;
+
+                const archivos = Array.from(event.dataTransfer?.files || []);
+
+                if (!archivos.length) {
+                    mostrarMensajeEditarNormaInv(
+                        "No se encontró un archivo válido.",
+                        "error"
+                    );
+                    return;
+                }
+
+                if (archivos.length > 1) {
+                    mostrarMensajeEditarNormaInv(
+                        "Solo puedes cargar un archivo a la vez.",
+                        "error"
+                    );
+                    return;
+                }
+
+                asignarArchivoEditarNormaInv(archivos[0]);
+            });
+
+            obtenerElementoEditarNormaInv(
+                "btn-limpiar-archivo-editar-norma-inv"
+            )?.addEventListener("click", function () {
+                limpiarArchivoEditarNormaInv();
+                ocultarMensajeEditarNormaInv();
+            });
+
+            clasificacion?.addEventListener("change", function () {
+                actualizarAlertaClasificacionEditarNormaInv();
+            });
+
+            renovacion?.addEventListener("change", function () {
+                aplicarBloqueoRenovacionEditarNormaInv();
+                ocultarMensajeEditarNormaInv();
+            });
+
+            obtenerElementoEditarNormaInv(
+                "crear-version-editar-norma-inv"
+            )?.addEventListener("change", function () {
+                aplicarBloqueoRenovacionEditarNormaInv();
+                ocultarMensajeEditarNormaInv();
+            });
+
+            obtenerElementoEditarNormaInv(
+                "btn-guardar-editar-norma-inv"
+            )?.addEventListener("click", procesarEditarNormaInv);
+
+            ["btn-cerrar-editar-norma-inv", "btn-cancelar-editar-norma-inv"].forEach(
+                function (id) {
+                    obtenerElementoEditarNormaInv(id)?.addEventListener(
+                        "click",
+                        function () {
+                            cerrarModalEditarNormaInv();
+                            limpiarModalEditarNormaInv();
+                        }
+                    );
+                }
+            );
+
+            document.addEventListener("click", function (event) {
+                const boton = event.target.closest(".editar-norma-inv");
+
+                if (!boton) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+                abrirModalEditarNormaInv(boton);
+            });
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key !== "Escape") {
+                    return;
+                }
+
+                if (modal.classList.contains("show")) {
+                    cerrarModalEditarNormaInv();
+                    limpiarModalEditarNormaInv();
+                }
+            });
+        }
+
+        function ejecutarEditarNormaInvSeguro() {
+            try {
+                inicializarModalEditarNormaInv();
+            } catch (error) {
+                console.error("[EDITAR NORMA INV] Error al inicializar:", error);
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener(
+                "DOMContentLoaded",
+                ejecutarEditarNormaInvSeguro,
+                {
+                    once: true,
+                }
+            );
+        } else {
+            ejecutarEditarNormaInvSeguro();
+        }
+
+        window.abrirModalEditarNormaInv = abrirModalEditarNormaInv;
+    })();
+</script>

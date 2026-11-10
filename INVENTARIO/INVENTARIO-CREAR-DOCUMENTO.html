@@ -1,0 +1,1262 @@
+<!-- MODAL CREAR DOCUMENTO DE INVENTARIO -->
+<div class="crear-documento-inventario-root">
+
+    <div class="modal fade crear-documento-inventario-modal" id="crear-nuevo-inventario" tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <!-- HEADER -->
+                <div class="modal-header">
+
+                    <h5 class="modal-title d-flex align-items-center">
+
+                        <div class="crear-documento-inventario-icon-circle">
+                            <i class="bi bi-plus-circle"></i>
+                        </div>
+
+                        <span>Crear</span>
+
+                    </h5>
+
+                    <button type="button" class="crear-documento-inventario-btn-cerrar" id="btn-cerrar-crear-inventario"
+                        aria-label="Cerrar">
+                        &times;
+                    </button>
+
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body">
+
+                    <div class="crear-documento-inventario-form-container">
+
+                        <p class="crear-documento-inventario-leyenda" id="leyenda-crear-inventario">
+                            Para crear un documento selecciona o arrastra un archivo en formato
+                            .pdf o .docx.
+                        </p>
+
+                        <input type="file" id="archivo-crear-inventario" accept=".pdf,.doc,.docx" hidden>
+
+                        <!-- ARCHIVO SELECCIONADO -->
+                        <div class="crear-documento-inventario-selector">
+
+
+
+                            <span class="crear-documento-inventario-nombre-archivo"
+                                id="nombre-archivo-crear-inventario">
+                                Sin archivos seleccionados
+                            </span>
+
+                            <button type="button" class="btn btn-outline-secondary"
+                                id="btn-limpiar-archivo-crear-inventario" disabled>
+                                Limpiar
+                            </button>
+
+                        </div>
+
+                        <!-- DROPZONE -->
+                        <div class="crear-documento-inventario-upload-box" id="upload-box-crear-inventario"
+                            role="button" tabindex="0" aria-label="Seleccionar o arrastrar archivo">
+
+                            <div class="crear-documento-inventario-upload-icon">
+                                <i class="bi bi-download"></i>
+                            </div>
+
+                            <div class="crear-documento-inventario-upload-text">
+                                Arrastra y suelta el archivo aquí para añadirlo
+                            </div>
+
+                        </div>
+
+                        <!-- MENSAJE -->
+                        <div class="crear-documento-inventario-mensaje" id="mensaje-crear-inventario" hidden></div>
+
+                    </div>
+
+                </div>
+
+                <!-- FOOTER -->
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-outline-secondary" id="btn-guardar-crear-inventario" disabled>
+                        Guardar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<style>
+    /*************************************/
+    /* MODAL CREAR DOCUMENTO INVENTARIO */
+    /*************************************/
+    .crear-documento-inventario-root .crear-documento-inventario-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        overflow-x: hidden;
+        overflow-y: auto;
+        outline: 0;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-modal.show {
+        display: block;
+    }
+
+    .crear-documento-inventario-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 99998;
+        background: rgba(0, 0, 0, 0.55);
+    }
+
+    .crear-documento-inventario-root .modal-dialog {
+        position: relative;
+        z-index: 100000;
+        width: auto;
+        max-width: 900px;
+        margin: 1.75rem auto;
+    }
+
+    .crear-documento-inventario-root .modal-content {
+        overflow: hidden;
+        background: #fff;
+        border: none;
+        border-radius: 6px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+    }
+
+    .crear-documento-inventario-root .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 22px;
+        color: #222;
+        background: #fff;
+        border-bottom: 1px solid #e4e4e4;
+    }
+
+    .crear-documento-inventario-root .modal-title {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .crear-documento-inventario-root .modal-body {
+        padding: 20px 22px 18px;
+        background: #fff;
+    }
+
+    .crear-documento-inventario-root .modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 0 22px 20px;
+        background: #fff;
+        border-top: none;
+    }
+
+
+    /*************************************/
+    /* ICONO */
+    /*************************************/
+    .crear-documento-inventario-root .crear-documento-inventario-icon-circle {
+        width: 42px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-right: 10px;
+        color: #8f365f;
+        font-size: 16px;
+        background: #fff;
+        border: 2px solid #8f365f;
+        border-radius: 50%;
+    }
+
+
+    /*************************************/
+    /* CERRAR */
+    /*************************************/
+    .crear-documento-inventario-root .crear-documento-inventario-btn-cerrar {
+        padding: 4px 10px;
+        color: #222;
+        font-size: 30px;
+        font-weight: 300;
+        line-height: 1;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+    }
+
+
+    /*************************************/
+    /* LEYENDA */
+    /*************************************/
+    .crear-documento-inventario-root .crear-documento-inventario-leyenda {
+        margin: 0 0 14px;
+        color: #606060;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+
+    /*************************************/
+    /* SELECTOR */
+    /*************************************/
+    .crear-documento-inventario-root .crear-documento-inventario-selector {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        margin-bottom: 14px;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-selector .btn {
+        min-height: 42px;
+        padding: 8px 16px;
+        color: #777;
+        font-size: 20px;
+        background: #fff;
+        border-color: #aaa;
+        border-radius: 2px;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-selector .btn:last-child {
+        margin-left: auto;
+        color: #cba9b9;
+        border: 2px solid #cba9b9;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-selector .btn:last-child:not(:disabled) {
+        color: #8f365f;
+        border-color: #8f365f;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-nombre-archivo {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        color: #666;
+        font-size: 15px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+
+    /*************************************/
+    /* DROPZONE */
+    /*************************************/
+    .crear-documento-inventario-root .crear-documento-inventario-upload-box {
+        width: 100%;
+        min-height: 210px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        padding: 28px 18px;
+        text-align: center;
+        cursor: pointer;
+        background: #fff;
+        border: 2px dashed #d4d4d4;
+        border-radius: 10px;
+        transition:
+            border-color 0.2s ease,
+            background-color 0.2s ease;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-upload-box:hover,
+    .crear-documento-inventario-root .crear-documento-inventario-upload-box:focus,
+    .crear-documento-inventario-root .crear-documento-inventario-upload-box.arrastrando {
+        outline: none;
+        background: #fbf7f9;
+        border-color: #8f365f;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-upload-icon {
+        width: 54px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        color: #777;
+        font-size: 26px;
+        background: #eee;
+        border-radius: 50%;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-upload-text {
+        color: #666;
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+
+    /*************************************/
+    /* BOTÓN GUARDAR */
+    /*************************************/
+    .crear-documento-inventario-root #btn-guardar-crear-inventario {
+        min-width: 190px;
+        min-height: 48px;
+        color: #cba9b9;
+        font-size: 16px;
+        font-weight: 600;
+        background: #fff;
+        border: 2px solid #cba9b9;
+        border-radius: 3px;
+    }
+
+    .crear-documento-inventario-root #btn-guardar-crear-inventario:not(:disabled) {
+        color: #8f365f;
+        border-color: #8f365f;
+    }
+
+
+    /*************************************/
+    /* MENSAJE */
+    /*************************************/
+    .crear-documento-inventario-root .crear-documento-inventario-mensaje {
+        margin-top: 15px;
+        padding: 12px 14px;
+        font-size: 14px;
+        line-height: 1.5;
+        border-radius: 6px;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-mensaje[hidden] {
+        display: none !important;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-mensaje.error {
+        color: #721c24;
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+    }
+
+
+    /*************************************/
+    /* RESPONSIVE */
+    /*************************************/
+    @media (max-width: 768px) {
+        .crear-documento-inventario-root .modal-dialog {
+            margin: 15px;
+        }
+
+        .crear-documento-inventario-root .modal-title {
+            font-size: 22px;
+        }
+
+        .crear-documento-inventario-root .crear-documento-inventario-selector {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .crear-documento-inventario-root .crear-documento-inventario-selector .btn {
+            width: 100%;
+            margin-left: 0 !important;
+        }
+
+        .crear-documento-inventario-root .crear-documento-inventario-nombre-archivo {
+            width: 100%;
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        .crear-documento-inventario-root .modal-footer {
+            padding: 0 20px 20px;
+        }
+
+        .crear-documento-inventario-root #btn-guardar-crear-inventario {
+            width: 100%;
+        }
+    }
+
+    /*************************************/
+    /* CAMPOS DE TIPO Y CONTENIDO */
+    /*************************************/
+    .crear-documento-inventario-root .crear-documento-inventario-campo {
+        margin-bottom: 16px;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-campo[hidden] {
+        display: none !important;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-campo label {
+        display: block;
+        margin-bottom: 6px;
+        color: #333;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .crear-documento-inventario-root .crear-documento-inventario-campo .form-control {
+        min-height: 42px;
+    }
+</style>
+
+
+<script>
+    /*************************************/
+    /* ESTADO */
+    /*************************************/
+    window.archivoCrearInventarioSeleccionado = null;
+
+    let crearDocumentoInventarioEnProceso = false;
+    let tipoCreacionInventarioActual = "documento";
+    let contenidoIdFormatoAdjuntoActual = null;
+    let tipoRegistroFormatoAdjuntoActual = "DOCUMENTO";
+
+    /*************************************/
+    /* CONFIGURACIÓN */
+    /*************************************/
+    const configuracionCrearInventario = {
+        documento: {
+            endpoint: "/api/v1/inventario/documentos",
+
+            functionalId: "Crear documento inventario",
+
+            moduloBitacora: "Inventario normativas",
+
+            accionBitacora: "Crear documento inventario",
+
+            descripcionBitacora: "Alta de documento de inventario",
+
+            mensajeExito: "Documento creado correctamente.",
+        },
+
+        formatoAdjunto: {
+            endpoint: "/api/v1/inventario/documentos/:contenidoId/formatos",
+
+            functionalId: "Crear formato adjunto de inventario",
+
+            moduloBitacora: "Inventario normas",
+
+            accionBitacora: "Crear formato adjunto",
+
+            descripcionBitacora: "Alta de formato adjunto de documento",
+
+            mensajeExito: "Formato adjunto creado correctamente.",
+        },
+    };
+
+    /*************************************/
+    /* ESCAPAR TEXTO */
+    /*************************************/
+    function escaparTextoOracle(texto = "") {
+        return String(texto).replace(/'/g, "''");
+    }
+
+    /*************************************/
+    /* NORMALIZAR TIPO */
+    /*************************************/
+    function normalizarTipoCreacionInventario(tipo) {
+        const valor = String(tipo || "")
+            .trim()
+            .toLowerCase();
+
+        return valor === "formato-adjunto" ||
+            valor === "formato" ||
+            valor === "adjunto"
+            ? "formato-adjunto"
+            : "documento";
+    }
+
+    /*************************************/
+    /* OBTENER TIPO DEL DOM POR CONTENIDO ID */
+    /*************************************/
+    function obtenerTipoRegistroFormatoDesdeDom(contenidoId, tipoAlternativo = "DOCUMENTO") {
+        const idBuscado = String(contenidoId ?? "").trim();
+
+        if (idBuscado) {
+            const enlaces = document.querySelectorAll(".llamar-visor");
+
+            for (const enlace of enlaces) {
+                // Comparar únicamente IDs de contenido, nunca el ID del archivo.
+                const idEnlace = String(
+                    enlace.dataset.contenidoId ||
+                    enlace.dataset.idContenido ||
+                    enlace.dataset.id ||
+                    ""
+                ).trim();
+
+                if (idEnlace !== idBuscado) continue;
+
+                const tipo = String(
+                    enlace.dataset.tipoRegistro || enlace.dataset.tipo || ""
+                ).trim().toUpperCase();
+
+                if (["NORMA", "DOCUMENTO", "DOCUMENTOS"].includes(tipo)) {
+                    return tipo;
+                }
+            }
+        }
+
+        // Mantener el comportamiento anterior si el registro no está en el DOM.
+        return String(tipoAlternativo || "DOCUMENTO").trim().toUpperCase();
+    }
+
+    /*************************************/
+    /* OBTENER CONFIGURACIÓN */
+    /*************************************/
+    function obtenerConfiguracionCrearInventario() {
+        if (tipoCreacionInventarioActual === "formato-adjunto") {
+            if (tipoRegistroFormatoAdjuntoActual === "NORMA") {
+                return {
+                    ...configuracionCrearInventario.formatoAdjunto,
+                    endpoint: "/api/v1/inventario/normas/:contenidoId/formatos",
+                    descripcionBitacora: "Alta de formato adjunto de norma",
+                };
+            }
+
+            return configuracionCrearInventario.formatoAdjunto;
+        }
+
+        return configuracionCrearInventario.documento;
+    }
+
+    /*************************************/
+    /* OBTENER MENSAJE */
+    /*************************************/
+    function obtenerMensajeRespuestaCrearInventario(
+        respuesta,
+        textoRespuesta = "",
+        mensajeDefault = "Ocurrió un error al procesar el archivo."
+    ) {
+        return (
+            respuesta?.errorMessageDTO?.message ||
+            respuesta?.errorMessageDTO?.detail ||
+            respuesta?.dataResponse?.mensaje ||
+            respuesta?.message ||
+            textoRespuesta ||
+            mensajeDefault
+        );
+    }
+
+    /*************************************/
+    /* MOSTRAR MENSAJE LOCAL */
+    /*************************************/
+    function mostrarMensajeCrearInventario(mensaje = "") {
+        const contenedor = document.getElementById("mensaje-crear-inventario");
+
+        if (!contenedor) {
+            return;
+        }
+
+        contenedor.hidden = false;
+        contenedor.textContent = mensaje;
+        contenedor.classList.add("error");
+    }
+
+    /*************************************/
+    /* OCULTAR MENSAJE LOCAL */
+    /*************************************/
+    function ocultarMensajeCrearInventario() {
+        const contenedor = document.getElementById("mensaje-crear-inventario");
+
+        if (!contenedor) {
+            return;
+        }
+
+        contenedor.hidden = true;
+        contenedor.textContent = "";
+        contenedor.classList.remove("error");
+    }
+
+    /*************************************/
+    /* ACTUALIZAR MODO DEL MODAL */
+    /*************************************/
+    function actualizarModoCrearInventario() {
+        const tituloModal = document.querySelector(
+            "#crear-nuevo-inventario .modal-title span"
+        );
+
+        const leyenda = document.getElementById("leyenda-crear-inventario");
+
+        const inputArchivo = document.getElementById("archivo-crear-inventario");
+
+        const esFormatoAdjunto = tipoCreacionInventarioActual === "formato-adjunto";
+
+        if (tituloModal) {
+            tituloModal.textContent = esFormatoAdjunto
+                ? "Crear formato adjunto"
+                : "Crear documento";
+        }
+
+        if (leyenda) {
+            leyenda.textContent = esFormatoAdjunto
+                ? "Para crear un formato adjunto selecciona o arrastra un archivo en formato .pdf, .docx, .xls, .xlsx o .pptx."
+                : "Para actualizar el Documento principal selecciona o arrastra un archivo en formato .pdf o .docx.";
+        }
+
+        if (inputArchivo) {
+            inputArchivo.accept = esFormatoAdjunto
+                ? ".pdf,.docx,.xls,.xlsx,.pptx"
+                : ".pdf,.docx";
+        }
+
+        actualizarControlesArchivoCrearInventario();
+    }
+
+    /*************************************/
+    /* ACTUALIZAR CONTROLES */
+    /*************************************/
+    function actualizarControlesArchivoCrearInventario() {
+        const nombreArchivo = document.getElementById(
+            "nombre-archivo-crear-inventario"
+        );
+
+        const btnLimpiar = document.getElementById(
+            "btn-limpiar-archivo-crear-inventario"
+        );
+
+        const btnGuardar = document.getElementById("btn-guardar-crear-inventario");
+
+        const archivo = window.archivoCrearInventarioSeleccionado;
+
+        const contenidoIdValido =
+            tipoCreacionInventarioActual !== "formato-adjunto" ||
+            (Number.isInteger(Number(contenidoIdFormatoAdjuntoActual)) &&
+                Number(contenidoIdFormatoAdjuntoActual) > 0);
+
+        if (nombreArchivo) {
+            nombreArchivo.textContent = archivo
+                ? archivo.name
+                : "Sin archivos seleccionados";
+        }
+
+        if (btnLimpiar) {
+            btnLimpiar.disabled = !archivo || crearDocumentoInventarioEnProceso;
+        }
+
+        if (btnGuardar) {
+            btnGuardar.disabled =
+                !archivo || !contenidoIdValido || crearDocumentoInventarioEnProceso;
+        }
+    }
+
+    /*************************************/
+    /* VALIDAR EXTENSIÓN SEGÚN TIPO */
+    /*************************************/
+    function validarArchivoCrearInventario(archivo) {
+        if (!archivo) {
+            throw new Error("Selecciona un archivo.");
+        }
+
+        const extension = String(archivo.name || "")
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+        const esFormatoAdjunto = tipoCreacionInventarioActual === "formato-adjunto";
+
+        const extensionesPermitidas = esFormatoAdjunto
+            ? ["pdf", "docx", "xls", "xlsx", "pptx"]
+            : ["pdf", "docx"];
+
+        if (!extension || !extensionesPermitidas.includes(extension)) {
+            throw new Error(
+                esFormatoAdjunto
+                    ? "El archivo debe estar en formato .pdf, .docx, .xls, .xlsx o .pptx."
+                    : "El Documento principal debe estar en formato .pdf o .docx."
+            );
+        }
+
+        return true;
+    }
+
+    /*************************************/
+    /* VALIDAR CONTENIDO ID */
+    /*************************************/
+    function validarContenidoIdFormatoAdjunto() {
+        if (tipoCreacionInventarioActual !== "formato-adjunto") {
+            return null;
+        }
+
+        const contenidoId = Number.parseInt(
+            String(contenidoIdFormatoAdjuntoActual || ""),
+            10
+        );
+
+        if (!Number.isInteger(contenidoId) || contenidoId <= 0) {
+            throw new Error(
+                "No se encontró un contenidoId válido para crear el formato adjunto."
+            );
+        }
+
+        return contenidoId;
+    }
+
+    /*************************************/
+    /* ASIGNAR ARCHIVO */
+    /*************************************/
+    function asignarArchivoCrearInventario(archivo) {
+        try {
+            validarArchivoCrearInventario(archivo);
+
+            window.archivoCrearInventarioSeleccionado = archivo;
+
+            ocultarMensajeCrearInventario();
+            actualizarControlesArchivoCrearInventario();
+        } catch (error) {
+            limpiarArchivoCrearInventario();
+
+            mostrarMensajeCrearInventario(
+                error?.message || "El archivo seleccionado no es válido."
+            );
+        }
+    }
+
+    /*************************************/
+    /* LIMPIAR ARCHIVO */
+    /*************************************/
+    function limpiarArchivoCrearInventario() {
+        const inputArchivo = document.getElementById("archivo-crear-inventario");
+
+        if (inputArchivo) {
+            inputArchivo.value = "";
+        }
+
+        window.archivoCrearInventarioSeleccionado = null;
+
+        actualizarControlesArchivoCrearInventario();
+    }
+
+    /*************************************/
+    /* LIMPIAR MODAL */
+    /*************************************/
+    function limpiarModalCrearInventario() {
+        limpiarArchivoCrearInventario();
+        ocultarMensajeCrearInventario();
+    }
+
+    /*************************************/
+    /* ABRIR MODAL */
+    /*************************************/
+    function abrirModalCrearInventario({
+        tipo = "documento",
+        contenidoId = null,
+        tipoRegistro = "DOCUMENTO",
+    } = {}) {
+        const modal = document.getElementById("crear-nuevo-inventario");
+
+        if (!modal) {
+            console.error("[CREAR INVENTARIO] No se encontró el modal.");
+
+            return;
+        }
+
+        tipoCreacionInventarioActual = normalizarTipoCreacionInventario(tipo);
+
+        // Reiniciar el tipo en cada apertura para no heredar el registro anterior.
+        tipoRegistroFormatoAdjuntoActual =
+            tipoCreacionInventarioActual === "formato-adjunto"
+                ? obtenerTipoRegistroFormatoDesdeDom(contenidoId, tipoRegistro)
+                : "DOCUMENTO";
+
+        contenidoIdFormatoAdjuntoActual =
+            tipoCreacionInventarioActual === "formato-adjunto"
+                ? Number(contenidoId) || null
+                : null;
+
+        limpiarModalCrearInventario();
+        actualizarModoCrearInventario();
+
+        const backdropId = "backdrop-crear-nuevo-inventario";
+
+        let backdrop = document.getElementById(backdropId);
+
+        if (!backdrop) {
+            backdrop = document.createElement("div");
+
+            backdrop.id = backdropId;
+            backdrop.className = "crear-documento-inventario-backdrop";
+
+            backdrop.addEventListener("click", function () {
+                if (crearDocumentoInventarioEnProceso) {
+                    return;
+                }
+
+                cerrarModalCrearInventario();
+                limpiarModalCrearInventario();
+            });
+
+            document.body.appendChild(backdrop);
+        }
+
+        modal.classList.add("show");
+        modal.style.display = "block";
+        modal.style.visibility = "visible";
+        modal.style.pointerEvents = "auto";
+
+        modal.setAttribute("aria-hidden", "false");
+
+        modal.setAttribute("aria-modal", "true");
+
+        document.body.classList.add("modal-open");
+
+        document.body.style.overflow = "hidden";
+    }
+
+    /*************************************/
+    /* CERRAR MODAL */
+    /*************************************/
+    function cerrarModalCrearInventario() {
+        const modal = document.getElementById("crear-nuevo-inventario");
+
+        if (modal) {
+            modal.classList.remove("show");
+            modal.style.display = "none";
+            modal.style.visibility = "hidden";
+            modal.style.pointerEvents = "none";
+
+            modal.setAttribute("aria-hidden", "true");
+
+            modal.removeAttribute("aria-modal");
+        }
+
+        document.getElementById("backdrop-crear-nuevo-inventario")?.remove();
+
+        document
+            .querySelectorAll(".crear-documento-inventario-backdrop")
+            .forEach(function (elemento) {
+                elemento.remove();
+            });
+
+        document.body.classList.remove("modal-open");
+
+        document.body.style.overflow = "";
+        document.body.style.paddingRight = "";
+    }
+
+    /*************************************/
+    /* BITÁCORA */
+    /*************************************/
+    async function registrarBitacoraCrearInventario(
+        statusCode,
+        mensaje,
+        contenidoId = null
+    ) {
+        if (
+            !window.bitacoraService ||
+            typeof window.bitacoraService.operationLog !== "function"
+        ) {
+            return;
+        }
+
+        const configuracion = obtenerConfiguracionCrearInventario();
+
+        const descripcion =
+            tipoCreacionInventarioActual === "formato-adjunto"
+                ? `${configuracion.descripcionBitacora}. ContenidoId: ${contenidoId}`
+                : configuracion.descripcionBitacora;
+
+        try {
+            await window.bitacoraService.operationLog(
+                "POST",
+                configuracion.moduloBitacora,
+                configuracion.accionBitacora,
+                descripcion,
+                Number(statusCode || 500),
+                mensaje || ""
+            );
+        } catch (bitacoraError) {
+            console.warn(
+                "[CREAR INVENTARIO] Error al registrar bitácora:",
+                bitacoraError
+            );
+        }
+    }
+
+    /*************************************/
+    /* PROCESAR CREACIÓN */
+    /*************************************/
+    async function crearDocumentoInventario() {
+        if (crearDocumentoInventarioEnProceso) {
+            return;
+        }
+
+        let respuesta = {};
+        let textoRespuesta = "";
+        let statusCode = 500;
+        let contenidoId = null;
+
+        try {
+            const archivo = window.archivoCrearInventarioSeleccionado;
+
+            validarArchivoCrearInventario(archivo);
+
+            contenidoId = validarContenidoIdFormatoAdjunto();
+
+            if (tipoCreacionInventarioActual === "formato-adjunto") {
+                tipoRegistroFormatoAdjuntoActual = obtenerTipoRegistroFormatoDesdeDom(
+                    contenidoId,
+                    tipoRegistroFormatoAdjuntoActual
+                );
+            }
+
+            const configuracion = obtenerConfiguracionCrearInventario();
+
+            crearDocumentoInventarioEnProceso = true;
+            actualizarControlesArchivoCrearInventario();
+            ocultarMensajeCrearInventario();
+
+            if (typeof window.mostrarLoaderPeticion === "function") {
+                window.mostrarLoaderPeticion();
+            }
+
+            sessionStorage.setItem("functional-id", configuracion.functionalId);
+
+            if (typeof window.tokenizerTransactionId !== "function") {
+                throw new Error("No se encontró la función tokenizerTransactionId.");
+            }
+
+            await window.tokenizerTransactionId();
+
+            if (typeof window.getGlobalHeaders !== "function") {
+                throw new Error("No se encontró la función getGlobalHeaders.");
+            }
+
+            const headers = await window.getGlobalHeaders();
+
+            delete headers["Content-Type"];
+            delete headers["content-type"];
+
+            const formData = new FormData();
+
+            formData.append("archivo", archivo, archivo.name);
+
+            const endpoint =
+                tipoCreacionInventarioActual === "formato-adjunto"
+                    ? configuracion.endpoint.replace(
+                        ":contenidoId",
+                        encodeURIComponent(contenidoId)
+                    )
+                    : configuracion.endpoint;
+
+            const baseUrl = String(window.apiConfig?.normativas || "").replace(
+                /\/+$/,
+                ""
+            );
+
+            if (!baseUrl) {
+                throw new Error("No se encontró la URL base de normativas.");
+            }
+
+            const response = await fetch(`${baseUrl}${endpoint}`, {
+                method: "POST",
+                headers,
+                body: formData,
+            });
+
+            statusCode = response.status;
+            textoRespuesta = await response.text();
+
+            try {
+                respuesta = textoRespuesta ? JSON.parse(textoRespuesta) : {};
+            } catch {
+                respuesta = {
+                    message: textoRespuesta,
+                };
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    obtenerMensajeRespuestaCrearInventario(respuesta, textoRespuesta)
+                );
+            }
+
+            if (
+                respuesta?.statusCode !== undefined &&
+                Number(respuesta.statusCode) >= 400
+            ) {
+                throw new Error(
+                    obtenerMensajeRespuestaCrearInventario(respuesta, textoRespuesta)
+                );
+            }
+
+            const mensajeExito = respuesta?.message || configuracion.mensajeExito;
+
+            await registrarBitacoraCrearInventario(
+                respuesta?.statusCode || response.status || 200,
+                mensajeExito,
+                contenidoId
+            );
+
+            cerrarModalCrearInventario();
+            limpiarModalCrearInventario();
+
+            if (typeof window.obtenerInformacionTabla === "function") {
+                await window.obtenerInformacionTabla();
+            }
+
+            if (typeof window.ocultarLoaderPeticion === "function") {
+                window.ocultarLoaderPeticion();
+            }
+
+            setTimeout(function () {
+                window.abrirModal?.({
+                    paso: 2,
+                    tipo: "Aceptar",
+                    titulo: "Completado",
+                    contenido: mensajeExito,
+                    btnAceptar: "Cerrar",
+                    onAceptar: async function () {
+                        if (typeof window.obtenerInformacionTabla === "function") {
+                            await window.obtenerInformacionTabla();
+                        }
+                    },
+                });
+            }, 500);
+        } catch (error) {
+            const mensajeError = obtenerMensajeRespuestaCrearInventario(
+                respuesta,
+                textoRespuesta,
+                error?.message || "No fue posible procesar el archivo."
+            );
+
+            await registrarBitacoraCrearInventario(
+                respuesta?.errorMessageDTO?.statusCode ||
+                respuesta?.statusCode ||
+                statusCode ||
+                500,
+                respuesta?.errorMessageDTO?.message || mensajeError,
+                contenidoId
+            );
+
+            cerrarModalCrearInventario();
+
+            if (typeof window.ocultarLoaderPeticion === "function") {
+                window.ocultarLoaderPeticion();
+            }
+
+            setTimeout(function () {
+                window.abrirModal?.({
+                    paso: 2,
+                    tipo: "Error",
+                    titulo: "Error",
+                    contenido: escaparTextoOracle(mensajeError),
+                    btnAceptar: "Cerrar",
+                });
+            }, 500);
+        } finally {
+            crearDocumentoInventarioEnProceso = false;
+
+            actualizarControlesArchivoCrearInventario();
+        }
+    }
+
+    /*************************************/
+    /* INICIALIZAR MODAL */
+    /*************************************/
+    function inicializarModalCrearInventario() {
+        const modal = document.getElementById("crear-nuevo-inventario");
+
+        const inputArchivo = document.getElementById("archivo-crear-inventario");
+
+        const uploadBox = document.getElementById("upload-box-crear-inventario");
+
+        const btnLimpiar = document.getElementById(
+            "btn-limpiar-archivo-crear-inventario"
+        );
+
+        const btnCerrar = document.getElementById("btn-cerrar-crear-inventario");
+
+        const btnGuardar = document.getElementById("btn-guardar-crear-inventario");
+
+        if (!modal || !inputArchivo || !uploadBox) {
+            console.error(
+                "[CREAR INVENTARIO] No se encontraron los elementos necesarios."
+            );
+
+            return;
+        }
+
+        if (modal.dataset.inicializado === "true") {
+            return;
+        }
+
+        modal.dataset.inicializado = "true";
+
+        uploadBox.addEventListener("click", function () {
+            inputArchivo.click();
+        });
+
+        uploadBox.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                inputArchivo.click();
+            }
+        });
+
+        inputArchivo.addEventListener("change", function () {
+            const archivo = inputArchivo.files?.[0] || null;
+
+            if (!archivo) {
+                limpiarArchivoCrearInventario();
+                return;
+            }
+
+            asignarArchivoCrearInventario(archivo);
+        });
+
+        ["dragenter", "dragover"].forEach(function (tipoEvento) {
+            uploadBox.addEventListener(tipoEvento, function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                uploadBox.classList.add("arrastrando");
+
+                if (event.dataTransfer) {
+                    event.dataTransfer.dropEffect = "copy";
+                }
+            });
+        });
+
+        ["dragleave", "dragend"].forEach(function (tipoEvento) {
+            uploadBox.addEventListener(tipoEvento, function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                uploadBox.classList.remove("arrastrando");
+            });
+        });
+
+        uploadBox.addEventListener("drop", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            uploadBox.classList.remove("arrastrando");
+
+            const archivos = Array.from(event.dataTransfer?.files || []);
+
+            if (!archivos.length) {
+                mostrarMensajeCrearInventario("No se encontró un archivo válido.");
+
+                return;
+            }
+
+            if (archivos.length > 1) {
+                mostrarMensajeCrearInventario("Solo puedes cargar un archivo a la vez.");
+
+                return;
+            }
+
+            asignarArchivoCrearInventario(archivos[0]);
+        });
+
+        btnLimpiar?.addEventListener("click", function () {
+            limpiarArchivoCrearInventario();
+            ocultarMensajeCrearInventario();
+        });
+
+        btnCerrar?.addEventListener("click", function () {
+            if (crearDocumentoInventarioEnProceso) {
+                return;
+            }
+
+            cerrarModalCrearInventario();
+            limpiarModalCrearInventario();
+        });
+
+        btnGuardar?.addEventListener("click", crearDocumentoInventario);
+
+        actualizarModoCrearInventario();
+        actualizarControlesArchivoCrearInventario();
+    }
+
+    /*************************************/
+    /* EVENTO BOTONES DE APERTURA */
+    /*************************************/
+    document.addEventListener("click", function (event) {
+        /*
+         * Crear documento:
+         * #btn-cargar-nuevo
+         *
+         * Crear formato adjunto:
+         * botón con data-crear-formato-adjunto="true"
+         * y data-contenido-id="..."
+         */
+        const boton = event.target.closest(
+            "#btn-cargar-nuevo, [data-crear-formato-adjunto='true']"
+        );
+
+        if (!boton) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const esFormatoAdjunto = boton.dataset.crearFormatoAdjunto === "true";
+
+        const contenidoId =
+            boton.dataset.contenidoId ||
+            boton.dataset.idContenido ||
+            boton.dataset.id ||
+            null;
+
+        abrirModalCrearInventario({
+            tipo: esFormatoAdjunto ? "formato-adjunto" : "documento",
+
+            contenidoId: esFormatoAdjunto ? contenidoId : null,
+
+            tipoRegistro:
+                boton.dataset.tipoRegistro || boton.dataset.tipo || "DOCUMENTO",
+        });
+    });
+
+    /*************************************/
+    /* CERRAR CON ESCAPE */
+    /*************************************/
+    document.addEventListener("keydown", function (event) {
+        if (event.key !== "Escape" || crearDocumentoInventarioEnProceso) {
+            return;
+        }
+
+        const modal = document.getElementById("crear-nuevo-inventario");
+
+        if (modal && modal.classList.contains("show")) {
+            cerrarModalCrearInventario();
+            limpiarModalCrearInventario();
+        }
+    });
+
+    /*************************************/
+    /* EXPONER APERTURA GLOBAL */
+    /*************************************/
+    window.abrirModalCrearInventario = abrirModalCrearInventario;
+
+    /*************************************/
+    /* INICIALIZACIÓN */
+    /*************************************/
+    function ejecutarCrearInventarioSeguro() {
+        try {
+            inicializarModalCrearInventario();
+        } catch (error) {
+            console.error("[CREAR INVENTARIO] Error al inicializar:", error);
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", ejecutarCrearInventarioSeguro, {
+            once: true,
+        });
+    } else {
+        ejecutarCrearInventarioSeguro();
+    }
+</script>

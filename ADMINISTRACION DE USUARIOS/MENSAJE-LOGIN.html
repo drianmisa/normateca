@@ -1,0 +1,145 @@
+<div class="banobras-login-messages" aria-hidden="true"
+    data-message-active-session="${configuration.activeSessionMessage}"
+    data-message-user-not-found="${configuration.userNotFoundMessage}"
+    data-message-account-locked="${configuration.accountLockedMessage}"
+    data-message-generic-auth-failed="${configuration.genericAuthFailedMessage}"
+    data-message-inactivity-block="${configuration.inactivityBlockMessage}"
+    data-message-failed-attempts-lockout="${configuration.failedAttemptsLockoutMessage}"></div>
+
+<style>
+    .banobras-login-messages {
+        display: none;
+    }
+
+    .sign-in-form [role="alert"] {
+        visibility: hidden;
+    }
+</style>
+
+
+<script>
+    (function () {
+        var DEBUG = false;
+        var RESOURCE_PORTLET_NAME = 'com_liferay_login_web_portlet_LoginPortlet';
+        var RESOURCE_COMMAND_NAME = '/banobras/login-failure-reason';
+        var IDENTIFIER_SELECTOR = 'input[name$="_login"]';
+        var IDENTIFIER_PARAM_NAME = 'screenName';
+        var ALERT_SELECTORS = [
+            '.sign-in-form [role="alert"]',
+            '.portlet-login [role="alert"]',
+            '.login-form [role="alert"]',
+            'form[action*="login"] [role="alert"]',
+            '.alert-danger[role="alert"]'
+        ];
+        var NAMESPACE = '_' + RESOURCE_PORTLET_NAME + '_';
+        var MAX_WAIT_MS = 5000;
+        var POLL_MS = 200;
+
+        function log() {
+            if (DEBUG && window.console) {
+                console.log.apply(console, ['[banobras-login-messages]'].concat([].slice.call(arguments)));
+            }
+        }
+
+        var container = fragmentElement.querySelector('.banobras-login-messages');
+        if (!container) { return; }
+
+        var d = container.dataset;
+        var messages = {
+            ACTIVE_SESSION: d.messageActiveSession || '',
+            USER_NOT_FOUND: d.messageUserNotFound || '',
+            ACCOUNT_LOCKED: d.messageAccountLocked || '',
+            GENERIC_AUTH_FAILED: d.messageGenericAuthFailed || '',
+            INACTIVITY_BLOCK: d.messageInactivityBlock || '',
+            FAILED_ATTEMPTS_LOCKOUT: d.messageFailedAttemptsLockout || ''
+        };
+        log('messages', messages);
+
+        function findAlert() {
+            for (var i = 0; i < ALERT_SELECTORS.length; i++) {
+                var el = document.querySelector(ALERT_SELECTORS[i]);
+                if (el && (el.textContent || '').toLowerCase().indexOf('cookie') === -1) {
+                    return el;
+                }
+            }
+            return null;
+        }
+
+        function reveal(el) {
+            if (el) { el.style.setProperty('visibility', 'visible', 'important'); }
+        }
+
+        function replaceText(el, msg) {
+            var lastText = null;
+            for (var i = 0; i < el.childNodes.length; i++) {
+                var n = el.childNodes[i];
+                if (n.nodeType === 3 && n.textContent.trim()) { lastText = n; }
+            }
+            if (lastText) { lastText.textContent = msg; }
+            else { el.appendChild(document.createTextNode(msg)); }
+        }
+
+        var reasonResolved = false;
+        var customMessage = '';
+        var done = false;
+
+        function tryFinish() {
+            if (done || !reasonResolved) { return; }
+            var el = findAlert();
+            if (!el) { return; }
+            if (customMessage) { replaceText(el, customMessage); }
+            reveal(el);
+            done = true;
+            log('done, custom=', !!customMessage);
+        }
+
+        var started = Date.now();
+        var timer = setInterval(function () {
+            tryFinish();
+            if (done || (Date.now() - started) > MAX_WAIT_MS) {
+                clearInterval(timer);
+                if (!done) { reveal(findAlert()); }
+            }
+        }, POLL_MS);
+
+        function getIdentifier() {
+            var f = document.querySelector(IDENTIFIER_SELECTOR);
+            return f ? f.value.trim() : '';
+        }
+
+        function buildURL(id) {
+            var p = {};
+            p['p_p_id'] = RESOURCE_PORTLET_NAME;
+            p['p_p_lifecycle'] = '2';
+            p['p_p_state'] = 'normal';
+            p['p_p_mode'] = 'view';
+            p['p_p_resource_id'] = RESOURCE_COMMAND_NAME;
+            p['p_p_cacheability'] = 'cacheLevelPage';
+            if (id) { p[NAMESPACE + IDENTIFIER_PARAM_NAME] = id; }
+            return window.location.pathname + '?' + new URLSearchParams(p).toString();
+        }
+
+        var identifier = getIdentifier();
+        log('identifier=', identifier);
+
+        if (!identifier) {
+            reasonResolved = true;
+            tryFinish();
+            return;
+        }
+
+        fetch(buildURL(identifier), { credentials: 'same-origin' })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (data) {
+                log('resource response', data);
+                var reason = data && data.reason;
+                if (reason && reason !== 'NONE' && messages[reason]) {
+                    customMessage = messages[reason];
+                }
+                reasonResolved = true;
+                tryFinish();
+            })
+            .catch(function (e) { log('fetch error', e); reasonResolved = true; tryFinish(); });
+    })();
+
+</script>

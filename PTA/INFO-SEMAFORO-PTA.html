@@ -1,0 +1,87 @@
+<style>
+    .info-semaforo-cu12 {
+        margin-top: 40PX;
+        padding: 18px 22px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+        margin-bottom: 40px;
+    }
+
+    .info-semaforo-cu12 h3 {
+        margin: 0 0 10px;
+        font-size: 20px;
+        font-weight: 600;
+        color: #222;
+    }
+
+    .info-semaforo-cu12 p {
+        margin: 0 0 12px;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .info-semaforo-cu12 ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .info-semaforo-cu12 li {
+        margin: 6px 0;
+        line-height: 1.5;
+    }
+
+    .info-semaforo-cu12 .verde {
+        color: #28a745;
+        font-weight: 700;
+    }
+
+    .info-semaforo-cu12 .amarillo {
+        color: #f4b400;
+        font-weight: 700;
+    }
+
+    .info-semaforo-cu12 .rojo {
+        color: #dc3545;
+        font-weight: 700;
+    }
+</style>
+
+
+<script>
+
+    function crearSemaforoInfo() {
+        const referencia = document.querySelector(".red");
+
+        if (!referencia) return;
+
+        // Evita duplicados
+        if (document.getElementById("info-semaforo-cu12")) return;
+
+        const contenedor = document.createElement("div");
+        contenedor.id = "info-semaforo-cu12";
+        contenedor.className = "info-semaforo-cu12";
+
+        contenedor.innerHTML = `
+    <h3>Actualización Automática del Semáforo</h3>
+
+    <p>
+      El sistema evalúa automáticamente el estado de vigencia de cada norma y
+      actualiza su semáforo según las siguientes reglas:
+    </p>
+
+    <ul>
+      <li><span class="verde">Verde</span> - Norma actualizada dentro del plazo establecido.</li>
+      <li><span class="amarillo">Amarillo</span> - La fecha de vigencia está próxima (menos de 30 días).</li>
+      <li><span class="rojo">Rojo</span> - La fecha de vigencia ha vencido y la norma requiere actualización.</li>
+    </ul>
+  `;
+
+        referencia.insertAdjacentElement("afterend", contenedor);
+    }
+
+
+    crearSemaforoInfo();
+</script>

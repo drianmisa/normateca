@@ -1,0 +1,1312 @@
+<div class="modal fade modal-actualizar-formato" id="modalActualizarFormato_${fragmentEntryLinkNamespace}" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title d-flex align-items-center">
+                    <span class="modal-actualizar-formato-icono mr-2">
+                        <i class="bi bi-check-lg"></i>
+                    </span>
+
+                    Actualizar
+                </h5>
+
+                <button type="button" class="close btn-cerrar-actualizar-formato" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="formato-asociado-actualizar">
+                    <span>Documento principal</span>
+
+                    <strong class="nombre-formato-asociado">
+                        Sin formato asociado
+                    </strong>
+                </div>
+
+                <p class="descripcion-actualizar-formato">
+                    Para agregar archivos asegúrate de que tengan un tamaño de entre
+                    200 y 300 KB, en formato .pdf o .docx.
+                </p>
+
+                <div class="fila-seleccion-actualizar-formato">
+                    <button type="button" class="btn-seleccionar-actualizar-formato">
+                        Seleccionar archivo
+                    </button>
+
+                    <span class="nombre-archivo-actualizar-formato">
+                        Sin archivos seleccionados
+                    </span>
+
+                    <button type="button" class="btn-limpiar-actualizar-formato" disabled>
+                        Limpiar
+                    </button>
+                </div>
+
+                <input type="file" class="input-archivo-actualizar-formato"
+                    accept=".pdf,.docx,.xlsx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+
+                <div class="upload-box-actualizar-formato" tabindex="0" role="button"
+                    aria-label="Seleccionar o arrastrar archivo">
+                    <div class="upload-box-actualizar-formato-icono">
+                        <i class="bi bi-download"></i>
+                    </div>
+
+                    <div>
+                        Arrastra y suelta el archivo aquí para añadirlo
+                    </div>
+                </div>
+
+                <div class="mensaje-actualizar-formato mt-3" hidden></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-guardar-actualizar-formato" disabled>
+                    Guardar cambios
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<style>
+    /*
+|--------------------------------------------------------------------------
+| CONTENEDOR PRINCIPAL
+|--------------------------------------------------------------------------
+*/
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato {
+        z-index: 1060;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato>.modal-dialog {
+        width: calc(100% - 30px);
+        max-width: 800px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato>.modal-dialog>.modal-content {
+        overflow: hidden;
+        color: #222;
+        background: #fff;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
+*/
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato>.modal-dialog>.modal-content>.modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        background: #fff;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .modal-title {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        color: #222;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .modal-actualizar-formato-icono {
+        display: inline-flex;
+        flex: 0 0 34px;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        margin-right: 10px;
+        color: #8a3d62;
+        border: 2px solid #8a3d62;
+        border-radius: 50%;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .modal-actualizar-formato-icono>i {
+        color: inherit;
+        font-size: 17px;
+        line-height: 1;
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| CERRAR
+|--------------------------------------------------------------------------
+*/
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .btn-cerrar-actualizar-formato {
+        width: 32px;
+        height: 32px;
+        margin: 0;
+        padding: 0;
+        color: #222;
+        font-size: 25px;
+        font-weight: 600;
+        line-height: 1;
+        text-shadow: none;
+        cursor: pointer;
+        appearance: none;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        opacity: 1;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .btn-cerrar-actualizar-formato:hover,
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .btn-cerrar-actualizar-formato:focus {
+        color: #8a3d62;
+        outline: none;
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| BODY
+|--------------------------------------------------------------------------
+*/
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato>.modal-dialog>.modal-content>.modal-body {
+        padding: 18px 20px;
+        color: #555;
+        background: #fff;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .formato-asociado-actualizar {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 18px;
+        padding: 10px 12px;
+        color: #222;
+        font-size: 14px;
+        background: #f5f5fa;
+        border-radius: 3px;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .formato-asociado-actualizar strong {
+        margin-top: 1px;
+        color: #111;
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .descripcion-actualizar-formato {
+        margin: 0 0 12px;
+        color: #555;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| SELECCIÓN
+|--------------------------------------------------------------------------
+*/
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .fila-seleccion-actualizar-formato {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .btn-seleccionar-actualizar-formato {
+        flex: 0 0 auto;
+        min-height: 32px;
+        padding: 4px 14px;
+        color: #555;
+        font-size: 14px;
+        cursor: pointer;
+        background: #fff;
+        border: 1px solid #999;
+        border-radius: 2px;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .nombre-archivo-actualizar-formato {
+        flex: 1 1 auto;
+        min-width: 0;
+        color: #666;
+        font-size: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .btn-limpiar-actualizar-formato {
+        flex: 0 0 auto;
+        min-width: 88px;
+        min-height: 32px;
+        padding: 4px 14px;
+        color: #8a3d62;
+        font-size: 14px;
+        cursor: pointer;
+        background: #fff;
+        border: 2px solid #8a3d62;
+        border-radius: 2px;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .btn-limpiar-actualizar-formato:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .input-archivo-actualizar-formato {
+        display: none !important;
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| CAJA DE ARRASTRE
+|--------------------------------------------------------------------------
+*/
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .upload-box-actualizar-formato {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 185px;
+        padding: 25px;
+        color: #666;
+        font-size: 15px;
+        text-align: center;
+        cursor: pointer;
+        background: #fafafa;
+        border: 2px dashed #d6d6d6;
+        border-radius: 8px;
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .upload-box-actualizar-formato:hover,
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .upload-box-actualizar-formato:focus,
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .upload-box-actualizar-formato.arrastrando {
+        background: #f6eef2;
+        border-color: #8a3d62;
+        outline: none;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .upload-box-actualizar-formato-icono {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        margin-bottom: 16px;
+        color: #777;
+        background: #e9e9e9;
+        border-radius: 50%;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .upload-box-actualizar-formato-icono>i {
+        color: inherit;
+        font-size: 24px;
+        line-height: 1;
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| MENSAJES
+|--------------------------------------------------------------------------
+*/
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .mensaje-actualizar-formato {
+        box-sizing: border-box;
+        width: 100%;
+        margin-top: 14px;
+        padding: 10px 12px;
+        font-size: 14px;
+        border-radius: 4px;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .mensaje-actualizar-formato[hidden] {
+        display: none !important;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .mensaje-actualizar-formato.error {
+        color: #9b1c1c;
+        background: #fdecec;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .mensaje-actualizar-formato.procesando {
+        color: #284b75;
+        background: #eef3fa;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .mensaje-actualizar-formato.exito {
+        color: #216b3a;
+        background: #e8f8ed;
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| FOOTER
+|--------------------------------------------------------------------------
+*/
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato>.modal-dialog>.modal-content>.modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 0 20px 20px;
+        background: #fff;
+        border-top: 0;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .btn-guardar-actualizar-formato {
+        min-width: 135px;
+        min-height: 40px;
+        padding: 7px 18px;
+        color: #8a3d62;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        background: #fff;
+        border: 2px solid #8a3d62;
+        border-radius: 3px;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .btn-guardar-actualizar-formato:hover:not(:disabled),
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .btn-guardar-actualizar-formato:focus:not(:disabled) {
+        color: #fff;
+        background: #8a3d62;
+        outline: none;
+    }
+
+    [id^="modalActualizarFormato_"].modal-actualizar-formato .btn-guardar-actualizar-formato:disabled {
+        color: #b68ca0;
+        cursor: not-allowed;
+        border-color: #c5a8b6;
+        opacity: 0.7;
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| BACKDROP
+|--------------------------------------------------------------------------
+*/
+
+    [id^="backdropActualizarFormato_"].backdrop-actualizar-formato {
+        position: fixed;
+        inset: 0;
+        z-index: 1055;
+        background: rgba(0, 0, 0, 0.55);
+    }
+
+
+    /*
+|--------------------------------------------------------------------------
+| RESPONSIVE
+|--------------------------------------------------------------------------
+*/
+
+    @media (max-width: 576px) {
+        [id^="modalActualizarFormato_"].modal-actualizar-formato>.modal-dialog {
+            width: calc(100% - 20px);
+            margin: 10px auto;
+        }
+
+        [id^="modalActualizarFormato_"].modal-actualizar-formato .fila-seleccion-actualizar-formato {
+            flex-wrap: wrap;
+        }
+
+        [id^="modalActualizarFormato_"].modal-actualizar-formato .nombre-archivo-actualizar-formato {
+            flex: 1 1 100%;
+            order: 3;
+        }
+    }
+</style>
+
+<script>
+    /*************************************/
+    /* ESTADO */
+    /*************************************/
+    window.archivoActualizarFormatoSeleccionado = null;
+
+    let actualizacionFormatoEnProceso = false;
+    let contenidoIdActualizarFormatoActual = null;
+
+    /*************************************/
+    /* CONFIGURACIÓN */
+    /*************************************/
+    const configuracionActualizarFormato = {
+        endpointDocumento: "/api/v1/inventario/documentos/:contenidoId/archivo",
+
+        functionalId: "Actualizar archivo de documento",
+
+        moduloBitacora: "INVENTARIO",
+
+        accionBitacora: "Actualizar ",
+
+        descripcionBitacora: "Se actualiza el archivo principal del documento",
+    };
+
+    /*************************************/
+    /* OBTENER BASE URL */
+    /*************************************/
+    function obtenerBaseUrlActualizarFormato() {
+        const baseUrl =
+            window.apiConfig?.normativas || window.apiConfig?.baseUrl || "";
+
+        if (!baseUrl) {
+            throw new Error("No se encontró la URL base del servicio.");
+        }
+
+        return String(baseUrl).replace(/\/+$/, "");
+    }
+
+    /*************************************/
+    /* VALIDAR ARCHIVO */
+    /*************************************/
+    function validarArchivoActualizarFormato(archivo) {
+        if (!archivo) {
+            throw new Error("Debes seleccionar un archivo.");
+        }
+
+        const nombre = String(archivo.name || "").toLowerCase();
+
+        const extensionValida = nombre.endsWith(".pdf") || nombre.endsWith(".docx");
+
+        if (!extensionValida) {
+            throw new Error("Solo se permiten archivos PDF o DOCX (.pdf, .docx).");
+        }
+
+        return true;
+    }
+
+    /*************************************/
+    /* ACTUALIZAR ETIQUETAS DE ARCHIVO */
+    /*************************************/
+    function actualizarEtiquetasActualizarFormato(
+        modal,
+        input,
+        uploadBox,
+        btnSeleccionar
+    ) {
+        if (input) {
+            input.accept = ".pdf,.docx";
+            input.setAttribute("aria-label", "Seleccionar archivo PDF o DOCX");
+        }
+
+        if (uploadBox) {
+            uploadBox.setAttribute(
+                "title",
+                "Seleccionar o arrastrar un archivo PDF o DOCX"
+            );
+        }
+
+        if (btnSeleccionar) {
+            btnSeleccionar.setAttribute("title", "Seleccionar archivo PDF o DOCX");
+        }
+
+        modal
+            ?.querySelectorAll(
+                ".leyenda-actualizar-formato, .formatos-permitidos-actualizar-formato, [data-etiqueta-formatos]"
+            )
+            .forEach(function (etiqueta) {
+                etiqueta.textContent = "Formatos permitidos: PDF y DOCX (.pdf, .docx).";
+            });
+    }
+
+    /*************************************/
+    /* MOSTRAR MENSAJE */
+    /*************************************/
+    function mostrarMensajeActualizarFormato(mensaje, tipo = "procesando") {
+        const modal = document.getElementById(
+            `modalActualizarFormato_${fragmentEntryLinkNamespace}`
+        );
+
+        const contenedor = modal?.querySelector(".mensaje-actualizar-formato");
+
+        if (!contenedor) {
+            return;
+        }
+
+        contenedor.hidden = false;
+        contenedor.textContent = mensaje;
+
+        contenedor.classList.remove("error", "procesando", "exito");
+
+        contenedor.classList.add(tipo);
+    }
+
+    /*************************************/
+    /* OCULTAR MENSAJE */
+    /*************************************/
+    function ocultarMensajeActualizarFormato() {
+        const modal = document.getElementById(
+            `modalActualizarFormato_${fragmentEntryLinkNamespace}`
+        );
+
+        const contenedor = modal?.querySelector(".mensaje-actualizar-formato");
+
+        if (!contenedor) {
+            return;
+        }
+
+        contenedor.hidden = true;
+        contenedor.textContent = "";
+
+        contenedor.classList.remove("error", "procesando", "exito");
+    }
+
+    /*************************************/
+    /* ACTUALIZAR ESTADO */
+    /*************************************/
+    function actualizarEstadoActualizarFormato() {
+        const modal = document.getElementById(
+            `modalActualizarFormato_${fragmentEntryLinkNamespace}`
+        );
+
+        const btnGuardar = modal?.querySelector(".btn-guardar-actualizar-formato");
+
+        const btnLimpiar = modal?.querySelector(".btn-limpiar-actualizar-formato");
+
+        if (btnGuardar) {
+            btnGuardar.disabled =
+                !window.archivoActualizarFormatoSeleccionado ||
+                actualizacionFormatoEnProceso;
+        }
+
+        if (btnLimpiar) {
+            btnLimpiar.disabled =
+                !window.archivoActualizarFormatoSeleccionado ||
+                actualizacionFormatoEnProceso;
+        }
+    }
+
+    /*************************************/
+    /* LIMPIAR ARCHIVO */
+    /*************************************/
+    function limpiarArchivoActualizarFormato() {
+        const modal = document.getElementById(
+            `modalActualizarFormato_${fragmentEntryLinkNamespace}`
+        );
+
+        const input = modal?.querySelector(".input-archivo-actualizar-formato");
+
+        const nombre = modal?.querySelector(".nombre-archivo-actualizar-formato");
+
+        if (input) {
+            input.value = "";
+        }
+
+        if (nombre) {
+            nombre.textContent = "Sin archivos seleccionados";
+        }
+
+        window.archivoActualizarFormatoSeleccionado = null;
+
+        actualizarEstadoActualizarFormato();
+    }
+
+    /*************************************/
+    /* ASIGNAR ARCHIVO */
+    /*************************************/
+    function asignarArchivoActualizarFormato(archivo) {
+        const modal = document.getElementById(
+            `modalActualizarFormato_${fragmentEntryLinkNamespace}`
+        );
+
+        const nombre = modal?.querySelector(".nombre-archivo-actualizar-formato");
+
+        try {
+            validarArchivoActualizarFormato(archivo);
+
+            window.archivoActualizarFormatoSeleccionado = archivo;
+
+            if (nombre) {
+                nombre.textContent = archivo.name;
+            }
+
+            ocultarMensajeActualizarFormato();
+            actualizarEstadoActualizarFormato();
+        } catch (error) {
+            limpiarArchivoActualizarFormato();
+
+            mostrarMensajeActualizarFormato(
+                error?.message || "El archivo seleccionado no es válido.",
+                "error"
+            );
+        }
+    }
+
+    /*************************************/
+    /* LIMPIAR MODAL */
+    /*************************************/
+    function limpiarModalActualizarFormato() {
+        limpiarArchivoActualizarFormato();
+        ocultarMensajeActualizarFormato();
+
+        contenidoIdActualizarFormatoActual = null;
+    }
+
+    /*************************************/
+    /* ABRIR MODAL */
+    /*************************************/
+    function abrirModalActualizarFormato(boton) {
+        /*
+         * El endpoint utiliza únicamente el identificador
+         * del contenido:
+         *
+         * PUT /api/v1/inventario/documentos/{contenidoId}/archivo
+         *
+         * Atributos admitidos en el botón:
+         * data-contenido-id="..."
+         * data-id-contenido="..."
+         * data-id="..."
+         */
+        const contenidoId =
+            boton?.dataset?.contenidoId ||
+            boton?.dataset?.idContenido ||
+            boton?.dataset?.id ||
+            "";
+
+        const fila = boton?.closest("tr");
+
+        const nombreDesdeFila =
+            fila?.querySelector("td:nth-child(2)")?.textContent?.trim() || "";
+
+        const nombreFormato =
+            boton?.dataset?.nombre ||
+            boton?.dataset?.nombreFormato ||
+            boton?.dataset?.formato ||
+            nombreDesdeFila ||
+            "Sin archivo asociado";
+
+        if (!contenidoId) {
+            if (typeof window.abrirModal === "function") {
+                window.abrirModal({
+                    paso: 2,
+                    tipo: "Error",
+                    titulo: "Error",
+                    contenido: "No se encontró el identificador del contenido.",
+                    btnAceptar: "Cerrar",
+                });
+            }
+
+            return;
+        }
+
+        const modal = document.getElementById(
+            `modalActualizarFormato_${fragmentEntryLinkNamespace}`
+        );
+
+        if (!modal) {
+            console.error("[ACTUALIZAR ARCHIVO] No se encontró el modal.");
+
+            return;
+        }
+
+        contenidoIdActualizarFormatoActual = contenidoId;
+
+        const nombreAsociado = modal.querySelector(".nombre-formato-asociado");
+
+        if (nombreAsociado) {
+            nombreAsociado.textContent = nombreFormato;
+        }
+
+        modal.dataset.abiertoPorBoton = "true";
+
+        const idBackdrop = `backdropActualizarFormato_${fragmentEntryLinkNamespace}`;
+
+        let backdrop = document.getElementById(idBackdrop);
+
+        if (!backdrop) {
+            backdrop = document.createElement("div");
+
+            backdrop.id = idBackdrop;
+
+            backdrop.className = "backdrop-actualizar-formato";
+
+            backdrop.addEventListener("click", function () {
+                cerrarModalActualizarFormato();
+                limpiarModalActualizarFormato();
+            });
+
+            document.body.appendChild(backdrop);
+        }
+
+        modal.classList.add("show");
+
+        modal.style.display = "block";
+
+        modal.style.visibility = "visible";
+
+        modal.style.pointerEvents = "auto";
+
+        modal.setAttribute("aria-hidden", "false");
+
+        modal.setAttribute("aria-modal", "true");
+
+        document.body.classList.add("modal-open");
+
+        document.body.style.overflow = "hidden";
+
+        actualizarEstadoActualizarFormato();
+    }
+
+    /*************************************/
+    /* CERRAR MODAL */
+    /*************************************/
+    function cerrarModalActualizarFormato() {
+        const modal = document.getElementById(
+            `modalActualizarFormato_${fragmentEntryLinkNamespace}`
+        );
+
+        if (modal) {
+            modal.classList.remove("show");
+
+            delete modal.dataset.abiertoPorBoton;
+
+            modal.style.display = "none";
+
+            modal.style.visibility = "hidden";
+
+            modal.style.pointerEvents = "none";
+
+            modal.setAttribute("aria-hidden", "true");
+
+            modal.removeAttribute("aria-modal");
+        }
+
+        document
+            .getElementById(`backdropActualizarFormato_${fragmentEntryLinkNamespace}`)
+            ?.remove();
+
+        document.body.classList.remove("modal-open");
+
+        document.body.style.overflow = "";
+
+        document.body.style.paddingRight = "";
+    }
+
+    /*************************************/
+    /* BITÁCORA */
+    /*************************************/
+    async function registrarBitacoraActualizarFormato(statusCode, mensaje) {
+        if (
+            !window.bitacoraService ||
+            typeof window.bitacoraService.operationLog !== "function"
+        ) {
+            console.warn(
+                "[ACTUALIZAR ARCHIVO] El servicio de bitácora no está disponible."
+            );
+
+            return;
+        }
+
+        try {
+            await window.bitacoraService.operationLog(
+                "PUT",
+                configuracionActualizarFormato.moduloBitacora,
+                configuracionActualizarFormato.accionBitacora,
+                `${configuracionActualizarFormato.descripcionBitacora}. ContenidoId: ${contenidoIdActualizarFormatoActual}`,
+                Number(statusCode || 500),
+                mensaje || ""
+            );
+        } catch (error) {
+            console.warn(
+                "[ACTUALIZAR ARCHIVO] No fue posible registrar la bitácora:",
+                error
+            );
+        }
+    }
+
+    /*************************************/
+    /* RESULTADO */
+    /*************************************/
+    function abrirModalResultadoActualizarFormato({
+        tipo = "Aceptar",
+        titulo = "Completado",
+        mensaje = "",
+        onAceptar = null,
+    } = {}) {
+        cerrarModalActualizarFormato();
+
+        document
+            .querySelectorAll(".backdrop-actualizar-formato")
+            .forEach(function (backdrop) {
+                backdrop.remove();
+            });
+
+        document.body.classList.remove("modal-open");
+
+        document.body.style.overflow = "";
+
+        document.body.style.paddingRight = "";
+
+        setTimeout(function () {
+            if (typeof window.abrirModal !== "function") {
+                return;
+            }
+
+            window.abrirModal({
+                paso: 2,
+                tipo,
+                titulo,
+                contenido:
+                    mensaje ||
+                    (tipo === "Error" ? "Ocurrió un error." : "Operación completada."),
+                btnAceptar: "Cerrar",
+
+                onAceptar: async function (ok) {
+                    if (!ok) {
+                        return;
+                    }
+
+                    if (typeof onAceptar === "function") {
+                        await onAceptar();
+                    }
+                },
+            });
+        }, 500);
+    }
+
+    /*************************************/
+    /* MENSAJE ERROR */
+    /*************************************/
+    function obtenerMensajeErrorActualizarFormato(
+        resultado,
+        response,
+        mensajePorDefecto = "No fue posible actualizar el archivo."
+    ) {
+        return (
+            resultado?.errorMessageDTO?.message ||
+            resultado?.errorMessageDTO?.detail ||
+            resultado?.message ||
+            (response?.status ? `Error HTTP ${response.status}` : "") ||
+            mensajePorDefecto
+        );
+    }
+
+    /*************************************/
+    /* PROCESAR ACTUALIZACIÓN */
+    /*************************************/
+    async function procesarActualizarFormato() {
+        if (actualizacionFormatoEnProceso) {
+            return;
+        }
+
+        const contenidoId = contenidoIdActualizarFormatoActual;
+
+        const archivo = window.archivoActualizarFormatoSeleccionado;
+
+        if (!contenidoId) {
+            mostrarMensajeActualizarFormato(
+                "No se encontró el identificador del contenido.",
+                "error"
+            );
+
+            return;
+        }
+
+        try {
+            validarArchivoActualizarFormato(archivo);
+        } catch (error) {
+            mostrarMensajeActualizarFormato(
+                error?.message || "Debes seleccionar un archivo válido.",
+                "error"
+            );
+
+            return;
+        }
+
+        actualizacionFormatoEnProceso = true;
+
+        actualizarEstadoActualizarFormato();
+
+        mostrarMensajeActualizarFormato("Actualizando el archivo...", "procesando");
+
+        if (typeof window.mostrarLoaderPeticion === "function") {
+            window.mostrarLoaderPeticion();
+        }
+
+        try {
+            const formData = new FormData();
+
+            formData.append("archivo", archivo, archivo.name);
+
+            sessionStorage.setItem(
+                "functional-id",
+                configuracionActualizarFormato.functionalId
+            );
+
+            if (typeof window.tokenizerTransactionId !== "function") {
+                throw new Error("No se encontró tokenizerTransactionId.");
+            }
+
+            await window.tokenizerTransactionId();
+
+            const headers =
+                typeof window.getGlobalHeaders === "function"
+                    ? await window.getGlobalHeaders()
+                    : {};
+
+            delete headers["Content-Type"];
+            delete headers["content-type"];
+
+            headers.Accept = "application/json";
+
+            const baseUrl = obtenerBaseUrlActualizarFormato();
+
+            const endpoint = configuracionActualizarFormato.endpointDocumento.replace(
+                ":contenidoId",
+                encodeURIComponent(contenidoId)
+            );
+
+            console.log("[ACTUALIZAR ARCHIVO] Endpoint:", endpoint);
+
+            const peticion = fetch(`${baseUrl}${endpoint}`, {
+                method: "PUT",
+                headers,
+                body: formData,
+            });
+
+            /*
+             * Se cierra el modal mientras la petición
+             * continúa y el loader permanece activo.
+             */
+            cerrarModalActualizarFormato();
+
+            const response = await peticion;
+
+            const responseText = await response.text();
+
+            let resultado = {};
+
+            try {
+                resultado = responseText ? JSON.parse(responseText) : {};
+            } catch {
+                resultado = {
+                    statusCode: response.status,
+                    message: responseText,
+                    dataResponse: null,
+                };
+            }
+
+            if (!response.ok) {
+                const mensajeError = obtenerMensajeErrorActualizarFormato(
+                    resultado,
+                    response
+                );
+
+                const error = new Error(mensajeError);
+
+                error.statusCode =
+                    resultado?.errorMessageDTO?.statusCode ||
+                    resultado?.statusCode ||
+                    response.status;
+
+                error.response = resultado;
+
+                throw error;
+            }
+
+            if (
+                resultado?.statusCode !== undefined &&
+                Number(resultado.statusCode) !== 200
+            ) {
+                const mensajeError = obtenerMensajeErrorActualizarFormato(
+                    resultado,
+                    response
+                );
+
+                const error = new Error(mensajeError);
+
+                error.statusCode =
+                    resultado?.errorMessageDTO?.statusCode || resultado?.statusCode || 500;
+
+                error.response = resultado;
+
+                throw error;
+            }
+
+            const mensajeExito =
+                resultado?.message || "El archivo se actualizó correctamente.";
+
+            await registrarBitacoraActualizarFormato(
+                resultado?.statusCode || response.status || 200,
+                mensajeExito
+            );
+
+            if (typeof window.obtenerInformacionTabla === "function") {
+                await window.obtenerInformacionTabla();
+            }
+
+            limpiarModalActualizarFormato();
+
+            abrirModalResultadoActualizarFormato({
+                tipo: "Aceptar",
+                titulo: "Completado",
+                mensaje: mensajeExito,
+            });
+        } catch (error) {
+            console.error("[ACTUALIZAR ARCHIVO] Error:", error);
+
+            const statusCode =
+                error?.response?.errorMessageDTO?.statusCode ||
+                error?.response?.statusCode ||
+                error?.statusCode ||
+                500;
+
+            const mensajeError = obtenerMensajeErrorActualizarFormato(
+                error?.response,
+                {
+                    status: error?.statusCode || error?.response?.statusCode,
+                },
+                error?.message || "No fue posible actualizar el archivo."
+            );
+
+            await registrarBitacoraActualizarFormato(statusCode, mensajeError);
+
+            limpiarModalActualizarFormato();
+
+            abrirModalResultadoActualizarFormato({
+                tipo: "Error",
+                titulo: "Error",
+                mensaje: mensajeError,
+            });
+        } finally {
+            actualizacionFormatoEnProceso = false;
+
+            actualizarEstadoActualizarFormato();
+
+            if (typeof window.ocultarLoaderPeticion === "function") {
+                window.ocultarLoaderPeticion();
+            }
+        }
+    }
+
+    /*************************************/
+    /* INICIALIZAR */
+    /*************************************/
+    function inicializarModalActualizarFormato() {
+        const modal = document.getElementById(
+            `modalActualizarFormato_${fragmentEntryLinkNamespace}`
+        );
+
+        if (!modal || modal.dataset.inicializado === "true") {
+            return;
+        }
+
+        modal.dataset.inicializado = "true";
+
+        modal.classList.remove("show");
+
+        delete modal.dataset.abiertoPorBoton;
+
+        modal.style.display = "none";
+
+        modal.style.visibility = "hidden";
+
+        modal.style.pointerEvents = "none";
+
+        modal.setAttribute("aria-hidden", "true");
+
+        modal.removeAttribute("aria-modal");
+
+        document
+            .getElementById(`backdropActualizarFormato_${fragmentEntryLinkNamespace}`)
+            ?.remove();
+
+        const input = modal.querySelector(".input-archivo-actualizar-formato");
+
+        const uploadBox = modal.querySelector(".upload-box-actualizar-formato");
+
+        const btnSeleccionar = modal.querySelector(
+            ".btn-seleccionar-actualizar-formato"
+        );
+
+        const btnLimpiar = modal.querySelector(".btn-limpiar-actualizar-formato");
+
+        const btnGuardar = modal.querySelector(".btn-guardar-actualizar-formato");
+
+        const btnCerrar = modal.querySelector(".btn-cerrar-actualizar-formato");
+
+        actualizarEtiquetasActualizarFormato(modal, input, uploadBox, btnSeleccionar);
+
+        btnSeleccionar?.addEventListener("click", function () {
+            input?.click();
+        });
+
+        btnLimpiar?.addEventListener("click", function () {
+            limpiarArchivoActualizarFormato();
+            ocultarMensajeActualizarFormato();
+        });
+
+        uploadBox?.addEventListener("click", function () {
+            input?.click();
+        });
+
+        uploadBox?.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                input?.click();
+            }
+        });
+
+        input?.addEventListener("change", function () {
+            const archivo = input.files?.[0] || null;
+
+            if (!archivo) {
+                limpiarArchivoActualizarFormato();
+                return;
+            }
+
+            asignarArchivoActualizarFormato(archivo);
+        });
+
+        ["dragenter", "dragover"].forEach(function (tipoEvento) {
+            uploadBox?.addEventListener(tipoEvento, function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                uploadBox.classList.add("arrastrando");
+
+                if (event.dataTransfer) {
+                    event.dataTransfer.dropEffect = "copy";
+                }
+            });
+        });
+
+        ["dragleave", "dragend"].forEach(function (tipoEvento) {
+            uploadBox?.addEventListener(tipoEvento, function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                uploadBox.classList.remove("arrastrando");
+            });
+        });
+
+        uploadBox?.addEventListener("drop", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            uploadBox.classList.remove("arrastrando");
+
+            const archivos = Array.from(event.dataTransfer?.files || []);
+
+            if (!archivos.length) {
+                mostrarMensajeActualizarFormato(
+                    "No se encontró un archivo válido.",
+                    "error"
+                );
+
+                return;
+            }
+
+            if (archivos.length > 1) {
+                mostrarMensajeActualizarFormato(
+                    "Solo puedes seleccionar un archivo a la vez.",
+                    "error"
+                );
+
+                return;
+            }
+
+            asignarArchivoActualizarFormato(archivos[0]);
+        });
+
+        btnGuardar?.addEventListener("click", async function () {
+            await procesarActualizarFormato();
+        });
+
+        btnCerrar?.addEventListener("click", function () {
+            cerrarModalActualizarFormato();
+            limpiarModalActualizarFormato();
+        });
+    }
+
+    /*************************************/
+    /* EVENTO DELEGADO BOTÓN DINÁMICO */
+    /*************************************/
+    const claveEventoActualizarFormato = `eventoActualizarFormato_${fragmentEntryLinkNamespace}`;
+
+    if (window[claveEventoActualizarFormato] !== true) {
+        window[claveEventoActualizarFormato] = true;
+
+        document.addEventListener("click", function (event) {
+            const boton = event.target.closest(".btn-editar");
+
+            if (!boton) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+
+            abrirModalActualizarFormato(boton);
+        });
+    }
+
+    /*************************************/
+    /* ESCAPE */
+    /*************************************/
+    document.addEventListener("keydown", function (event) {
+        if (event.key !== "Escape") {
+            return;
+        }
+
+        const modal = document.getElementById(
+            `modalActualizarFormato_${fragmentEntryLinkNamespace}`
+        );
+
+        if (modal && modal.classList.contains("show")) {
+            cerrarModalActualizarFormato();
+            limpiarModalActualizarFormato();
+        }
+    });
+
+    /*************************************/
+    /* INICIALIZACIÓN SEGURA */
+    /*************************************/
+    function ejecutarActualizarFormatoSeguro() {
+        try {
+            inicializarModalActualizarFormato();
+        } catch (error) {
+            console.error("[ACTUALIZAR ARCHIVO] Error al inicializar:", error);
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener(
+            "DOMContentLoaded",
+            ejecutarActualizarFormatoSeguro,
+            {
+                once: true,
+            }
+        );
+    } else {
+        ejecutarActualizarFormatoSeguro();
+    }
+
+</script>
