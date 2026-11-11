@@ -512,7 +512,7 @@
               <a
                 title="Ver formatos adjuntos"
                 aria-label="Ver formatos adjuntos"
-                href="/web/normateca/detalle-inventario?id=${idNorma}&formatos-adj=true"
+                href="/web/normateca/detalle-inventario?id=${idNorma}"
               >
                 <i class="bi bi-paperclip"></i>
               </a>
@@ -527,6 +527,7 @@
               </div>
             `;
                     }
+                    return `<a title="Ver detalle de norma" href="/web/normateca/detalle-inventario?id=${idNorma}">Ver</a>`;
                 }
 
                 if (tipo === "DOCUMENTOS" && tieneAdjuntos) {

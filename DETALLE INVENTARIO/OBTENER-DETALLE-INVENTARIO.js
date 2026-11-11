@@ -1,5 +1,14 @@
 
 (async () => {
+    // Retirar el listener de la página anterior antes de cualquier petición.
+    if (window.Liferay && window.informacionEventoNavigate) {
+        window.Liferay.detach("endNavigate", window.informacionEventoNavigate);
+    }
+    if (!(window.detalleInventarioCargasIniciales instanceof WeakMap)) {
+        window.detalleInventarioCargasIniciales = new WeakMap();
+    }
+    let cargaDetallePendiente = null;
+
     const rolNORMATECA = window.obtenerRolNORMATECA?.() || null;
 
     const rolUsuario = rolNORMATECA?.nombre || "";
@@ -87,7 +96,15 @@
         return null;
     }
 
-    async function obtenerInformacionTabla() {
+    function obtenerInformacionTabla() {
+        if (cargaDetallePendiente) return cargaDetallePendiente;
+        cargaDetallePendiente = Promise.resolve().then(cargarInformacionDetalle).finally(function () {
+            cargaDetallePendiente = null;
+        });
+        return cargaDetallePendiente;
+    }
+
+    async function cargarInformacionDetalle() {
         window.mostrarLoaderPeticion();
 
         try {
@@ -96,7 +113,6 @@
             const params = new URLSearchParams(window.location.search);
             const idDocumento = params.get("id");
             const esHistorico = params.get("historico") === "true";
-            const mostrarFormatosNorma = params.get("formatos-adj") === "true";
 
             if (!idDocumento) {
                 console.warn("No se encontró el parámetro 'id' en la URL.");
@@ -132,12 +148,18 @@
 
             pintarEncabezadoDetalle(detalle, esAdmin, esHistorico);
 
-            const tipo = (detalle.tipo || "").toUpperCase();
-            const tieneAdjuntos = detalle.datosAdjuntos === true;
-            const esVistaFormatosNorma = tipo === "NORMA" && mostrarFormatosNorma;
+            const tipo = String(detalle.tipo || "").trim().toUpperCase();
+            const esVerdadero = (valor) => [true, "true", 1, "1"].includes(valor);
+            const tieneNormas = esVerdadero(detalle.tieneNormasAdjuntas) ||
+                (Array.isArray(detalle.normasAdjuntas) && detalle.normasAdjuntas.length > 0);
+            const tieneFormatos = esVerdadero(detalle.tieneFormatosAdjuntos) ||
+                (Array.isArray(detalle.formatosAdjuntos) && detalle.formatosAdjuntos.length > 0);
+            const cargarFormatosNorma = tipo === "NORMA" && tieneFormatos;
             const puedeEliminarFormatoNorma = esAdmin && !esHistorico;
-            let recursos;
-            if (esVistaFormatosNorma) {
+            let recursosFormatos = [];
+            let errorFormatos = "";
+            if (cargarFormatosNorma) {
+                try {
                 const respuestaFormatos = await window.apiFetch(
                     "normativas",
                     `/api/v1/inventario/normas/${encodeURIComponent(detalle.id ?? idDocumento)}/formatos`
@@ -148,13 +170,18 @@
                 if (!respuestaFormatos || respuestaFormatos.ok === false || statusFormatos >= 400 || !Array.isArray(listaFormatos)) {
                     throw new Error(resultadoFormatos?.errorMessageDTO?.message || resultadoFormatos?.message || "No fue posible consultar los formatos de la norma.");
                 }
-                // Esta vista solo muestra formatos, aun cuando la norma también tenga normas adjuntas.
-                recursos = obtenerRecursosPorTipo({
+                recursosFormatos = obtenerRecursosPorTipo({
                     tieneFormatosAdjuntos: true,
                     formatosAdjuntos: listaFormatos,
                 });
-            } else {
-                recursos = obtenerRecursosPorTipo(detalle);
+                } catch (error) {
+                    errorFormatos = error?.message || "No fue posible consultar los formatos de la norma.";
+                    console.error("[Detalle inventario] Error al consultar formatos:", error);
+                    recursosFormatos = obtenerRecursosPorTipo({
+                        tieneFormatosAdjuntos: true,
+                        formatosAdjuntos: detalle.formatosAdjuntos,
+                    });
+                }
             }
 
             if (typeof window.crearTablaDinamica !== "function") {
@@ -163,6 +190,54 @@
                 return;
             }
 
+            const vistas = [];
+            if (tipo === "NORMA") {
+                if (tieneNormas || !cargarFormatosNorma) {
+                    vistas.push({ formatos: false, recursos: obtenerRecursosPorTipo({
+                        ...detalle, tieneNormasAdjuntas: true, tieneFormatosAdjuntos: false,
+                    }) });
+                }
+                if (cargarFormatosNorma) vistas.push({ formatos: true, recursos: recursosFormatos });
+            } else {
+                vistas.push({ formatos: false, recursos: obtenerRecursosPorTipo(detalle) });
+            }
+            const contenedorPrincipal = document.querySelector("#tabla-dinamica");
+            const tablaFormatosAnterior = document.getElementById("tabla-formatos-adjuntos-norma");
+            if (vistas.length <= 1) tablaFormatosAnterior?.remove();
+            if (vistas.length > 1 && contenedorPrincipal && !tablaFormatosAnterior) {
+                const contenedorFormatos = document.createElement("div");
+                contenedorFormatos.id = "tabla-formatos-adjuntos-norma";
+                contenedorFormatos.className = "pt-5 pb-5 mt-4";
+                // Evitar el ancho máximo y los márgenes automáticos de .container.
+                contenedorFormatos.style.setProperty("width", "100%", "important");
+                contenedorFormatos.style.setProperty("max-width", "100%", "important");
+                contenedorFormatos.style.setProperty("margin-left", "0", "important");
+                contenedorFormatos.style.setProperty("margin-right", "0", "important");
+                contenedorFormatos.innerHTML = `
+                    <h1 class="tabla-h1"></h1>
+                    <hr class="red">
+                    <div class="d-flex justify-content-end mb-5">
+                        <div class="form-inline">
+                            <label for="selectRows-formatos-norma" class="mr-2 font-weight-bold">Mostrar:</label>
+                            <select id="selectRows-formatos-norma" class="form-control form-control-sm">
+                                <option value="5" selected>5</option>
+                                <option value="10">10</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="pestana activa mb-5">
+                        <table><thead></thead><tbody></tbody></table>
+                    </div>
+                    <div id="paginador-formatos-norma"></div>
+                `;
+                contenedorPrincipal.insertAdjacentElement("afterend", contenedorFormatos);
+            }
+
+            for (const [indiceVista, vista] of vistas.entries()) {
+            const recursos = vista.recursos;
+            const esVistaFormatosNorma = tipo === "NORMA" && vista.formatos;
+            const selectorTabla = indiceVista === 0 ? "#tabla-dinamica" : "#tabla-formatos-adjuntos-norma";
             /*
              * DOCUMENTOS conserva exactamente su tabla actual.
              * NORMA replica la estructura de la tabla principal de Inventario.
@@ -252,7 +327,7 @@
                         return `
                       <a
                         title="Ver formatos"
-                        href="/web/normateca/detalle-inventario?id=${encodeURIComponent(fila.id ?? "")}&formatos-adj=true"
+                        href="/web/normateca/detalle-inventario?id=${encodeURIComponent(fila.id ?? "")}"
                       >
                         <i class="bi bi-paperclip"></i>
                       </a>
@@ -862,8 +937,22 @@
                 };
             }
 
+            configuracionTabla.contenedor = selectorTabla;
+            if (indiceVista > 0) {
+                configuracionTabla.selectRows = "#selectRows-formatos-norma";
+                configuracionTabla.paginador = "#paginador-formatos-norma";
+            }
+            if (tipo === "NORMA") configuracionTabla.titulo = vista.formatos ? "FORMATOS ADJUNTOS" : "NORMAS ADJUNTAS";
             window.crearTablaDinamica(configuracionTabla);
-            aplicarEstilosDetalleTabla();
+            aplicarEstilosDetalleTabla(selectorTabla);
+            if (esVistaFormatosNorma && errorFormatos) {
+                const aviso = document.createElement("div");
+                aviso.className = "alert alert-warning";
+                aviso.setAttribute("role", "alert");
+                aviso.textContent = `${errorFormatos} La lista de formatos puede estar incompleta; vuelva a cargar el detalle.`;
+                document.querySelector(selectorTabla)?.prepend(aviso);
+            }
+            }
 
             if (window.bitacoraService?.operationLog) {
                 await window.bitacoraService.operationLog(
@@ -1005,6 +1094,12 @@
                   <i class="bi bi-arrow-left"></i> Regresar
                 </button>
           
+                ${tipo === "NORMA" && esAdmin && !esHistorico ? `
+                  <button type="button" class="btn btn-primary btn-agregar-formato-norma"
+                    data-contenido-id="${escaparDatoDocumento(detalle.id ?? "")}"
+                    data-titulo-norma="${escaparDatoDocumento(detalle.titulo ?? "")}">
+                    Agregar formato adjunto
+                  </button>` : ""}
                 ${!esDocumento
                 ? `
                `
@@ -1101,7 +1196,13 @@
               </div>
             `;
 
-        hrRed.insertAdjacentElement("afterend", bloque);
+        // Conservar la cabecera dentro del contenedor original y antes del título de normas.
+        const contenedorTabla = document.querySelector("#tabla-dinamica");
+        if (contenedorTabla) {
+            contenedorTabla.prepend(bloque);
+        } else {
+            hrRed.insertAdjacentElement("afterend", bloque);
+        }
     }
 
     function obtenerIconoEncabezado(tipo) {
@@ -1321,8 +1422,8 @@
         return `<i class="bi bi-file-earmark"></i>`;
     }
 
-    function aplicarEstilosDetalleTabla() {
-        const tabla = document.querySelector("#tabla-dinamica table");
+    function aplicarEstilosDetalleTabla(selector = "#tabla-dinamica") {
+        const tabla = document.querySelector(`${selector} table`);
 
         if (!tabla) return;
 
@@ -1333,7 +1434,7 @@
         tabla.style.overflow = "visible";
 
         const responsive = document.querySelector(
-            "#tabla-dinamica .table-responsive"
+            `${selector} .table-responsive`
         );
 
         if (responsive) {
@@ -1360,17 +1461,22 @@
     /*************************************/
     window.obtenerInformacionTabla = obtenerInformacionTabla;
 
-    await obtenerInformacionTabla();
-
-    if (window.informacionEventoNavigate) {
-        Liferay.detach("endNavigate", window.informacionEventoNavigate);
+    function inicializarDetalleInventario() {
+        const contenedor = document.getElementById("tabla-dinamica");
+        if (!contenedor) return Promise.resolve();
+        const clave = window.location.pathname + window.location.search;
+        const anterior = window.detalleInventarioCargasIniciales.get(contenedor);
+        if (anterior?.clave === clave) return anterior.promesa;
+        const promesa = obtenerInformacionTabla();
+        window.detalleInventarioCargasIniciales.set(contenedor, { clave, promesa });
+        return promesa;
     }
 
-    window.informacionEventoNavigate = async function () {
-        await obtenerInformacionTabla();
-    };
-
-    Liferay.on("endNavigate", window.informacionEventoNavigate);
+    if (window.Liferay) {
+        window.informacionEventoNavigate = inicializarDetalleInventario;
+        window.Liferay.on("endNavigate", window.informacionEventoNavigate);
+    }
+    await inicializarDetalleInventario();
 })();
 
 document.addEventListener("click", function (e) {

@@ -1,0 +1,776 @@
+<div id="tabla-dinamica" class="container pt-5 pb-5">
+
+    <h1 class="tabla-h1">
+    </h1>
+
+    <hr class="red">
+
+    <div id="idContenedorBusqueda">
+
+        <!-- BOTON ACCION -->
+        <div
+            class="d-flex justify-content-end mb-3"
+            id="contenedor-boton-accion-tab">
+
+            <button
+                class="btn btn-primary"
+                id="btn-tab-accion" style="display:none">
+            </button>
+
+        </div>
+
+        <!-- BUSQUEDA + FILTROS -->
+        <div class="d-flex justify-content-end mb-5">
+
+            <!-- BUSCADOR + AÑO -->
+   <div
+    id="container-anio"
+    class="d-flex align-items-center"
+    style="display:none !important;">
+                <input
+                    class="form-control buscador-normateca mr-3"
+                    type="text"
+                    placeholder="Buscar..."
+                >
+
+                <div
+                    class="form-group d-flex align-items-center m-0">
+
+                    <label
+                        for="anio"
+                        style="margin-right: 20px; margin-bottom: 0;">
+
+                        Año
+
+                    </label>
+
+                    <select
+                        name="anio"
+                        id="anio"
+                        class="form-control">
+
+                        <option value="">
+                            Selecciona un año
+                        </option>
+
+                        <option value="2024">
+                            2024
+                        </option>
+
+                        <option value="2025">
+                            2025
+                        </option>
+
+                        <option value="2026">
+                            2026
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <!-- SELECT PAGINACION -->
+            <div class="form-inline">
+
+                <label
+                    for="selectRows"
+                    class="mr-2 font-weight-bold">
+
+                    Mostrar:
+
+                </label>
+
+                <select
+                    id="selectRows"
+                    class="form-control form-control-sm">
+
+                    <option value="5" selected>
+                        5
+                    </option>
+
+                    <option value="10">
+                        10
+                    </option>
+
+                    <option value="50">
+                        50
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <!-- TABLA -->
+        <div class="pestana activa mb-5">
+
+            <table>
+
+                <thead></thead>
+
+                <tbody></tbody>
+
+            </table>
+
+        </div>
+
+        <!-- PAGINADOR -->
+        <div id="paginador"></div>
+
+    </div>
+
+</div>
+
+
+<style>
+    /************************************** ESTILOS TABLA ************************************/
+#tabla-dinamica, #tabla-formatos-adjuntos-norma,
+#tabla-dinamica .table-responsive, #tabla-formatos-adjuntos-norma .table-responsive {
+    overflow: auto !important;
+    max-width: 100% !important;
+    padding-left: var(--spacer-4, 1.5rem) !important;
+    padding-right: var(--spacer-4, 1.5rem) !important;
+}    
+.pestana {
+        max-height: 400px;
+        overflow: auto !important;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead tr {
+        background-color: #ffffff;
+    }
+
+    tbody tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+
+    tbody tr:hover {
+        background-color: #e9ecef;
+        transition: 0.2s;
+    }
+
+    table th,
+    table td {
+			  font-size: 16px;
+        padding: 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .item td {
+        padding: 0px 5px;
+    }
+
+    /* Paginador */
+    #paginador, #paginador-formatos-norma {
+        margin-top: 10px;
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+    }
+
+    .page-btn {
+        padding: 5px 10px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+    }
+
+    .page-btn.activa {
+        color: #fff;
+        background-color: var(--brand-color-1);
+    }
+
+    hr.red {
+        border-top-color: #dce0e0;
+    }
+
+    .red {
+        color: var(--brand-color-1);
+    }
+
+    .red::before {
+        content: "";
+        width: 35px;
+        height: 5px;
+        background-color: #b38e5d;
+        position: absolute;
+        display: block;
+    }
+
+    button.btn-filtro {
+        background-color: transparent;
+        border: none;
+        font-weight: 700;
+    }
+
+
+    .tabla-h1,
+    .subtitulo-tabla {
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .folder-accion,
+    .clip-accion,
+    .btn-ver {
+        color: #000;
+        cursor: pointer;
+
+    }
+
+    .btn-ver {
+        text-decoration: underline;
+    }
+
+    .normaRoja {
+        color: #D0021B;
+    }
+
+    .norma-publica {
+        color: #10AE05;
+        text-decoration: underline;
+    }
+
+.btn-primary {
+    background-color: var(--brand-color-1) !important;
+    border-color: var(--brand-color-1) !important;
+    color: var(--btn-primary-color, #fff);
+}
+
+table th {
+    white-space: nowrap;
+}
+
+.btn-filtro {
+    white-space: nowrap;
+}
+button.btn-filtro {
+    background-color: transparent;
+    border: none;
+    font-weight: 700;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+table td {
+    white-space: nowrap;
+}
+
+</style>
+
+<script>
+    /*************************************/
+/* API BASE GLOBAL */
+/*************************************/
+window.apiBaseUrl = "https://dummyjson.com";
+
+/*************************************/
+/* TABLA DINAMICA */
+/*************************************/
+window.crearTablaDinamica = function (config) {
+  /*************************************/
+  /* API PERSONALIZADA */
+  /*************************************/
+  if (config?.api) {
+    window.apiBaseUrl = config.api;
+  }
+
+  const contenedor = document.querySelector(config.contenedor);
+
+  if (!contenedor) return;
+
+  const tabla = contenedor.querySelector("table");
+
+  if (!tabla) return;
+
+  /*************************************/
+  /* TITULO H1 */
+  /*************************************/
+  const titulo = contenedor.querySelector(".tabla-h1");
+
+  if (titulo) {
+    titulo.innerHTML = config.titulo || "";
+  }
+
+  /*************************************/
+  /* BOTON ACCION TAB */
+  /*************************************/
+  const contenedorBoton = contenedor.querySelector(
+    "#contenedor-boton-accion-tab"
+  );
+
+  const botonAccion = contenedor.querySelector("#btn-tab-accion");
+
+  if (contenedorBoton) {
+    if (config?.botonAccion?.mostrar === true) {
+      botonAccion.style.display = "";
+
+      botonAccion.innerHTML = `
+
+    ${
+      config.botonAccion.icono
+        ? `<i class="${config.botonAccion.icono}"></i>`
+        : ""
+    }
+
+    ${config.botonAccion.titulo || ""}
+
+`;
+    } else {
+      contenedorBoton.remove();
+    }
+  }
+
+  /*************************************/
+  /* CONTENEDOR AÑO */
+  /*************************************/
+  const containerAnio = contenedor.querySelector("#container-anio");
+
+  if (containerAnio) {
+    const filaFiltros = containerAnio.parentElement;
+
+    if (config?.mostrarFiltroAnio === true) {
+      containerAnio.style.display = "";
+
+      filaFiltros.classList.remove("justify-content-end");
+      filaFiltros.classList.add("justify-content-between");
+    } else {
+      containerAnio.remove();
+
+      filaFiltros.classList.remove("justify-content-between");
+
+      filaFiltros.classList.add("justify-content-end");
+    }
+  }
+
+  /*************************************/
+  /* HEADERS */
+  /*************************************/
+  tabla.querySelector("thead").innerHTML = `<tr>
+
+${config.columnas
+  .map(
+    (col) => `
+
+    <th class="${col.centerText ? "text-center" : ""}">
+
+    ${
+      col.ordenar
+        ? `<button class="btn-filtro ${
+            col.centerText ? "text-center w-100" : ""
+          }">
+
+                ${col.titulo}
+
+                <i class="bi bi-arrow-down-up"></i>
+
+            </button>`
+        : col.titulo
+    }
+
+</th>
+
+`
+  )
+  .join("")}
+
+</tr>`;
+
+  /*************************************/
+  /* BODY */
+  /*************************************/
+  tabla.querySelector("tbody").innerHTML = config.filas
+    .map(
+      (f) => `
+
+<tr class="item">
+
+    ${f}
+
+</tr>
+
+`
+    )
+    .join("");
+
+  const filasTabla = tabla.querySelectorAll("tbody tr");
+
+  filasTabla.forEach((fila) => {
+    fila.querySelectorAll("td").forEach((td, index) => {
+      if (config.columnas[index]?.centerText) {
+        td.classList.add("text-center");
+      }
+    });
+  });
+
+  /*************************************/
+  /* TABLA INTERACTIVA */
+  /*************************************/
+  const instanciaTabla = crearTablaInteractiva({
+    contenedor: config.contenedor,
+
+    filas: ".item",
+
+    botonesOrden: ".btn-filtro",
+
+    inputsBusqueda: ".buscador-normateca",
+
+    paginador: config.paginador || "#paginador",
+
+    selectRows: config.selectRows || "#selectRows",
+  });
+
+  contenedor.tablaAdmin = instanciaTabla;
+  window.tablaAdmin = instanciaTabla;
+  instanciaTabla.renderizar();
+};
+
+/*************************************/
+/* TABLA INTERACTIVA */
+/*************************************/
+function crearTablaInteractiva(config) {
+  const contenedor = document.querySelector(config.contenedor);
+
+  let paginaActual = 1;
+
+  let filasPorPagina = parseInt(
+    contenedor.querySelector(config.selectRows).value,
+    10
+  );
+
+  let columnaOrden = null;
+  let direccionOrden = "asc";
+
+  // Guardar el orden de las filas en la primera carga.
+  const ordenInicialFilas = Array.from(
+    contenedor.querySelectorAll(config.filas)
+  );
+
+  function obtenerValorOrdenable(td) {
+    let valor = td.innerText.replace(/\s+/g, " ").trim();
+
+    const select = td.querySelector("select");
+
+    if (select) {
+      valor = select.options[select.selectedIndex].text.trim();
+    }
+
+    const fechaMatch = valor.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+
+    if (fechaMatch) {
+      const [_, d, m, y] = fechaMatch;
+
+      return new Date(`${y}-${m}-${d}`).getTime();
+    }
+
+    const numero = valor.replace(/,/g, "");
+
+    if (!isNaN(numero) && numero !== "") {
+      return parseFloat(numero);
+    }
+
+    return valor.toLowerCase();
+  }
+
+  function compararFilas(a, b, columna) {
+    const a1 = obtenerValorOrdenable(a.children[columna]);
+
+    const b1 = obtenerValorOrdenable(b.children[columna]);
+
+    if (a1 < b1) {
+      return direccionOrden === "asc" ? -1 : 1;
+    }
+
+    if (a1 > b1) {
+      return direccionOrden === "asc" ? 1 : -1;
+    }
+
+    return 0;
+  }
+
+  function normalizarTextoBusqueda(valor) {
+    return String(valor || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function obtenerTextoBusqueda() {
+    const inputs = contenedor.querySelectorAll(config.inputsBusqueda);
+
+    return Array.from(inputs)
+      .map((i) => normalizarTextoBusqueda(i.value))
+      .join(" ");
+  }
+
+  function buscarFilas(texto) {
+    const filas = contenedor.querySelectorAll(config.filas);
+
+    texto = normalizarTextoBusqueda(texto);
+
+    return Array.from(filas).filter((f) => {
+      return (
+        texto === "" || normalizarTextoBusqueda(f.textContent).includes(texto)
+      );
+    });
+  }
+
+  function renderizar() {
+    const filas = Array.from(contenedor.querySelectorAll(config.filas));
+
+    const texto = obtenerTextoBusqueda();
+
+    const filtradas = buscarFilas(texto);
+
+    if (columnaOrden !== null) {
+      filtradas.sort((a, b) => compararFilas(a, b, columnaOrden));
+    }
+
+    const totalPaginas =
+      filtradas.length > 0 ? Math.ceil(filtradas.length / filasPorPagina) : 0;
+
+    if (paginaActual > totalPaginas) {
+      paginaActual = 1;
+    }
+
+    filas.forEach((f) => {
+      f.style.display = "none";
+    });
+
+    const inicio = (paginaActual - 1) * filasPorPagina;
+
+    const fin = inicio + filasPorPagina;
+
+    const tbody = contenedor.querySelector("tbody");
+
+    /*************************************/
+    /* SIN RESULTADOS */
+    /*************************************/
+    if (filtradas.length === 0) {
+      tbody.querySelector(".sin-resultados")?.remove();
+
+      const filaSinResultados = document.createElement("tr");
+
+      filaSinResultados.className = "sin-resultados";
+
+      filaSinResultados.innerHTML = `
+    <td colspan="${contenedor.querySelectorAll("thead th").length}"
+        class="text-center">
+        No se encontraron resultados
+    </td>
+`;
+
+      tbody.appendChild(filaSinResultados);
+
+      const paginador = contenedor.querySelector(config.paginador);
+
+      if (paginador) {
+        paginador.innerHTML = "";
+      }
+
+      return;
+    }
+
+    tbody.querySelector(".sin-resultados")?.remove();
+    filtradas.forEach((f) => {
+      tbody.appendChild(f);
+    });
+
+    filtradas.slice(inicio, fin).forEach((f) => {
+      f.style.display = "";
+    });
+
+    /*************************************/
+    /* PAGINADOR */
+    /*************************************/
+    const paginador = contenedor.querySelector(config.paginador);
+
+    if (!paginador) {
+      return;
+    }
+
+    paginador.innerHTML = "";
+
+    function crearBoton(texto, pagina, clase = "") {
+      const btn = document.createElement("span");
+
+      btn.innerHTML = texto;
+
+      btn.className = "page-btn " + clase;
+
+      btn.onclick = () => {
+        paginaActual = pagina;
+
+        renderizar();
+      };
+
+      paginador.appendChild(btn);
+    }
+
+    function crearPuntos() {
+      const puntos = document.createElement("span");
+
+      puntos.className = "page-btn page-puntos";
+
+      puntos.innerHTML = "...";
+
+      paginador.appendChild(puntos);
+    }
+
+    /*************************************/
+    /* ANTERIOR */
+    /*************************************/
+    if (paginaActual > 1) {
+      crearBoton("&lsaquo;", paginaActual - 1);
+    }
+
+    /*************************************/
+    /* NUMEROS DEL PAGINADOR */
+    /*************************************/
+    if (totalPaginas <= 7) {
+      for (let i = 1; i <= totalPaginas; i++) {
+        crearBoton(i, i, i === paginaActual ? "activa" : "");
+      }
+    } else {
+      /*************************************/
+      /* PRIMERA PAGINA */
+      /*************************************/
+      crearBoton(1, 1, paginaActual === 1 ? "activa" : "");
+
+      /*************************************/
+      /* PUNTOS IZQUIERDOS */
+      /*************************************/
+      if (paginaActual > 4) {
+        crearPuntos();
+      }
+
+      /*************************************/
+      /* RANGO DINAMICO */
+      /*************************************/
+      let inicioPaginas = Math.max(2, paginaActual - 2);
+
+      let finPaginas = Math.min(totalPaginas - 1, paginaActual + 2);
+
+      if (paginaActual <= 4) {
+        inicioPaginas = 2;
+
+        finPaginas = 5;
+      }
+
+      if (paginaActual >= totalPaginas - 3) {
+        inicioPaginas = totalPaginas - 4;
+
+        finPaginas = totalPaginas - 1;
+      }
+
+      for (let i = inicioPaginas; i <= finPaginas; i++) {
+        crearBoton(i, i, i === paginaActual ? "activa" : "");
+      }
+
+      /*************************************/
+      /* PUNTOS DERECHOS */
+      /*************************************/
+      if (paginaActual < totalPaginas - 3) {
+        crearPuntos();
+      }
+
+      /*************************************/
+      /* ULTIMA PAGINA */
+      /*************************************/
+      crearBoton(
+        totalPaginas,
+        totalPaginas,
+        paginaActual === totalPaginas ? "activa" : ""
+      );
+    }
+
+    /*************************************/
+    /* SIGUIENTE */
+    /*************************************/
+    if (paginaActual < totalPaginas) {
+      crearBoton("&rsaquo;", paginaActual + 1);
+
+      crearBoton("&raquo;", totalPaginas);
+    }
+  }
+
+  /* BUSQUEDA */
+  contenedor.querySelectorAll(config.inputsBusqueda).forEach((input) => {
+    input.oninput = () => {
+      input.value = normalizarTextoBusqueda(input.value);
+
+      paginaActual = 1;
+
+      // Si todos los campos de búsqueda están vacíos,
+      // restaurar el orden de la primera carga.
+      if (normalizarTextoBusqueda(obtenerTextoBusqueda()) === "") {
+        columnaOrden = null;
+        direccionOrden = "asc";
+
+        const tbody = contenedor.querySelector("tbody");
+
+        ordenInicialFilas.forEach((fila) => {
+          if (contenedor.contains(fila)) {
+            tbody.appendChild(fila);
+          }
+        });
+      }
+
+      renderizar();
+    };
+  });
+
+  /* SELECT */
+  contenedor.querySelector(config.selectRows).onchange = () => {
+    paginaActual = 1;
+
+    filasPorPagina = parseInt(
+      contenedor.querySelector(config.selectRows).value,
+      10
+    );
+
+    renderizar();
+  };
+
+  /* ORDEN */
+  contenedor.querySelectorAll(config.botonesOrden).forEach((btn, index) => {
+    btn.onclick = () => {
+      if (columnaOrden === index) {
+        direccionOrden = direccionOrden === "asc" ? "desc" : "asc";
+      } else {
+        columnaOrden = index;
+
+        direccionOrden = "asc";
+      }
+
+      paginaActual = 1;
+
+      renderizar();
+    };
+  });
+
+  return {
+    renderizar,
+  };
+}
+
+document.addEventListener("input", function (event) {
+  if (event.target.classList.contains("buscador-normateca")) {
+    event.target.value = event.target.value.slice(0, 40);
+  }
+});
+
+</script>

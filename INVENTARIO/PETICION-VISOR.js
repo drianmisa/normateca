@@ -631,7 +631,7 @@ async function abrirVistaPreviaInventario(boton) {
 
             mostrarEliminar: esAdministrador && esDocumento,
 
-            mostrarAgregarFormato: esAdministrador && (esDocumento || esNorma),
+            mostrarAgregarFormato: esAdministrador && esDocumento,
 
             mostrarActualizarNorma: false,
 

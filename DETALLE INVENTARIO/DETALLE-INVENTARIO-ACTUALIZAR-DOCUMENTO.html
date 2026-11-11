@@ -449,6 +449,8 @@
     let actualizarDocumentoDetalleEnProceso = false;
     let contenidoIdActualizarDocumentoDetalle = null;
     let documentoIdActualizarDocumentoDetalle = null;
+    let agregarFormatoNormaDetalle = false;
+    let tituloNormaFormatoDetalle = "";
 
     const configuracionActualizarDocumentoDetalle = {
         endpoint: "/api/v1/inventario/documentos/:contenidoId/formatos/:documentoId",
@@ -458,6 +460,19 @@
         descripcionBitacora: "Actualización de formato adjunto del documento",
         mensajeExito: "Documento actualizado correctamente.",
     };
+
+    function obtenerConfiguracionFormatoDetalle() {
+        if (!agregarFormatoNormaDetalle) return { ...configuracionActualizarDocumentoDetalle, metodo: "PUT" };
+        return {
+            ...configuracionActualizarDocumentoDetalle,
+            metodo: "POST",
+            endpoint: "/api/v1/inventario/normas/:contenidoId/formatos",
+            functionalId: "Agregar formato adjunto de norma",
+            accionBitacora: "Agregar formato adjunto",
+            descripcionBitacora: "Alta de formato adjunto de norma",
+            mensajeExito: "Formato adjunto agregado correctamente.",
+        };
+    }
 
     function obtenerMensajeRespuestaActualizarDocumentoDetalle(
         respuesta,
@@ -515,7 +530,7 @@
 
         const idsValidos =
             Number(contenidoIdActualizarDocumentoDetalle) > 0 &&
-            Number(documentoIdActualizarDocumentoDetalle) > 0;
+            (agregarFormatoNormaDetalle || Number(documentoIdActualizarDocumentoDetalle) > 0);
 
         if (nombreArchivo) {
             nombreArchivo.textContent = archivo
@@ -569,7 +584,7 @@
             throw new Error("No se encontró un contenidoId válido.");
         }
 
-        if (!Number.isInteger(documentoId) || documentoId <= 0) {
+        if (!agregarFormatoNormaDetalle && (!Number.isInteger(documentoId) || documentoId <= 0)) {
             throw new Error("No se encontró un documentoId válido.");
         }
 
@@ -616,6 +631,8 @@
         contenidoId = null,
         documentoId = null,
         nombre = "",
+        agregarFormatoNorma = false,
+        tituloNorma = "",
     } = {}) {
         const modal = document.getElementById("actualizar-documento-detalle");
 
@@ -623,6 +640,16 @@
             console.error("[ACTUALIZAR DOCUMENTO DETALLE] No se encontró el modal.");
             return;
         }
+
+        if (actualizarDocumentoDetalleEnProceso) return;
+        agregarFormatoNormaDetalle = agregarFormatoNorma === true;
+        tituloNormaFormatoDetalle = tituloNorma;
+        const tituloModal = modal.querySelector(".modal-title span");
+        if (tituloModal) tituloModal.textContent = agregarFormatoNormaDetalle ? "Agregar formato adjunto" : "Actualizar documento";
+        const leyenda = modal.querySelector(".crear-documento-inventario-leyenda");
+        if (leyenda) leyenda.textContent = agregarFormatoNormaDetalle
+            ? "Selecciona o arrastra el archivo que deseas agregar como formato adjunto de la norma."
+            : "Para actualizar el documento selecciona o arrastra un archivo en formato .pdf, .pptx, .docx, .xls o .xlsx.";
 
         contenidoIdActualizarDocumentoDetalle = Number(contenidoId) || null;
 
@@ -704,16 +731,18 @@
             return;
         }
 
-        const descripcion =
-            `${configuracionActualizarDocumentoDetalle.descripcionBitacora}. ` +
+        const configuracion = obtenerConfiguracionFormatoDetalle();
+        const descripcion = agregarFormatoNormaDetalle
+            ? `Se agrega el formato adjunto "${window.archivoActualizarDocumentoDetalleSeleccionado?.name || ""}" a la norma "${tituloNormaFormatoDetalle}".`
+            : `${configuracion.descripcionBitacora}. ` +
             `ContenidoId: ${contenidoIdActualizarDocumentoDetalle}. ` +
             `DocumentoId: ${documentoIdActualizarDocumentoDetalle}`;
 
         try {
             await window.bitacoraService.operationLog(
-                "PUT",
-                configuracionActualizarDocumentoDetalle.moduloBitacora,
-                configuracionActualizarDocumentoDetalle.accionBitacora,
+                configuracion.metodo,
+                configuracion.moduloBitacora,
+                configuracion.accionBitacora,
                 descripcion,
                 Number(statusCode || 500),
                 mensaje || ""
@@ -729,6 +758,7 @@
     async function actualizarDocumentoDetalle() {
         if (actualizarDocumentoDetalleEnProceso) return;
 
+        const configuracion = obtenerConfiguracionFormatoDetalle();
         let respuesta = {};
         let textoRespuesta = "";
         let statusCode = 500;
@@ -749,7 +779,7 @@
 
             sessionStorage.setItem(
                 "functional-id",
-                configuracionActualizarDocumentoDetalle.functionalId
+                configuracion.functionalId
             );
 
             if (typeof window.tokenizerTransactionId !== "function") {
@@ -771,7 +801,7 @@
 
             formData.append("archivo", archivo, archivo.name);
 
-            const endpoint = configuracionActualizarDocumentoDetalle.endpoint
+            const endpoint = configuracion.endpoint
                 .replace(":contenidoId", encodeURIComponent(contenidoId))
                 .replace(":documentoId", encodeURIComponent(documentoId));
 
@@ -785,7 +815,7 @@
             }
 
             const response = await fetch(`${baseUrl}${endpoint}`, {
-                method: "PUT",
+                method: configuracion.metodo,
                 headers,
                 body: formData,
             });
@@ -824,7 +854,7 @@
 
             const mensajeExito =
                 respuesta?.message ||
-                configuracionActualizarDocumentoDetalle.mensajeExito;
+                configuracion.mensajeExito;
 
             await registrarBitacoraActualizarDocumentoDetalle(
                 respuesta?.statusCode || response.status || 200,
@@ -1011,6 +1041,17 @@
         window[claveEventoActualizarDocumentoDetalle] = true;
 
         document.addEventListener("click", function (event) {
+            const agregar = event.target.closest(".btn-agregar-formato-norma");
+            if (agregar) {
+                event.preventDefault();
+                event.stopPropagation();
+                abrirModalActualizarDocumentoDetalle({
+                    contenidoId: agregar.dataset.contenidoId,
+                    agregarFormatoNorma: true,
+                    tituloNorma: agregar.dataset.tituloNorma || "",
+                });
+                return;
+            }
             const boton = event.target.closest(".btn-editar[data-contenido-id]");
 
             if (!boton) return;
