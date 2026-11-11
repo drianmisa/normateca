@@ -429,6 +429,34 @@ window.apiDelete = async function (apiName, endpoint, extraHeaders = {}) {
 /* BITACORA */
 /******************************************************************************/
 class BitacoraService {
+    async accesosLog(metodo, actividad, statusNum, respuestaOperacion) {
+        try {
+            const data = {
+                identificador: 0,
+                aplicativoId: "NORMATECA",
+                capa: "Frontend",
+                metodo,
+                transaccionId: window.obtenerTransactionId(),
+                estatusOperacion: statusNum === 200 || statusNum === 201 ? "C" : "I",
+                respuestaOperacion,
+                actividad,
+                fechaHoraAcceso: new Date().toISOString(),
+                usuarioAcceso: window.obtenerUsuario(),
+                nombreUsuario: window.obtenerNombreOperador(),
+                expedienteUsuario: sessionStorage.getItem("expediente") || "Sin dato",
+                rfcUsuario: window.obtenerRFC(),
+                areaUsuario: window.obtenerArea(),
+                puestoUsuario: window.obtenerPuesto(),
+                ipEquipo: await window.obtenerIP(),
+            };
+            // La URL base de bitácora ya incluye /bitacora.
+            return await window.apiPost("bitacora", "/accesos/registrar", data);
+        } catch (error) {
+            console.error("Error accesosLog:", error);
+            return error;
+        }
+    }
+
     async operationLog(
         metodo,
         proceso,

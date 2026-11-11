@@ -12,10 +12,23 @@
     let temporizador = null;
     let cerrandoSesion = false;
 
-    function cerrarSesionPorInactividad() {
+    async function cerrarSesionPorInactividad() {
         if (cerrandoSesion) return;
         cerrandoSesion = true;
         destruir();
+
+        try {
+            if (typeof window.bitacoraService?.accesosLog === "function") {
+                await window.bitacoraService.accesosLog(
+                    "Logout",
+                    "Cierre de sesión por inactividad",
+                    200,
+                    `El usuario ${window.obtenerUsuario()} cerró sesión por inactividad.`
+                );
+            }
+        } catch (error) {
+            console.error("[Sesión expirada] No fue posible registrar el cierre en bitácora:", error);
+        }
 
         // La redirección también se ejecuta si el navegador impide limpiar el almacenamiento.
         try {

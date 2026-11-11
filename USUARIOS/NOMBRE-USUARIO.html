@@ -202,6 +202,19 @@
             onGuardar: async function () {
 
                 try {
+                    try {
+                        if (typeof window.bitacoraService?.accesosLog === "function") {
+                            await window.bitacoraService.accesosLog(
+                                "Logout",
+                                "Cierre de sesión",
+                                200,
+                                `El usuario ${window.obtenerUsuario()} cerró sesión en el sistema.`
+                            );
+                        }
+                    } catch (error) {
+                        console.error("[Cierre de sesión] No fue posible registrar el cierre en bitácora:", error);
+                    }
+
 
                     /*************************************/
                     /* LIMPIAR ALMACENAMIENTO */
