@@ -84,6 +84,8 @@
                                     class="form-control editar-norma-inv-dato-bloqueable">
                             </div>
                         </div>
+                        <div id="mensaje-fechas-renovacion-editar-norma-inv"
+                            class="text-danger mt-2" role="alert" aria-live="polite" hidden></div>
                         <div id="alerta-clasificacion-editar-norma-inv"
                             class="alert alert-warning editar-norma-inv-alerta-clasificacion" role="alert"
                             aria-live="polite" hidden>
@@ -496,6 +498,7 @@
         const ESTADO_EDITAR_NORMA_INV = {
             inicializado: false,
             enviando: false,
+            fechaDesdeInteractuada: false,
             archivoSeleccionado: null,
             datosOriginales: null,
         };
@@ -758,6 +761,50 @@
             });
         }
 
+        function obtenerErrorRenovacionEditarNormaInv(datos) {
+            if (!datos.renovacionVigencia) return "";
+            const normalizarFecha = (valor) => String(valor ?? "").trim().slice(0, 10);
+            const desde = normalizarFecha(datos.fechaDesde);
+            const hasta = normalizarFecha(datos.fechaHasta);
+            const originales = ESTADO_EDITAR_NORMA_INV.datosOriginales;
+            if (desde && hasta && originales && desde === normalizarFecha(originales.fechaDesde) &&
+                hasta === normalizarFecha(originales.fechaHasta)) {
+                return "Las fechas capturadas son iguales a las vigentes. Capture una nueva Fecha Desde y una nueva Fecha Hasta e intente nuevamente.";
+            }
+            const hoy = new Date();
+            const limite = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1);
+            const ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth(), 0).getDate();
+            limite.setDate(Math.min(hoy.getDate(), ultimoDia));
+            const fechaISO = (fecha) => [
+                fecha.getFullYear(),
+                String(fecha.getMonth() + 1).padStart(2, "0"),
+                String(fecha.getDate()).padStart(2, "0"),
+            ].join("-");
+            const fechaMensaje = (fecha) => fecha.split("-").reverse().join("-");
+            const fechaLimite = fechaISO(limite);
+            const fechaCaptura = fechaISO(hoy);
+            if (!desde || desde < fechaLimite || desde > fechaCaptura) {
+                return `La Fecha Desde debe estar entre ${fechaMensaje(fechaLimite)} y ${fechaMensaje(fechaCaptura)}. Verifique la fecha e intente nuevamente.`;
+            }
+            if (!hasta) return "Capture una nueva Fecha Hasta e intente nuevamente.";
+            if (hasta < desde) return "La fecha hasta no puede ser menor que la fecha desde.";
+            return "";
+        }
+
+        function actualizarValidacionRenovacionEditarNormaInv() {
+            const datos = obtenerDatosFormularioEditarNormaInv();
+            const mensaje = obtenerErrorRenovacionEditarNormaInv(datos);
+            const aviso = obtenerElementoEditarNormaInv("mensaje-fechas-renovacion-editar-norma-inv");
+            if (aviso) {
+                const mostrar = ESTADO_EDITAR_NORMA_INV.fechaDesdeInteractuada && Boolean(mensaje);
+                aviso.textContent = mostrar ? mensaje : "";
+                aviso.hidden = !mostrar;
+            }
+            const guardar = obtenerElementoEditarNormaInv("btn-guardar-editar-norma-inv");
+            if (guardar) guardar.disabled = ESTADO_EDITAR_NORMA_INV.enviando || Boolean(mensaje);
+            return !mensaje;
+        }
+
         function validarFormularioEditarNormaInv(datos) {
             const campos = [
                 "titulo-editar-norma-inv",
@@ -834,6 +881,10 @@
             /* =====================================================
                    FECHA DESDE
                    ===================================================== */
+
+            if (!actualizarValidacionRenovacionEditarNormaInv()) {
+                return false;
+            }
 
             if (!datos.renovacionVigencia && !datos.fechaDesde) {
                 marcarError("fecha-desde-editar-norma-inv");
@@ -944,6 +995,7 @@
                     btnLimpiar.disabled = !ESTADO_EDITAR_NORMA_INV.archivoSeleccionado;
                 }
             }
+            actualizarValidacionRenovacionEditarNormaInv();
         }
 
         function cargarDatosDesdeBotonEditarNormaInv(boton) {
@@ -982,6 +1034,7 @@
                 throw new Error("El botón no contiene data-contenido-id ni data-id.");
             }
 
+            ESTADO_EDITAR_NORMA_INV.fechaDesdeInteractuada = false;
             ESTADO_EDITAR_NORMA_INV.datosOriginales = { ...datos };
 
             obtenerElementoEditarNormaInv("contenido-id-editar-norma-inv").value =
@@ -1123,6 +1176,7 @@
                 textoCambioClasificacion.textContent = "";
             }
 
+            ESTADO_EDITAR_NORMA_INV.fechaDesdeInteractuada = false;
             ESTADO_EDITAR_NORMA_INV.datosOriginales = null;
 
             const crearVersion = obtenerElementoEditarNormaInv(
@@ -1399,6 +1453,7 @@
                 abrirResultadoEditarNormaInv("Error", "Error", mensaje);
             } finally {
                 ESTADO_EDITAR_NORMA_INV.enviando = false;
+                actualizarValidacionRenovacionEditarNormaInv();
 
                 if (typeof window.ocultarLoaderPeticion === "function") {
                     window.ocultarLoaderPeticion();
@@ -1518,7 +1573,21 @@
                 actualizarAlertaClasificacionEditarNormaInv();
             });
 
+            ["fecha-desde-editar-norma-inv", "fecha-hasta-editar-norma-inv"].forEach(function (id) {
+                const campo = obtenerElementoEditarNormaInv(id);
+                const validarFecha = function () {
+                    if (id === "fecha-desde-editar-norma-inv" && renovacion?.checked) {
+                        ESTADO_EDITAR_NORMA_INV.fechaDesdeInteractuada = true;
+                    }
+                    actualizarValidacionRenovacionEditarNormaInv();
+                };
+                campo?.addEventListener("input", validarFecha);
+                campo?.addEventListener("change", validarFecha);
+                campo?.addEventListener("blur", validarFecha);
+            });
+
             renovacion?.addEventListener("change", function () {
+                ESTADO_EDITAR_NORMA_INV.fechaDesdeInteractuada = false;
                 aplicarBloqueoRenovacionEditarNormaInv();
                 ocultarMensajeEditarNormaInv();
             });
