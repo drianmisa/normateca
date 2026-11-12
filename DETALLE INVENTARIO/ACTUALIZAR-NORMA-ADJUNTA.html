@@ -735,7 +735,7 @@
         }
 
         function obtenerErrorRenovacionEditarNormaInv(datos) {
-            if (!datos.renovacionVigencia) return "";
+            if (!datos.renovacionVigencia && !datos.crearVersion) return "";
             const normalizarFecha = (valor) => String(valor ?? "").trim().slice(0, 10);
             const desde = normalizarFecha(datos.fechaDesde);
             const hasta = normalizarFecha(datos.fechaHasta);
@@ -1561,7 +1561,8 @@
             ["fecha-desde-editar-norma-inv", "fecha-hasta-editar-norma-inv"].forEach(function (id) {
                 const campo = obtenerElementoEditarNormaInv(id);
                 const validarFecha = function () {
-                    if (id === "fecha-desde-editar-norma-inv" && renovacion?.checked) {
+                    if (id === "fecha-desde-editar-norma-inv" &&
+                        (renovacion?.checked || obtenerElementoEditarNormaInv("crear-version-editar-norma-inv")?.checked)) {
                         ESTADO_EDITAR_NORMA_INV.fechaDesdeInteractuada = true;
                     }
                     actualizarValidacionRenovacionEditarNormaInv();
@@ -1580,6 +1581,7 @@
             obtenerElementoEditarNormaInv(
                 "crear-version-editar-norma-inv"
             )?.addEventListener("change", function () {
+                ESTADO_EDITAR_NORMA_INV.fechaDesdeInteractuada = false;
                 aplicarBloqueoRenovacionEditarNormaInv();
                 ocultarMensajeEditarNormaInv();
             });
