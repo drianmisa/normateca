@@ -444,603 +444,607 @@
 </style>
 
 <script>
-    window.archivoActualizarDocumentoDetalleSeleccionado = null;
+    (function () {
+        window.controladorEventosDocumentoDetalle?.abort();
+        const controladorEventos = new AbortController();
+        window.controladorEventosDocumentoDetalle = controladorEventos;
 
-    let actualizarDocumentoDetalleEnProceso = false;
-    let contenidoIdActualizarDocumentoDetalle = null;
-    let documentoIdActualizarDocumentoDetalle = null;
-    let agregarFormatoNormaDetalle = false;
-    let tituloNormaFormatoDetalle = "";
-
-    const configuracionActualizarDocumentoDetalle = {
-        endpoint: "/api/v1/inventario/documentos/:contenidoId/formatos/:documentoId",
-        functionalId: "Actualizar documento detalle",
-        moduloBitacora: "Inventario de normas",
-        accionBitacora: "Aactualizar documento detalle",
-        descripcionBitacora: "Actualización de formato adjunto del documento",
-        mensajeExito: "Documento actualizado correctamente.",
-    };
-
-    function obtenerConfiguracionFormatoDetalle() {
-        if (!agregarFormatoNormaDetalle) return { ...configuracionActualizarDocumentoDetalle, metodo: "PUT" };
-        return {
-            ...configuracionActualizarDocumentoDetalle,
-            metodo: "POST",
-            endpoint: "/api/v1/inventario/normas/:contenidoId/formatos",
-            functionalId: "Agregar formato adjunto de norma",
-            accionBitacora: "Agregar formato adjunto",
-            descripcionBitacora: "Alta de formato adjunto de norma",
-            mensajeExito: "Formato adjunto agregado correctamente.",
-        };
-    }
-
-    function obtenerMensajeRespuestaActualizarDocumentoDetalle(
-        respuesta,
-        textoRespuesta = "",
-        mensajeDefault = "Ocurrió un error al actualizar el documento."
-    ) {
-        return (
-            respuesta?.errorMessageDTO?.message ||
-            respuesta?.errorMessageDTO?.detail ||
-            respuesta?.dataResponse?.mensaje ||
-            respuesta?.message ||
-            textoRespuesta ||
-            mensajeDefault
-        );
-    }
-
-    function mostrarMensajeActualizarDocumentoDetalle(mensaje = "") {
-        const contenedor = document.getElementById(
-            "mensaje-actualizar-documento-detalle"
-        );
-
-        if (!contenedor) return;
-
-        contenedor.hidden = false;
-        contenedor.textContent = mensaje;
-        contenedor.classList.add("error");
-    }
-
-    function ocultarMensajeActualizarDocumentoDetalle() {
-        const contenedor = document.getElementById(
-            "mensaje-actualizar-documento-detalle"
-        );
-
-        if (!contenedor) return;
-
-        contenedor.hidden = true;
-        contenedor.textContent = "";
-        contenedor.classList.remove("error");
-    }
-
-    function actualizarControlesActualizarDocumentoDetalle() {
-        const nombreArchivo = document.getElementById(
-            "nombre-archivo-actualizar-documento-detalle"
-        );
-
-        const btnLimpiar = document.getElementById(
-            "btn-limpiar-archivo-actualizar-documento-detalle"
-        );
-
-        const btnGuardar = document.getElementById(
-            "btn-guardar-actualizar-documento-detalle"
-        );
-
-        const archivo = window.archivoActualizarDocumentoDetalleSeleccionado;
-
-        const idsValidos =
-            Number(contenidoIdActualizarDocumentoDetalle) > 0 &&
-            (agregarFormatoNormaDetalle || Number(documentoIdActualizarDocumentoDetalle) > 0);
-
-        if (nombreArchivo) {
-            nombreArchivo.textContent = archivo
-                ? archivo.name
-                : "Sin archivos seleccionados";
+        function escuchar(elemento, evento, callback, opciones = {}) {
+            elemento?.addEventListener(evento, callback, { ...opciones, signal: controladorEventos.signal });
         }
-
-        if (btnLimpiar) {
-            btnLimpiar.disabled = !archivo || actualizarDocumentoDetalleEnProceso;
-        }
-
-        if (btnGuardar) {
-            btnGuardar.disabled =
-                !archivo || !idsValidos || actualizarDocumentoDetalleEnProceso;
-        }
-    }
-
-    function validarArchivoActualizarDocumentoDetalle(archivo) {
-        if (!archivo) {
-            throw new Error("Selecciona un archivo.");
-        }
-
-        const extensionesPermitidas = ["pdf", "docx", "xls", "xlsx", "pptx"];
-
-        const extension = String(archivo.name || "")
-            .split(".")
-            .pop()
-            .toLowerCase();
-
-        if (!extension || !extensionesPermitidas.includes(extension)) {
-            throw new Error(
-                "El archivo debe estar en formato .pdf, .docx, .xls, .xlsx o .pptx."
-            );
-        }
-
-        return true;
-    }
-
-    function validarIdentificadoresActualizarDocumentoDetalle() {
-        const contenidoId = Number.parseInt(
-            String(contenidoIdActualizarDocumentoDetalle || ""),
-            10
-        );
-
-        const documentoId = Number.parseInt(
-            String(documentoIdActualizarDocumentoDetalle || ""),
-            10
-        );
-
-        if (!Number.isInteger(contenidoId) || contenidoId <= 0) {
-            throw new Error("No se encontró un contenidoId válido.");
-        }
-
-        if (!agregarFormatoNormaDetalle && (!Number.isInteger(documentoId) || documentoId <= 0)) {
-            throw new Error("No se encontró un documentoId válido.");
-        }
-
-        return { contenidoId, documentoId };
-    }
-
-    function asignarArchivoActualizarDocumentoDetalle(archivo) {
-        try {
-            validarArchivoActualizarDocumentoDetalle(archivo);
-
-            window.archivoActualizarDocumentoDetalleSeleccionado = archivo;
-
-            ocultarMensajeActualizarDocumentoDetalle();
-            actualizarControlesActualizarDocumentoDetalle();
-        } catch (error) {
-            limpiarArchivoActualizarDocumentoDetalle();
-
-            mostrarMensajeActualizarDocumentoDetalle(
-                error?.message || "El archivo seleccionado no es válido."
-            );
-        }
-    }
-
-    function limpiarArchivoActualizarDocumentoDetalle() {
-        const inputArchivo = document.getElementById(
-            "archivo-actualizar-documento-detalle"
-        );
-
-        if (inputArchivo) {
-            inputArchivo.value = "";
-        }
-
         window.archivoActualizarDocumentoDetalleSeleccionado = null;
 
-        actualizarControlesActualizarDocumentoDetalle();
-    }
+        let actualizarDocumentoDetalleEnProceso = false;
+        let contenidoIdActualizarDocumentoDetalle = null;
+        let documentoIdActualizarDocumentoDetalle = null;
+        let agregarFormatoNormaDetalle = false;
+        let tituloNormaFormatoDetalle = "";
 
-    function limpiarModalActualizarDocumentoDetalle() {
-        limpiarArchivoActualizarDocumentoDetalle();
-        ocultarMensajeActualizarDocumentoDetalle();
-    }
+        const configuracionActualizarDocumentoDetalle = {
+            endpoint: "/api/v1/inventario/documentos/:contenidoId/formatos/:documentoId",
+            functionalId: "Actualizar documento detalle",
+            moduloBitacora: "Inventario de normas",
+            accionBitacora: "Aactualizar documento detalle",
+            descripcionBitacora: "Actualización de formato adjunto del documento",
+            mensajeExito: "Documento actualizado correctamente.",
+        };
 
-    function abrirModalActualizarDocumentoDetalle({
-        contenidoId = null,
-        documentoId = null,
-        nombre = "",
-        agregarFormatoNorma = false,
-        tituloNorma = "",
-    } = {}) {
-        const modal = document.getElementById("actualizar-documento-detalle");
-
-        if (!modal) {
-            console.error("[ACTUALIZAR DOCUMENTO DETALLE] No se encontró el modal.");
-            return;
+        function obtenerConfiguracionFormatoDetalle() {
+            if (!agregarFormatoNormaDetalle) return { ...configuracionActualizarDocumentoDetalle, metodo: "PUT" };
+            return {
+                ...configuracionActualizarDocumentoDetalle,
+                metodo: "POST",
+                endpoint: "/api/v1/inventario/normas/:contenidoId/formatos",
+                functionalId: "Agregar formato adjunto de norma",
+                accionBitacora: "Agregar formato adjunto",
+                descripcionBitacora: "Alta de formato adjunto de norma",
+                mensajeExito: "Formato adjunto agregado correctamente.",
+            };
         }
 
-        if (actualizarDocumentoDetalleEnProceso) return;
-        agregarFormatoNormaDetalle = agregarFormatoNorma === true;
-        tituloNormaFormatoDetalle = tituloNorma;
-        const tituloModal = modal.querySelector(".modal-title span");
-        if (tituloModal) tituloModal.textContent = agregarFormatoNormaDetalle ? "Agregar formato adjunto" : "Actualizar documento";
-        const leyenda = modal.querySelector(".crear-documento-inventario-leyenda");
-        if (leyenda) leyenda.textContent = agregarFormatoNormaDetalle
-            ? "Selecciona o arrastra el archivo que deseas agregar como formato adjunto de la norma."
-            : "Para actualizar el documento selecciona o arrastra un archivo en formato .pdf, .pptx, .docx, .xls o .xlsx.";
-
-        contenidoIdActualizarDocumentoDetalle = Number(contenidoId) || null;
-
-        documentoIdActualizarDocumentoDetalle = Number(documentoId) || null;
-
-        limpiarModalActualizarDocumentoDetalle();
-
-        const nombreArchivo = document.getElementById(
-            "nombre-archivo-actualizar-documento-detalle"
-        );
-
-        if (nombreArchivo && nombre) {
-            nombreArchivo.textContent = nombre;
+        function obtenerMensajeRespuestaActualizarDocumentoDetalle(
+            respuesta,
+            textoRespuesta = "",
+            mensajeDefault = "Ocurrió un error al actualizar el documento."
+        ) {
+            return (
+                respuesta?.errorMessageDTO?.message ||
+                respuesta?.errorMessageDTO?.detail ||
+                respuesta?.dataResponse?.mensaje ||
+                respuesta?.message ||
+                textoRespuesta ||
+                mensajeDefault
+            );
         }
 
-        const backdropId = "backdrop-actualizar-documento-detalle";
+        function mostrarMensajeActualizarDocumentoDetalle(mensaje = "") {
+            const contenedor = document.getElementById(
+                "mensaje-actualizar-documento-detalle"
+            );
 
-        let backdrop = document.getElementById(backdropId);
+            if (!contenedor) return;
 
-        if (!backdrop) {
-            backdrop = document.createElement("div");
-            backdrop.id = backdropId;
-            backdrop.className = "actualizar-documento-detalle-backdrop";
+            contenedor.hidden = false;
+            contenedor.textContent = mensaje;
+            contenedor.classList.add("error");
+        }
 
-            backdrop.addEventListener("click", function () {
-                if (actualizarDocumentoDetalleEnProceso) return;
+        function ocultarMensajeActualizarDocumentoDetalle() {
+            const contenedor = document.getElementById(
+                "mensaje-actualizar-documento-detalle"
+            );
+
+            if (!contenedor) return;
+
+            contenedor.hidden = true;
+            contenedor.textContent = "";
+            contenedor.classList.remove("error");
+        }
+
+        function actualizarControlesActualizarDocumentoDetalle() {
+            const nombreArchivo = document.getElementById(
+                "nombre-archivo-actualizar-documento-detalle"
+            );
+
+            const btnLimpiar = document.getElementById(
+                "btn-limpiar-archivo-actualizar-documento-detalle"
+            );
+
+            const btnGuardar = document.getElementById(
+                "btn-guardar-actualizar-documento-detalle"
+            );
+
+            const archivo = window.archivoActualizarDocumentoDetalleSeleccionado;
+
+            const idsValidos =
+                Number(contenidoIdActualizarDocumentoDetalle) > 0 &&
+                (agregarFormatoNormaDetalle || Number(documentoIdActualizarDocumentoDetalle) > 0);
+
+            if (nombreArchivo) {
+                nombreArchivo.textContent = archivo
+                    ? archivo.name
+                    : "Sin archivos seleccionados";
+            }
+
+            if (btnLimpiar) {
+                btnLimpiar.disabled = !archivo || actualizarDocumentoDetalleEnProceso;
+            }
+
+            if (btnGuardar) {
+                btnGuardar.disabled =
+                    !archivo || !idsValidos || actualizarDocumentoDetalleEnProceso;
+            }
+        }
+
+        function validarArchivoActualizarDocumentoDetalle(archivo) {
+            if (!archivo) {
+                throw new Error("Selecciona un archivo.");
+            }
+
+            const extensionesPermitidas = ["pdf", "docx", "xls", "xlsx", "pptx"];
+
+            const extension = String(archivo.name || "")
+                .split(".")
+                .pop()
+                .toLowerCase();
+
+            if (!extension || !extensionesPermitidas.includes(extension)) {
+                throw new Error(
+                    "El archivo debe estar en formato .pdf, .docx, .xls, .xlsx o .pptx."
+                );
+            }
+
+            return true;
+        }
+
+        function validarIdentificadoresActualizarDocumentoDetalle() {
+            const contenidoId = Number.parseInt(
+                String(contenidoIdActualizarDocumentoDetalle || ""),
+                10
+            );
+
+            const documentoId = Number.parseInt(
+                String(documentoIdActualizarDocumentoDetalle || ""),
+                10
+            );
+
+            if (!Number.isInteger(contenidoId) || contenidoId <= 0) {
+                throw new Error("No se encontró un contenidoId válido.");
+            }
+
+            if (!agregarFormatoNormaDetalle && (!Number.isInteger(documentoId) || documentoId <= 0)) {
+                throw new Error("No se encontró un documentoId válido.");
+            }
+
+            return { contenidoId, documentoId };
+        }
+
+        function asignarArchivoActualizarDocumentoDetalle(archivo) {
+            try {
+                validarArchivoActualizarDocumentoDetalle(archivo);
+
+                window.archivoActualizarDocumentoDetalleSeleccionado = archivo;
+
+                ocultarMensajeActualizarDocumentoDetalle();
+                actualizarControlesActualizarDocumentoDetalle();
+            } catch (error) {
+                limpiarArchivoActualizarDocumentoDetalle();
+
+                mostrarMensajeActualizarDocumentoDetalle(
+                    error?.message || "El archivo seleccionado no es válido."
+                );
+            }
+        }
+
+        function limpiarArchivoActualizarDocumentoDetalle() {
+            const inputArchivo = document.getElementById(
+                "archivo-actualizar-documento-detalle"
+            );
+
+            if (inputArchivo) {
+                inputArchivo.value = "";
+            }
+
+            window.archivoActualizarDocumentoDetalleSeleccionado = null;
+
+            actualizarControlesActualizarDocumentoDetalle();
+        }
+
+        function limpiarModalActualizarDocumentoDetalle() {
+            limpiarArchivoActualizarDocumentoDetalle();
+            ocultarMensajeActualizarDocumentoDetalle();
+        }
+
+        function abrirModalActualizarDocumentoDetalle({
+            contenidoId = null,
+            documentoId = null,
+            nombre = "",
+            agregarFormatoNorma = false,
+            tituloNorma = "",
+        } = {}) {
+            const modal = document.getElementById("actualizar-documento-detalle");
+
+            if (!modal) {
+                console.error("[ACTUALIZAR DOCUMENTO DETALLE] No se encontró el modal.");
+                return;
+            }
+
+            if (actualizarDocumentoDetalleEnProceso) return;
+            inicializarModalActualizarDocumentoDetalle();
+            agregarFormatoNormaDetalle = agregarFormatoNorma === true;
+            tituloNormaFormatoDetalle = tituloNorma;
+            const tituloModal = modal.querySelector(".modal-title span");
+            if (tituloModal) tituloModal.textContent = agregarFormatoNormaDetalle ? "Agregar formato adjunto" : "Actualizar documento";
+            const leyenda = modal.querySelector(".crear-documento-inventario-leyenda");
+            if (leyenda) leyenda.textContent = agregarFormatoNormaDetalle
+                ? "Selecciona o arrastra el archivo que deseas agregar como formato adjunto de la norma."
+                : "Para actualizar el documento selecciona o arrastra un archivo en formato .pdf, .pptx, .docx, .xls o .xlsx.";
+
+            contenidoIdActualizarDocumentoDetalle = Number(contenidoId) || null;
+
+            documentoIdActualizarDocumentoDetalle = Number(documentoId) || null;
+
+            limpiarModalActualizarDocumentoDetalle();
+
+            const nombreArchivo = document.getElementById(
+                "nombre-archivo-actualizar-documento-detalle"
+            );
+
+            if (nombreArchivo && nombre) {
+                nombreArchivo.textContent = nombre;
+            }
+
+            const backdropId = "backdrop-actualizar-documento-detalle";
+
+            let backdrop = document.getElementById(backdropId);
+
+            if (!backdrop) {
+                backdrop = document.createElement("div");
+                backdrop.id = backdropId;
+                backdrop.className = "actualizar-documento-detalle-backdrop";
+
+                escuchar(backdrop, "click", function () {
+                    if (actualizarDocumentoDetalleEnProceso) return;
+
+                    cerrarModalActualizarDocumentoDetalle();
+                    limpiarModalActualizarDocumentoDetalle();
+                });
+
+                document.body.appendChild(backdrop);
+            }
+
+            modal.classList.add("show");
+            modal.style.display = "block";
+            modal.style.visibility = "visible";
+            modal.style.pointerEvents = "auto";
+            modal.setAttribute("aria-hidden", "false");
+            modal.setAttribute("aria-modal", "true");
+
+            document.body.classList.add("modal-open");
+            document.body.style.overflow = "hidden";
+
+            actualizarControlesActualizarDocumentoDetalle();
+        }
+
+        function cerrarModalActualizarDocumentoDetalle() {
+            const modal = document.getElementById("actualizar-documento-detalle");
+
+            if (modal) {
+                modal.classList.remove("show");
+                modal.style.display = "none";
+                modal.style.visibility = "hidden";
+                modal.style.pointerEvents = "none";
+                modal.setAttribute("aria-hidden", "true");
+                modal.removeAttribute("aria-modal");
+            }
+
+            document.getElementById("backdrop-actualizar-documento-detalle")?.remove();
+
+            document
+                .querySelectorAll(".actualizar-documento-detalle-backdrop")
+                .forEach((elemento) => elemento.remove());
+
+            document.body.classList.remove("modal-open");
+            document.body.style.overflow = "";
+            document.body.style.paddingRight = "";
+        }
+
+        async function registrarBitacoraActualizarDocumentoDetalle(
+            statusCode,
+            mensaje
+        ) {
+            if (
+                !window.bitacoraService ||
+                typeof window.bitacoraService.operationLog !== "function"
+            ) {
+                return;
+            }
+
+            const configuracion = obtenerConfiguracionFormatoDetalle();
+            const descripcion = agregarFormatoNormaDetalle
+                ? `Se agrega el formato adjunto "${window.archivoActualizarDocumentoDetalleSeleccionado?.name || ""}" a la norma "${tituloNormaFormatoDetalle}".`
+                : `${configuracion.descripcionBitacora}. ` +
+                `ContenidoId: ${contenidoIdActualizarDocumentoDetalle}. ` +
+                `DocumentoId: ${documentoIdActualizarDocumentoDetalle}`;
+
+            try {
+                await window.bitacoraService.operationLog(
+                    configuracion.metodo,
+                    configuracion.moduloBitacora,
+                    configuracion.accionBitacora,
+                    descripcion,
+                    Number(statusCode || 500),
+                    mensaje || ""
+                );
+            } catch (error) {
+                console.warn(
+                    "[ACTUALIZAR DOCUMENTO DETALLE] Error al registrar bitácora:",
+                    error
+                );
+            }
+        }
+
+        async function actualizarDocumentoDetalle() {
+            if (actualizarDocumentoDetalleEnProceso) return;
+
+            const configuracion = obtenerConfiguracionFormatoDetalle();
+            let respuesta = {};
+            let textoRespuesta = "";
+            let statusCode = 500;
+
+            try {
+                const archivo = window.archivoActualizarDocumentoDetalleSeleccionado;
+
+                validarArchivoActualizarDocumentoDetalle(archivo);
+
+                const { contenidoId, documentoId } =
+                    validarIdentificadoresActualizarDocumentoDetalle();
+
+                actualizarDocumentoDetalleEnProceso = true;
+                actualizarControlesActualizarDocumentoDetalle();
+                ocultarMensajeActualizarDocumentoDetalle();
+
+                window.mostrarLoaderPeticion?.();
+
+                sessionStorage.setItem(
+                    "functional-id",
+                    configuracion.functionalId
+                );
+
+                if (typeof window.tokenizerTransactionId !== "function") {
+                    throw new Error("No se encontró la función tokenizerTransactionId.");
+                }
+
+                await window.tokenizerTransactionId();
+
+                if (typeof window.getGlobalHeaders !== "function") {
+                    throw new Error("No se encontró la función getGlobalHeaders.");
+                }
+
+                const headers = await window.getGlobalHeaders();
+
+                delete headers["Content-Type"];
+                delete headers["content-type"];
+
+                const formData = new FormData();
+
+                formData.append("archivo", archivo, archivo.name);
+
+                const endpoint = configuracion.endpoint
+                    .replace(":contenidoId", encodeURIComponent(contenidoId))
+                    .replace(":documentoId", encodeURIComponent(documentoId));
+
+                const baseUrl = String(window.apiConfig?.normativas || "").replace(
+                    /\/+$/,
+                    ""
+                );
+
+                if (!baseUrl) {
+                    throw new Error("No se encontró la URL base de normativas.");
+                }
+
+                const response = await fetch(`${baseUrl}${endpoint}`, {
+                    method: configuracion.metodo,
+                    headers,
+                    body: formData,
+                });
+
+                statusCode = response.status;
+                textoRespuesta = await response.text();
+
+                try {
+                    respuesta = textoRespuesta ? JSON.parse(textoRespuesta) : {};
+                } catch {
+                    respuesta = {
+                        message: textoRespuesta,
+                    };
+                }
+
+                if (!response.ok) {
+                    throw new Error(
+                        obtenerMensajeRespuestaActualizarDocumentoDetalle(
+                            respuesta,
+                            textoRespuesta
+                        )
+                    );
+                }
+
+                if (
+                    respuesta?.statusCode !== undefined &&
+                    Number(respuesta.statusCode) >= 400
+                ) {
+                    throw new Error(
+                        obtenerMensajeRespuestaActualizarDocumentoDetalle(
+                            respuesta,
+                            textoRespuesta
+                        )
+                    );
+                }
+
+                const mensajeExito =
+                    respuesta?.message ||
+                    configuracion.mensajeExito;
+
+                await registrarBitacoraActualizarDocumentoDetalle(
+                    respuesta?.statusCode || response.status || 200,
+                    mensajeExito
+                );
+
+                cerrarModalActualizarDocumentoDetalle();
+                limpiarModalActualizarDocumentoDetalle();
+
+                if (typeof window.obtenerInformacionTabla === "function") {
+                    await window.obtenerInformacionTabla();
+                }
+
+                window.ocultarLoaderPeticion?.();
+
+                setTimeout(function () {
+                    window.abrirModal?.({
+                        paso: 2,
+                        tipo: "Aceptar",
+                        titulo: "Completado",
+                        contenido: mensajeExito,
+                        btnAceptar: "Cerrar",
+                    });
+                }, 500);
+            } catch (error) {
+                const mensajeError = obtenerMensajeRespuestaActualizarDocumentoDetalle(
+                    respuesta,
+                    textoRespuesta,
+                    error?.message || "No fue posible actualizar el documento."
+                );
+
+                await registrarBitacoraActualizarDocumentoDetalle(
+                    respuesta?.errorMessageDTO?.statusCode ||
+                    respuesta?.statusCode ||
+                    statusCode ||
+                    500,
+                    respuesta?.errorMessageDTO?.message || mensajeError
+                );
+
+                cerrarModalActualizarDocumentoDetalle();
+                window.ocultarLoaderPeticion?.();
+
+                setTimeout(function () {
+                    window.abrirModal?.({
+                        paso: 2,
+                        tipo: "Error",
+                        titulo: "Error",
+                        contenido: mensajeError,
+                        btnAceptar: "Cerrar",
+                    });
+                }, 500);
+            } finally {
+                actualizarDocumentoDetalleEnProceso = false;
+                actualizarControlesActualizarDocumentoDetalle();
+            }
+        }
+
+        function inicializarModalActualizarDocumentoDetalle() {
+            const modal = document.getElementById("actualizar-documento-detalle");
+
+            const inputArchivo = document.getElementById(
+                "archivo-actualizar-documento-detalle"
+            );
+
+            const uploadBox = document.getElementById(
+                "upload-box-actualizar-documento-detalle"
+            );
+
+            const btnLimpiar = document.getElementById(
+                "btn-limpiar-archivo-actualizar-documento-detalle"
+            );
+
+            const btnCerrar = document.getElementById(
+                "btn-cerrar-actualizar-documento-detalle"
+            );
+
+            const btnGuardar = document.getElementById(
+                "btn-guardar-actualizar-documento-detalle"
+            );
+
+            if (!modal || !inputArchivo || !uploadBox) {
+                console.error(
+                    "[ACTUALIZAR DOCUMENTO DETALLE] No se encontraron los elementos necesarios."
+                );
+                return;
+            }
+
+            if (modal.controladorEventosDocumentoDetalle === controladorEventos) {
+                return;
+            }
+
+            modal.dataset.inicializado = "true";
+            modal.controladorEventosDocumentoDetalle = controladorEventos;
+
+            escuchar(uploadBox, "click", () => inputArchivo.click());
+
+            escuchar(uploadBox, "keydown", function (event) {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    inputArchivo.click();
+                }
+            });
+
+            escuchar(inputArchivo, "change", function () {
+                const archivo = inputArchivo.files?.[0] || null;
+
+                if (!archivo) {
+                    limpiarArchivoActualizarDocumentoDetalle();
+                    return;
+                }
+
+                asignarArchivoActualizarDocumentoDetalle(archivo);
+            });
+
+            ["dragenter", "dragover"].forEach(function (tipoEvento) {
+                escuchar(uploadBox, tipoEvento, function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    uploadBox.classList.add("arrastrando");
+
+                    if (event.dataTransfer) {
+                        event.dataTransfer.dropEffect = "copy";
+                    }
+                });
+            });
+
+            ["dragleave", "dragend"].forEach(function (tipoEvento) {
+                escuchar(uploadBox, tipoEvento, function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    uploadBox.classList.remove("arrastrando");
+                });
+            });
+
+            escuchar(uploadBox, "drop", function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                uploadBox.classList.remove("arrastrando");
+
+                const archivos = Array.from(event.dataTransfer?.files || []);
+
+                if (!archivos.length) {
+                    mostrarMensajeActualizarDocumentoDetalle(
+                        "No se encontró un archivo válido."
+                    );
+                    return;
+                }
+
+                if (archivos.length > 1) {
+                    mostrarMensajeActualizarDocumentoDetalle(
+                        "Solo puedes cargar un archivo a la vez."
+                    );
+                    return;
+                }
+
+                asignarArchivoActualizarDocumentoDetalle(archivos[0]);
+            });
+
+            escuchar(btnLimpiar, "click", function () {
+                limpiarArchivoActualizarDocumentoDetalle();
+                ocultarMensajeActualizarDocumentoDetalle();
+            });
+
+            escuchar(btnCerrar, "click", function () {
+                if (actualizarDocumentoDetalleEnProceso) {
+                    return;
+                }
 
                 cerrarModalActualizarDocumentoDetalle();
                 limpiarModalActualizarDocumentoDetalle();
             });
 
-            document.body.appendChild(backdrop);
-        }
+            escuchar(btnGuardar, "click", actualizarDocumentoDetalle);
 
-        modal.classList.add("show");
-        modal.style.display = "block";
-        modal.style.visibility = "visible";
-        modal.style.pointerEvents = "auto";
-        modal.setAttribute("aria-hidden", "false");
-        modal.setAttribute("aria-modal", "true");
-
-        document.body.classList.add("modal-open");
-        document.body.style.overflow = "hidden";
-
-        actualizarControlesActualizarDocumentoDetalle();
-    }
-
-    function cerrarModalActualizarDocumentoDetalle() {
-        const modal = document.getElementById("actualizar-documento-detalle");
-
-        if (modal) {
-            modal.classList.remove("show");
-            modal.style.display = "none";
-            modal.style.visibility = "hidden";
-            modal.style.pointerEvents = "none";
-            modal.setAttribute("aria-hidden", "true");
-            modal.removeAttribute("aria-modal");
-        }
-
-        document.getElementById("backdrop-actualizar-documento-detalle")?.remove();
-
-        document
-            .querySelectorAll(".actualizar-documento-detalle-backdrop")
-            .forEach((elemento) => elemento.remove());
-
-        document.body.classList.remove("modal-open");
-        document.body.style.overflow = "";
-        document.body.style.paddingRight = "";
-    }
-
-    async function registrarBitacoraActualizarDocumentoDetalle(
-        statusCode,
-        mensaje
-    ) {
-        if (
-            !window.bitacoraService ||
-            typeof window.bitacoraService.operationLog !== "function"
-        ) {
-            return;
-        }
-
-        const configuracion = obtenerConfiguracionFormatoDetalle();
-        const descripcion = agregarFormatoNormaDetalle
-            ? `Se agrega el formato adjunto "${window.archivoActualizarDocumentoDetalleSeleccionado?.name || ""}" a la norma "${tituloNormaFormatoDetalle}".`
-            : `${configuracion.descripcionBitacora}. ` +
-            `ContenidoId: ${contenidoIdActualizarDocumentoDetalle}. ` +
-            `DocumentoId: ${documentoIdActualizarDocumentoDetalle}`;
-
-        try {
-            await window.bitacoraService.operationLog(
-                configuracion.metodo,
-                configuracion.moduloBitacora,
-                configuracion.accionBitacora,
-                descripcion,
-                Number(statusCode || 500),
-                mensaje || ""
-            );
-        } catch (error) {
-            console.warn(
-                "[ACTUALIZAR DOCUMENTO DETALLE] Error al registrar bitácora:",
-                error
-            );
-        }
-    }
-
-    async function actualizarDocumentoDetalle() {
-        if (actualizarDocumentoDetalleEnProceso) return;
-
-        const configuracion = obtenerConfiguracionFormatoDetalle();
-        let respuesta = {};
-        let textoRespuesta = "";
-        let statusCode = 500;
-
-        try {
-            const archivo = window.archivoActualizarDocumentoDetalleSeleccionado;
-
-            validarArchivoActualizarDocumentoDetalle(archivo);
-
-            const { contenidoId, documentoId } =
-                validarIdentificadoresActualizarDocumentoDetalle();
-
-            actualizarDocumentoDetalleEnProceso = true;
-            actualizarControlesActualizarDocumentoDetalle();
-            ocultarMensajeActualizarDocumentoDetalle();
-
-            window.mostrarLoaderPeticion?.();
-
-            sessionStorage.setItem(
-                "functional-id",
-                configuracion.functionalId
-            );
-
-            if (typeof window.tokenizerTransactionId !== "function") {
-                throw new Error("No se encontró la función tokenizerTransactionId.");
-            }
-
-            await window.tokenizerTransactionId();
-
-            if (typeof window.getGlobalHeaders !== "function") {
-                throw new Error("No se encontró la función getGlobalHeaders.");
-            }
-
-            const headers = await window.getGlobalHeaders();
-
-            delete headers["Content-Type"];
-            delete headers["content-type"];
-
-            const formData = new FormData();
-
-            formData.append("archivo", archivo, archivo.name);
-
-            const endpoint = configuracion.endpoint
-                .replace(":contenidoId", encodeURIComponent(contenidoId))
-                .replace(":documentoId", encodeURIComponent(documentoId));
-
-            const baseUrl = String(window.apiConfig?.normativas || "").replace(
-                /\/+$/,
-                ""
-            );
-
-            if (!baseUrl) {
-                throw new Error("No se encontró la URL base de normativas.");
-            }
-
-            const response = await fetch(`${baseUrl}${endpoint}`, {
-                method: configuracion.metodo,
-                headers,
-                body: formData,
-            });
-
-            statusCode = response.status;
-            textoRespuesta = await response.text();
-
-            try {
-                respuesta = textoRespuesta ? JSON.parse(textoRespuesta) : {};
-            } catch {
-                respuesta = {
-                    message: textoRespuesta,
-                };
-            }
-
-            if (!response.ok) {
-                throw new Error(
-                    obtenerMensajeRespuestaActualizarDocumentoDetalle(
-                        respuesta,
-                        textoRespuesta
-                    )
-                );
-            }
-
-            if (
-                respuesta?.statusCode !== undefined &&
-                Number(respuesta.statusCode) >= 400
-            ) {
-                throw new Error(
-                    obtenerMensajeRespuestaActualizarDocumentoDetalle(
-                        respuesta,
-                        textoRespuesta
-                    )
-                );
-            }
-
-            const mensajeExito =
-                respuesta?.message ||
-                configuracion.mensajeExito;
-
-            await registrarBitacoraActualizarDocumentoDetalle(
-                respuesta?.statusCode || response.status || 200,
-                mensajeExito
-            );
-
-            cerrarModalActualizarDocumentoDetalle();
-            limpiarModalActualizarDocumentoDetalle();
-
-            if (typeof window.obtenerInformacionTabla === "function") {
-                await window.obtenerInformacionTabla();
-            }
-
-            window.ocultarLoaderPeticion?.();
-
-            setTimeout(function () {
-                window.abrirModal?.({
-                    paso: 2,
-                    tipo: "Aceptar",
-                    titulo: "Completado",
-                    contenido: mensajeExito,
-                    btnAceptar: "Cerrar",
-                });
-            }, 500);
-        } catch (error) {
-            const mensajeError = obtenerMensajeRespuestaActualizarDocumentoDetalle(
-                respuesta,
-                textoRespuesta,
-                error?.message || "No fue posible actualizar el documento."
-            );
-
-            await registrarBitacoraActualizarDocumentoDetalle(
-                respuesta?.errorMessageDTO?.statusCode ||
-                respuesta?.statusCode ||
-                statusCode ||
-                500,
-                respuesta?.errorMessageDTO?.message || mensajeError
-            );
-
-            cerrarModalActualizarDocumentoDetalle();
-            window.ocultarLoaderPeticion?.();
-
-            setTimeout(function () {
-                window.abrirModal?.({
-                    paso: 2,
-                    tipo: "Error",
-                    titulo: "Error",
-                    contenido: mensajeError,
-                    btnAceptar: "Cerrar",
-                });
-            }, 500);
-        } finally {
-            actualizarDocumentoDetalleEnProceso = false;
             actualizarControlesActualizarDocumentoDetalle();
         }
-    }
 
-    function inicializarModalActualizarDocumentoDetalle() {
-        const modal = document.getElementById("actualizar-documento-detalle");
-
-        const inputArchivo = document.getElementById(
-            "archivo-actualizar-documento-detalle"
-        );
-
-        const uploadBox = document.getElementById(
-            "upload-box-actualizar-documento-detalle"
-        );
-
-        const btnLimpiar = document.getElementById(
-            "btn-limpiar-archivo-actualizar-documento-detalle"
-        );
-
-        const btnCerrar = document.getElementById(
-            "btn-cerrar-actualizar-documento-detalle"
-        );
-
-        const btnGuardar = document.getElementById(
-            "btn-guardar-actualizar-documento-detalle"
-        );
-
-        if (!modal || !inputArchivo || !uploadBox) {
-            console.error(
-                "[ACTUALIZAR DOCUMENTO DETALLE] No se encontraron los elementos necesarios."
-            );
-            return;
-        }
-
-        if (modal.dataset.inicializado === "true") {
-            return;
-        }
-
-        modal.dataset.inicializado = "true";
-
-        uploadBox.addEventListener("click", () => inputArchivo.click());
-
-        uploadBox.addEventListener("keydown", function (event) {
-            if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                inputArchivo.click();
-            }
-        });
-
-        inputArchivo.addEventListener("change", function () {
-            const archivo = inputArchivo.files?.[0] || null;
-
-            if (!archivo) {
-                limpiarArchivoActualizarDocumentoDetalle();
-                return;
-            }
-
-            asignarArchivoActualizarDocumentoDetalle(archivo);
-        });
-
-        ["dragenter", "dragover"].forEach(function (tipoEvento) {
-            uploadBox.addEventListener(tipoEvento, function (event) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                uploadBox.classList.add("arrastrando");
-
-                if (event.dataTransfer) {
-                    event.dataTransfer.dropEffect = "copy";
-                }
-            });
-        });
-
-        ["dragleave", "dragend"].forEach(function (tipoEvento) {
-            uploadBox.addEventListener(tipoEvento, function (event) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                uploadBox.classList.remove("arrastrando");
-            });
-        });
-
-        uploadBox.addEventListener("drop", function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            uploadBox.classList.remove("arrastrando");
-
-            const archivos = Array.from(event.dataTransfer?.files || []);
-
-            if (!archivos.length) {
-                mostrarMensajeActualizarDocumentoDetalle(
-                    "No se encontró un archivo válido."
-                );
-                return;
-            }
-
-            if (archivos.length > 1) {
-                mostrarMensajeActualizarDocumentoDetalle(
-                    "Solo puedes cargar un archivo a la vez."
-                );
-                return;
-            }
-
-            asignarArchivoActualizarDocumentoDetalle(archivos[0]);
-        });
-
-        btnLimpiar?.addEventListener("click", function () {
-            limpiarArchivoActualizarDocumentoDetalle();
-            ocultarMensajeActualizarDocumentoDetalle();
-        });
-
-        btnCerrar?.addEventListener("click", function () {
-            if (actualizarDocumentoDetalleEnProceso) {
-                return;
-            }
-
-            cerrarModalActualizarDocumentoDetalle();
-            limpiarModalActualizarDocumentoDetalle();
-        });
-
-        btnGuardar?.addEventListener("click", actualizarDocumentoDetalle);
-
-        actualizarControlesActualizarDocumentoDetalle();
-    }
-
-    const claveEventoActualizarDocumentoDetalle =
-        "eventoActualizarDocumentoDetalle";
-
-    if (window[claveEventoActualizarDocumentoDetalle] !== true) {
-        window[claveEventoActualizarDocumentoDetalle] = true;
-
-        document.addEventListener("click", function (event) {
+        escuchar(document, "click", function (event) {
             const agregar = event.target.closest(".btn-agregar-formato-norma");
             if (agregar) {
                 event.preventDefault();
@@ -1081,45 +1085,45 @@
                 nombre: boton.dataset.nombre || "",
             });
         });
-    }
 
-    document.addEventListener("keydown", function (event) {
-        if (event.key !== "Escape" || actualizarDocumentoDetalleEnProceso) {
-            return;
+        escuchar(document, "keydown", function (event) {
+            if (event.key !== "Escape" || actualizarDocumentoDetalleEnProceso) {
+                return;
+            }
+
+            const modal = document.getElementById("actualizar-documento-detalle");
+
+            if (modal && modal.classList.contains("show")) {
+                cerrarModalActualizarDocumentoDetalle();
+                limpiarModalActualizarDocumentoDetalle();
+            }
+        });
+
+        window.abrirModalActualizarDocumentoDetalle =
+            abrirModalActualizarDocumentoDetalle;
+
+        window.actualizarDocumentoDetalle = actualizarDocumentoDetalle;
+
+        function ejecutarActualizarDocumentoDetalleSeguro() {
+            try {
+                inicializarModalActualizarDocumentoDetalle();
+            } catch (error) {
+                console.error(
+                    "[ACTUALIZAR DOCUMENTO DETALLE] Error al inicializar:",
+                    error
+                );
+            }
         }
 
-        const modal = document.getElementById("actualizar-documento-detalle");
-
-        if (modal && modal.classList.contains("show")) {
-            cerrarModalActualizarDocumentoDetalle();
-            limpiarModalActualizarDocumentoDetalle();
-        }
-    });
-
-    window.abrirModalActualizarDocumentoDetalle =
-        abrirModalActualizarDocumentoDetalle;
-
-    window.actualizarDocumentoDetalle = actualizarDocumentoDetalle;
-
-    function ejecutarActualizarDocumentoDetalleSeguro() {
-        try {
-            inicializarModalActualizarDocumentoDetalle();
-        } catch (error) {
-            console.error(
-                "[ACTUALIZAR DOCUMENTO DETALLE] Error al inicializar:",
-                error
+        if (document.readyState === "loading") {
+            escuchar(document,
+                "DOMContentLoaded",
+                ejecutarActualizarDocumentoDetalleSeguro,
+                { once: true }
             );
+        } else {
+            ejecutarActualizarDocumentoDetalleSeguro();
         }
-    }
 
-    if (document.readyState === "loading") {
-        document.addEventListener(
-            "DOMContentLoaded",
-            ejecutarActualizarDocumentoDetalleSeguro,
-            { once: true }
-        );
-    } else {
-        ejecutarActualizarDocumentoDetalleSeguro();
-    }
-
+    })();
 </script>
