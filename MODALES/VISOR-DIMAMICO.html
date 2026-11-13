@@ -1910,6 +1910,19 @@
             .querySelector(".btn-cerrar-visor")
             ?.addEventListener("click", cerrarVisor);
 
+        // El mismo clic debe llegar al listener del formulario o confirmación.
+        // Ocultar primero evita superponer los modales mientras se libera el PDF.
+        modal.querySelectorAll(
+            ".btn-editar, .editar-norma-inv, .btn-crear-formato-adjunto, .btn-eliminar-formato"
+        ).forEach(function (boton) {
+                boton.addEventListener("click", function () {
+                    modal.style.display = "none";
+                    cerrarVisor().catch(function (error) {
+                        console.error("[Visor] Error al cerrar antes de abrir la acción:", error);
+                    });
+                });
+        });
+
         /*
             
             BOTÓN DE ACCIÓN
