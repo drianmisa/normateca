@@ -453,7 +453,7 @@
 
 
 <script>
-    (function () {
+      (function () {
         "use strict";
 
         const CONFIG_EDITAR_NORMA_INV = {
@@ -674,6 +674,7 @@
             return {
                 contenidoPadreId:
                     ESTADO_EDITAR_NORMA_INV.datosOriginales?.contenidoPadreId || "",
+                versionId: ESTADO_EDITAR_NORMA_INV.datosOriginales?.versionId || "",
                 contenidoId:
                     obtenerElementoEditarNormaInv("contenido-id-editar-norma-inv")?.value ||
                     "",
@@ -983,6 +984,7 @@
             ocultarMensajeEditarNormaInv();
             const datos = {
                 contenidoPadreId: boton?.dataset?.idPadre || "",
+                versionId: boton?.dataset?.versionId || "",
                 contenidoId: boton?.dataset?.contenidoId || boton?.dataset?.id || "",
                 archivoId: boton?.dataset?.archivoId || boton?.dataset?.idArchivo || "",
                 codigo: boton?.dataset?.codigo || "",
@@ -1297,6 +1299,10 @@
             try {
                 const formularioValido = validarFormularioEditarNormaInv(datos);
 
+                if (!usarSinVersion && !datos.versionId) {
+                    throw new Error("No se encontró el identificador de versión de la norma adjunta.");
+                }
+
                 if (!formularioValido) {
                     return;
                 }
@@ -1345,7 +1351,7 @@
                         ":contenidoPadreId",
                         encodeURIComponent(datos.contenidoPadreId)
                     )
-                    .replace(":contenidoHijaId", encodeURIComponent(datos.contenidoId))
+                    .replace(":contenidoHijaId", encodeURIComponent(datos.versionId))
                     .replace(":contenidoId", encodeURIComponent(datos.contenidoId));
 
                 const url = /^https?:\/\//i.test(endpoint)
@@ -1648,4 +1654,5 @@
 
         window.abrirModalEditarNormaInv = abrirModalEditarNormaInv;
     })();
+
 </script>

@@ -514,6 +514,7 @@
                           type="button"
                           class="btn btn-link p-0 editar-norma-inv"
                           data-id="${idDocumento}"
+                          data-version-id="${item.versionId ?? ""}"
                           data-id-padre="${item.idPadre ?? ""}"
                           data-contenido-id="${idDocumento}"
                           data-documento-id="${idArchivoPrincipal}"
