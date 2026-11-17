@@ -197,7 +197,9 @@
                         ...detalle, tieneNormasAdjuntas: true, tieneFormatosAdjuntos: false,
                     }) });
                 }
-                if (cargarFormatosNorma) vistas.push({ formatos: true, recursos: recursosFormatos });
+                if (cargarFormatosNorma || puedeEliminarFormatoNorma) {
+                    vistas.push({ formatos: true, recursos: recursosFormatos });
+                }
             } else {
                 vistas.push({ formatos: false, recursos: obtenerRecursosPorTipo(detalle) });
             }
@@ -946,6 +948,21 @@
             if (tipo === "NORMA") configuracionTabla.titulo = vista.formatos ? "FORMATOS ADJUNTOS" : "NORMAS ADJUNTAS";
             window.crearTablaDinamica(configuracionTabla);
             aplicarEstilosDetalleTabla(selectorTabla);
+            const contenedorVista = document.querySelector(selectorTabla);
+            contenedorVista?.querySelector(".acciones-agregar-formato-norma")?.remove();
+            if (esVistaFormatosNorma && esAdmin && !esHistorico && contenedorVista) {
+                const acciones = document.createElement("div");
+                acciones.className = "acciones-agregar-formato-norma d-flex justify-content-end mb-3";
+                acciones.innerHTML = `
+                    <button type="button" class="btn btn-primary btn-agregar-formato-norma"
+                        data-contenido-id="${escaparDatoDocumento(detalle.id ?? idDocumento)}"
+                        data-titulo-norma="${escaparDatoDocumento(detalle.titulo ?? "")}">
+                        Agregar formato adjunto
+                    </button>`;
+                const separador = contenedorVista.querySelector("hr.red");
+                if (separador) separador.insertAdjacentElement("afterend", acciones);
+                else contenedorVista.prepend(acciones);
+            }
             if (esVistaFormatosNorma && errorFormatos) {
                 const aviso = document.createElement("div");
                 aviso.className = "alert alert-warning";
@@ -1095,12 +1112,6 @@
                   <i class="bi bi-arrow-left"></i> Regresar
                 </button>
           
-                ${tipo === "NORMA" && esAdmin && !esHistorico ? `
-                  <button type="button" class="btn btn-primary btn-agregar-formato-norma"
-                    data-contenido-id="${escaparDatoDocumento(detalle.id ?? "")}"
-                    data-titulo-norma="${escaparDatoDocumento(detalle.titulo ?? "")}">
-                    Agregar formato adjunto
-                  </button>` : ""}
                 ${!esDocumento
                 ? `
                `
