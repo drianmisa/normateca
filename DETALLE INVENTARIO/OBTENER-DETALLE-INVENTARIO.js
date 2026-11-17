@@ -154,7 +154,7 @@
                 (Array.isArray(detalle.normasAdjuntas) && detalle.normasAdjuntas.length > 0);
             const tieneFormatos = esVerdadero(detalle.tieneFormatosAdjuntos) ||
                 (Array.isArray(detalle.formatosAdjuntos) && detalle.formatosAdjuntos.length > 0);
-            const cargarFormatosNorma = tipo === "NORMA" && tieneFormatos;
+            const cargarFormatosNorma = tipo === "NORMA" && tieneFormatos && !esHistorico;
             const puedeEliminarFormatoNorma = esAdmin && !esHistorico;
             let recursosFormatos = [];
             let errorFormatos = "";
@@ -192,14 +192,28 @@
 
             const vistas = [];
             if (tipo === "NORMA") {
-                vistas.push({ formatos: false, recursos: obtenerRecursosPorTipo({
+                const normasAdjuntas = obtenerRecursosPorTipo({
                     ...detalle, tieneNormasAdjuntas: true, tieneFormatosAdjuntos: false,
-                }) });
-                vistas.push({ formatos: true, recursos: recursosFormatos });
+                });
+                if (!esHistorico || normasAdjuntas.length > 0) {
+                    vistas.push({ formatos: false, recursos: normasAdjuntas });
+                }
+                if (!esHistorico) vistas.push({ formatos: true, recursos: recursosFormatos });
             } else {
                 vistas.push({ formatos: false, recursos: obtenerRecursosPorTipo(detalle) });
             }
             const contenedorPrincipal = document.querySelector("#tabla-dinamica");
+            // Conservar la cabecera principal cuando el histórico no tenga normas adjuntas.
+            Array.from(contenedorPrincipal?.children || []).forEach(function (elemento) {
+                if (elemento.id === "detalle-documento-header") return;
+                if (vistas.length === 0) {
+                    if (!elemento.hidden) elemento.dataset.ocultoPorHistorico = "true";
+                    elemento.hidden = true;
+                } else if (elemento.dataset.ocultoPorHistorico === "true") {
+                    elemento.hidden = false;
+                    delete elemento.dataset.ocultoPorHistorico;
+                }
+            });
             const tablaFormatosAnterior = document.getElementById("tabla-formatos-adjuntos-norma");
             if (vistas.length <= 1) tablaFormatosAnterior?.remove();
             if (vistas.length > 1 && contenedorPrincipal && !tablaFormatosAnterior) {
