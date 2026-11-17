@@ -284,7 +284,8 @@
                             formatearFecha(item.vigencia),
                             item.semaforo,
                             esAdmin && esNorma && isUpdate,
-                            vigenciaManual
+                            vigenciaManual,
+                            esNorma
                         )}
             </td>
     
@@ -453,7 +454,8 @@
                 frase,
                 color,
                 actualizarActivo = false,
-                vigenciaManual = false
+                vigenciaManual = false,
+                mostrarBullet = false
             ) {
                 const colorTexto =
                     color === "rojo" ? "red" : color === "amarillo" ? "#FFC107" : "green";
@@ -462,6 +464,9 @@
             <span
               data-color-original="${colorTexto}"
               style="
+                display: inline-flex;
+                align-items: center;
+                gap: 26px;
                 color:${actualizarActivo ? "#FFFFFF" : colorTexto};
                 ${vigenciaManual
                         ? `text-decoration: underline; text-decoration-color: ${colorTexto}; text-decoration-thickness: 2px; text-underline-offset: 3px;`
@@ -469,6 +474,15 @@
                     }
               "
             >
+              ${mostrarBullet ? `<span aria-hidden="true" style="
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                flex: 0 0 10px;
+                border-radius: 50%;
+                background-color: ${{ rojo: "#DC3545", amarillo: "#FFC107", verde: "#198754" }[String(color ?? "").trim().toLowerCase()] || "#198754"};
+                border: 1px solid rgba(0, 0, 0, 0.12);
+              "></span>` : ""}
               ${frase ?? ""}
             </span>
           `;

@@ -192,14 +192,10 @@
 
             const vistas = [];
             if (tipo === "NORMA") {
-                if (tieneNormas || !cargarFormatosNorma) {
-                    vistas.push({ formatos: false, recursos: obtenerRecursosPorTipo({
-                        ...detalle, tieneNormasAdjuntas: true, tieneFormatosAdjuntos: false,
-                    }) });
-                }
-                if (cargarFormatosNorma || puedeEliminarFormatoNorma) {
-                    vistas.push({ formatos: true, recursos: recursosFormatos });
-                }
+                vistas.push({ formatos: false, recursos: obtenerRecursosPorTipo({
+                    ...detalle, tieneNormasAdjuntas: true, tieneFormatosAdjuntos: false,
+                }) });
+                vistas.push({ formatos: true, recursos: recursosFormatos });
             } else {
                 vistas.push({ formatos: false, recursos: obtenerRecursosPorTipo(detalle) });
             }
