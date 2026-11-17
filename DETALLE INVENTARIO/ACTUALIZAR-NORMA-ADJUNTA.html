@@ -1299,10 +1299,6 @@
             try {
                 const formularioValido = validarFormularioEditarNormaInv(datos);
 
-                if (!usarSinVersion && !datos.versionId) {
-                    throw new Error("No se encontró el identificador de versión de la norma adjunta.");
-                }
-
                 if (!formularioValido) {
                     return;
                 }
@@ -1351,7 +1347,7 @@
                         ":contenidoPadreId",
                         encodeURIComponent(datos.contenidoPadreId)
                     )
-                    .replace(":contenidoHijaId", encodeURIComponent(datos.versionId))
+                    .replace(":contenidoHijaId", encodeURIComponent(datos.contenidoId))
                     .replace(":contenidoId", encodeURIComponent(datos.contenidoId));
 
                 const url = /^https?:\/\//i.test(endpoint)

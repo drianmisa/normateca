@@ -304,6 +304,9 @@ async function abrirVistaPreviaInventario(boton) {
             ? `/api/v1/inventario/documentos/${idContenido}/formatos/${idArchivo}`
             : "");
 
+    const esFormatoAdjuntoNorma =
+        /^\/api\/v1\/inventario\/normas\/[^/]+\/formatos\/[^/?#]+(?:[?#]|$)/.test(endpoint);
+
     const isUpdate = datosBoton.isUpdate === "true";
 
     const vigenciaManual = datosBoton.vigenciaManual === "true";
@@ -601,7 +604,8 @@ async function abrirVistaPreviaInventario(boton) {
 
             mostrarDescargar: puedeDescargarDocumento,
 
-            mostrarActualizar: esAdministrador && esDocumento,
+            mostrarActualizar: esAdministrador && esDocumento &&
+                !esFormatoAdjuntoNorma && datosBoton.mostrarActualizar !== "false",
 
             mostrarEliminar: esAdministrador && esDocumento,
 
