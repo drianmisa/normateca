@@ -191,19 +191,17 @@
             }
 
             const vistas = [];
-            if (tipo === "NORMA") {
+            if (!esHistorico && tipo === "NORMA") {
                 const normasAdjuntas = obtenerRecursosPorTipo({
                     ...detalle, tieneNormasAdjuntas: true, tieneFormatosAdjuntos: false,
                 });
-                if (!esHistorico || normasAdjuntas.length > 0) {
-                    vistas.push({ formatos: false, recursos: normasAdjuntas });
-                }
-                if (!esHistorico) vistas.push({ formatos: true, recursos: recursosFormatos });
-            } else {
+                vistas.push({ formatos: false, recursos: normasAdjuntas });
+                vistas.push({ formatos: true, recursos: recursosFormatos });
+            } else if (!esHistorico) {
                 vistas.push({ formatos: false, recursos: obtenerRecursosPorTipo(detalle) });
             }
             const contenedorPrincipal = document.querySelector("#tabla-dinamica");
-            // Conservar la cabecera principal cuando el histórico no tenga normas adjuntas.
+            // En histórico conservar únicamente la cabecera principal.
             Array.from(contenedorPrincipal?.children || []).forEach(function (elemento) {
                 if (elemento.id === "detalle-documento-header") return;
                 if (vistas.length === 0) {
