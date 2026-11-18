@@ -429,6 +429,11 @@ window.apiDelete = async function (apiName, endpoint, extraHeaders = {}) {
 /* BITACORA */
 /******************************************************************************/
 class BitacoraService {
+    obtenerEstatusOperacion(statusNum) {
+        const status = Number(statusNum);
+        return status >= 200 && status < 300 ? "C" : "I";
+    }
+
     async accesosLog(metodo, actividad, statusNum, respuestaOperacion) {
         try {
             const data = {
@@ -437,7 +442,7 @@ class BitacoraService {
                 capa: "Frontend",
                 metodo,
                 transaccionId: window.obtenerTransactionId(),
-                estatusOperacion: statusNum === 200 || statusNum === 201 ? "C" : "I",
+                estatusOperacion: this.obtenerEstatusOperacion(statusNum),
                 respuestaOperacion,
                 actividad,
                 fechaHoraAcceso: new Date().toISOString(),
@@ -465,7 +470,7 @@ class BitacoraService {
         statusNum,
         responseDTO
     ) {
-        let statusCode = statusNum === 200 || statusNum === 201 ? "C" : "I";
+        const statusCode = this.obtenerEstatusOperacion(statusNum);
         const fecha = new Date();
 
         const fechaLocal = new Date(
@@ -496,7 +501,7 @@ class BitacoraService {
 
             nombreOperador: window.obtenerNombreOperador(),
 
-            expedienteOperador: sessionStorage.getItem("expediente") || "12345ABCDE",
+            expedienteOperador: sessionStorage.getItem("expediente") || "Sin dato",
 
             rfcOperador: window.obtenerRFC(),
 
@@ -527,7 +532,7 @@ class BitacoraService {
         datosUsuario = {},
         tipoBitacora = "Usuarios"
     ) {
-        const statusCode = statusNum === 200 || statusNum === 201 ? "C" : "I";
+        const statusCode = this.obtenerEstatusOperacion(statusNum);
         const fecha = new Date();
 
         const fechaLocal = new Date(
@@ -553,7 +558,7 @@ class BitacoraService {
             respuestaOperacion: responseDTO,
             usuarioOperador: window.obtenerUsuario(),
             nombreOperador: window.obtenerNombreOperador(),
-            expedienteOperador: "sin dato",
+            expedienteOperador: sessionStorage.getItem("expediente") || "Sin dato",
             rfcOperador: window.obtenerRFC(),
             areaOperador: window.obtenerArea(),
             puestoOperador: window.obtenerPuesto(),
