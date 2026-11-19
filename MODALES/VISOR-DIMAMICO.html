@@ -309,6 +309,7 @@
             mostrarCerrar: true,
             mostrarIcono: true,
             mostrarTitulo: true,
+            mostrarCodigo: true,
             mostrarClasificacion: true,
             mostrarFechaVigencia: true,
             mostrarTituloNorma: false,
@@ -812,9 +813,9 @@
           ${data.mostrarTitulo
                     ? `
       <div>
-        <h3 class="titulo-h3">
+        ${data.mostrarCodigo !== false ? `<h3 class="titulo-h3">
             ${esAdminVisor ? (data.codigo || data.titulo) : ""}
-        </h3>
+        </h3>` : ""}
     
         ${data.mostrarTituloNorma && data.tituloNorma
                         ? `

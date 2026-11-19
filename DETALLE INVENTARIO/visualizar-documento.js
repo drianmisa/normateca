@@ -298,6 +298,10 @@ async function abrirVistaPreviaInventario(boton) {
 
     const nombre = datosBoton.nombre || nombreArchivo;
 
+    const tituloVisor = esDocumento
+        ? nombreArchivo || titulo || "Documento"
+        : tituloNorma || titulo || codigo || "Documento";
+
     const endpoint =
         datosBoton.endpoint ||
         (idContenido && idArchivo
@@ -530,9 +534,9 @@ async function abrirVistaPreviaInventario(boton) {
 
             codigo: codigo,
 
-            titulo: tituloNorma || titulo || codigo || "Documento",
+            titulo: tituloVisor,
 
-            tituloNorma: tituloNorma,
+            tituloNorma: esDocumento ? tituloVisor : tituloNorma,
 
             icono: esDocumento
                 ? "bi bi-paperclip"
@@ -591,6 +595,7 @@ async function abrirVistaPreviaInventario(boton) {
             rutaHome: "/web/normateca/inicio",
 
             mostrarTitulo: true,
+            mostrarCodigo: !esDocumento,
 
             mostrarIcono: true,
 
@@ -600,7 +605,7 @@ async function abrirVistaPreviaInventario(boton) {
 
             mostrarFechaActualizacion: false,
 
-            mostrarTituloNorma: Boolean(tituloNorma),
+            mostrarTituloNorma: Boolean(esDocumento ? tituloVisor : tituloNorma),
 
             mostrarDescargar: puedeDescargarDocumento,
 
