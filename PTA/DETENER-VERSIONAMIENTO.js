@@ -59,6 +59,8 @@ async function detenerVersionamientoInventario(check) {
     const contenidoId =
         check.dataset.contenidoId || check.dataset.id || "";
 
+    const versionEsperada = Number(check.dataset.versionId);
+
     const tituloNorma =
         String(check.dataset.titulo || "").trim() ||
         String(check.dataset.codigo || "").trim() ||
@@ -73,6 +75,17 @@ async function detenerVersionamientoInventario(check) {
             btnAceptar: "Cerrar",
         });
 
+        return;
+    }
+
+    if (!Number.isSafeInteger(versionEsperada) || versionEsperada <= 0) {
+        abrirModal({
+            paso: 2,
+            tipo: "Error",
+            titulo: "Error",
+            contenido: "No se encontró una versión válida de la norma. Actualiza el listado e intenta nuevamente.",
+            btnAceptar: "Cerrar",
+        });
         return;
     }
 
@@ -200,7 +213,7 @@ async function detenerVersionamientoInventario(check) {
                 headers,
                 body: JSON.stringify({
                     confirmar: true,
-                    versionEsperada: 0,
+                    versionEsperada,
                 }),
             }
         );
