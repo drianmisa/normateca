@@ -302,6 +302,10 @@ async function abrirVistaPreviaInventario(boton) {
         ? nombreArchivo || titulo || "Documento"
         : tituloNorma || titulo || codigo || "Documento";
 
+    const nombreBitacora = esDocumento
+        ? nombreArchivo || nombre || titulo || "Sin título"
+        : tituloNorma || titulo || nombreArchivo || nombre || "Sin título";
+
     const endpoint =
         datosBoton.endpoint ||
         (idContenido && idArchivo
@@ -498,8 +502,7 @@ async function abrirVistaPreviaInventario(boton) {
         await registrarBitacoraUrlInventario(
             "GET",
             "Consultar url documento inventario",
-            `Se consulta la URL del documento del inventario: ${tituloNorma || titulo || nombreArchivo || nombre || "Sin título"
-            }`,
+            `Se consulta la URL del documento del inventario: ${nombreBitacora}`,
             result?.statusCode || response?.status || 200,
             mensajeExito
         );
@@ -660,8 +663,7 @@ async function abrirVistaPreviaInventario(boton) {
         await registrarBitacoraUrlInventario(
             "GET",
             "Consultar url documento inventario",
-            `Error al consultar la URL del documento del inventario: ${tituloNorma || titulo || nombreArchivo || nombre || "Sin título"
-            }`,
+            `Error al consultar la URL del documento del inventario: ${nombreBitacora}`,
             statusCode,
             mensajeError
         );

@@ -595,7 +595,7 @@
         
                     ${esAdmin
                                 ? `<td>
-                      ${String(item.fechaModificacion ?? "").slice(0, 10)}
+                      ${formatearFechaDetalle(item.fechaModificacion, "/")}
                     </td>`
                                 : ""
                             }
@@ -888,7 +888,8 @@
                     ${esAdmin
                             ? `<td>
                       ${formatearFechaDetalle(
-                                item.fechaModificacion ?? item.fechaActualizacion
+                                item.fechaModificacion ?? item.fechaActualizacion,
+                                "/"
                             )}
                     </td>`
                             : ""
@@ -1402,19 +1403,24 @@
         return valor.split(".").pop();
     }
 
-    function formatearFechaDetalle(fecha) {
+    function formatearFechaDetalle(fecha, separador = "-") {
         if (!fecha) {
             return "";
         }
 
         const valor = String(fecha).trim();
 
-        const coincidencia = valor.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        const coincidencia = valor.match(/^(\d{4})[-\/](\d{2})[-\/](\d{2})/);
 
         if (coincidencia) {
             const [, anio, mes, dia] = coincidencia;
 
-            return `${dia}-${mes}-${anio}`;
+            return `${dia}${separador}${mes}${separador}${anio}`;
+        }
+
+        const fechaLocal = valor.match(/^(\d{2})[-\/](\d{2})[-\/](\d{4})(?:T|\s|$)/);
+        if (fechaLocal) {
+            return `${fechaLocal[1]}${separador}${fechaLocal[2]}${separador}${fechaLocal[3]}`;
         }
 
         const fechaObjeto = new Date(valor);

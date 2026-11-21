@@ -114,7 +114,14 @@ async function descargarArchivoInventario(boton) {
     const idArchivo = boton?.dataset?.idArchivo || "";
 
     // Nombre utilizado exclusivamente para el detalle de la bitácora.
-    const nombreBitacora =
+    const tipoRegistro = String(
+        boton?.dataset?.tipoRegistro || boton?.dataset?.tipo || ""
+    ).trim().toUpperCase();
+    const esDocumento = tipoRegistro === "DOCUMENTO" || tipoRegistro === "DOCUMENTOS";
+    const nombreBitacora = esDocumento
+        ? boton?.dataset?.nombreArchivo || boton?.dataset?.nombre ||
+            boton?.dataset?.titulo || "Sin título"
+        :
         boton?.dataset?.tituloNorma ||
         boton?.dataset?.titulo ||
         boton?.dataset?.nombreArchivo ||
