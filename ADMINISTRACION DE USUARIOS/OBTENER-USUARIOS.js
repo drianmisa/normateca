@@ -137,6 +137,7 @@
             idUserGroup: registro.idUserGroup ?? "",
             rol: registro.rol ?? "Lector",
             activo: registro.activo === true,
+            isBloqueo: registro.isBloqueo === true,
         };
     }
 
@@ -219,6 +220,22 @@
             }
         });
     }
+    function crearCheckActivarLogin(usuario) {
+        if (!usuario.isBloqueo) return "";
+        const deshabilitado = esLectorNORMATECA ||
+            (esAdministradorNORMATECA && String(usuario.rol).trim().toLowerCase() === "administrador");
+        return `<input type="checkbox"
+            class="check-activar-login-usuario"
+            title="Desbloquear usuario"
+            aria-label="Desbloquear usuario: ${escaparHtml(usuario.nombre)}"
+            data-usuario="${escaparHtml(usuario.usuario)}"
+            data-nombre="${escaparHtml(usuario.nombre)}"
+            data-expediente="${escaparHtml(usuario.expediente)}"
+            data-area="${escaparHtml(usuario.area)}"
+            data-puesto="${escaparHtml(usuario.puesto)}"
+            ${deshabilitado ? "disabled" : ""}>`;
+    }
+
     function crearTablaAdministracionUsuarios(usuarios) {
         if (typeof window.crearTablaDinamica !== "function") {
             throw new Error("crearTablaDinamica no está disponible");
@@ -261,6 +278,7 @@
               </td>
       
               <td>
+                <div class="d-flex align-items-center" style="gap:12px;">
                 <div class="form-check form-switch">
                     <input
                         class="form-check-input switch-activo-usuario"
@@ -285,6 +303,8 @@
                     : ""
                 }
                     >
+                </div>
+                ${crearCheckActivarLogin(usuario)}
                 </div>
               </td>
       
@@ -540,6 +560,8 @@
         |--------------------------------------------------------------------------
         */
 
+    // La recarga explícita no reutiliza la caché de la carga inicial.
+    window.recargarUsuariosAdministracion = obtenerUsuariosAdministracion;
     await inicializarAdministracionUsuarios();
 })();
 
@@ -834,4 +856,3 @@
     window.administracionUsuariosEventoEstado = manejarClick;
     document.addEventListener("click", window.administracionUsuariosEventoEstado);
 })();
-
