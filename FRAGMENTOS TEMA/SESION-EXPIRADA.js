@@ -18,12 +18,34 @@
         destruir();
 
         try {
-            if (typeof window.bitacoraService?.accesosLog === "function") {
-                await window.bitacoraService.accesosLog(
-                    "Logout",
-                    "Cierre de sesión por inactividad",
-                    200,
-                    `El usuario ${window.obtenerUsuario()} cerró sesión por inactividad.`
+            if (typeof window.bitacoraService?.accesosLog !== "function") {
+                throw new Error("No está disponible bitacoraService.accesosLog. Verifica que FETCH-GLOBALES.js esté cargado y actualizado en esta página.");
+            }
+            sessionStorage.setItem("functional-id", "Cierre de sesión por inactividad");
+            // Después del periodo inactivo, preparar los tokens como en las demás peticiones.
+            // Si la renovación falla, intentar igualmente la bitácora con la sesión disponible.
+            if (typeof window.tokenizerTransactionId === "function") {
+                try {
+                    await window.tokenizerTransactionId();
+                } catch (errorToken) {
+                    console.warn("[Sesión expirada] No fue posible renovar los tokens antes de registrar el cierre:", errorToken);
+                }
+            }
+            const usuario = typeof window.obtenerUsuario === "function"
+                ? window.obtenerUsuario()
+                : sessionStorage.getItem("usuario") || "Sin dato";
+            const response = await window.bitacoraService.accesosLog(
+                "Logout",
+                "Cierre de sesión por inactividad",
+                200,
+                `El usuario ${usuario} cerró sesión por inactividad.`
+            );
+            const resultado = response?.data;
+            const status = Number(resultado?.errorMessageDTO?.statusCode || resultado?.statusCode || response?.status || 500);
+            if (response?.ok !== true || status >= 400) {
+                throw new Error(
+                    resultado?.errorMessageDTO?.message || resultado?.message || response?.message ||
+                    `El servicio de bitácora no confirmó el registro del cierre (HTTP ${status}).`
                 );
             }
         } catch (error) {
