@@ -429,6 +429,26 @@ window.apiDelete = async function (apiName, endpoint, extraHeaders = {}) {
 /* BITACORA */
 /******************************************************************************/
 class BitacoraService {
+    obtenerFechaHoraAccesoMexico(fecha = new Date()) {
+        const formato = new Intl.DateTimeFormat("en-CA", {
+            timeZone: "America/Mexico_City",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hourCycle: "h23",
+            timeZoneName: "longOffset",
+        });
+        const partes = Object.fromEntries(
+            formato.formatToParts(fecha).map(({ type, value }) => [type, value])
+        );
+        const milisegundos = String(fecha.getUTCMilliseconds()).padStart(3, "0");
+        const zona = partes.timeZoneName === "GMT" ? "Z" : partes.timeZoneName.replace("GMT", "");
+        return `${partes.year}-${partes.month}-${partes.day}T${partes.hour}:${partes.minute}:${partes.second}.${milisegundos}${zona}`;
+    }
+
     obtenerEstatusOperacion(statusNum) {
         const status = Number(statusNum);
         return status >= 200 && status < 300 ? "C" : "I";
@@ -445,7 +465,7 @@ class BitacoraService {
                 estatusOperacion: this.obtenerEstatusOperacion(statusNum),
                 respuestaOperacion,
                 actividad,
-                fechaHoraAcceso: new Date().toISOString(),
+                fechaHoraAcceso: this.obtenerFechaHoraAccesoMexico(),
                 usuarioAcceso: window.obtenerUsuario(),
                 nombreUsuario: window.obtenerNombreOperador(),
                 expedienteUsuario: sessionStorage.getItem("expediente") || "Sin dato",
