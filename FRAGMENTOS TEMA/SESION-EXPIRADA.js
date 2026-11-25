@@ -41,7 +41,8 @@
         } catch (error) {
             console.error("[SESIÓN EXPIRADA] No fue posible limpiar sessionStorage:", error);
         }
-        window.location.href = "/c/portal/logout?referer=/web/normateca/login";
+        const regresoLogin = "/web/normateca/login?motivo=inactividad";
+        window.location.href = `/c/portal/logout?referer=${encodeURIComponent(regresoLogin)}`;
     }
 
     function comprobarInactividad() {

@@ -19,6 +19,8 @@
 
 <script>
     (function () {
+        // El aviso de sesión expirada lo controla su propio componente.
+        if (new URLSearchParams(window.location.search).get('motivo') === 'inactividad') return;
         var DEBUG = false;
         var RESOURCE_PORTLET_NAME = 'com_liferay_login_web_portlet_LoginPortlet';
         var RESOURCE_COMMAND_NAME = '/banobras/login-failure-reason';

@@ -439,14 +439,13 @@ class BitacoraService {
             minute: "2-digit",
             second: "2-digit",
             hourCycle: "h23",
-            timeZoneName: "longOffset",
         });
         const partes = Object.fromEntries(
             formato.formatToParts(fecha).map(({ type, value }) => [type, value])
         );
         const milisegundos = String(fecha.getUTCMilliseconds()).padStart(3, "0");
-        const zona = partes.timeZoneName === "GMT" ? "Z" : partes.timeZoneName.replace("GMT", "");
-        return `${partes.year}-${partes.month}-${partes.day}T${partes.hour}:${partes.minute}:${partes.second}.${milisegundos}${zona}`;
+        // Formato solicitado por la integración: hora de México con sufijo Z.
+        return `${partes.year}-${partes.month}-${partes.day}T${partes.hour}:${partes.minute}:${partes.second}.${milisegundos}Z`;
     }
 
     obtenerEstatusOperacion(statusNum) {
